@@ -1,0 +1,26 @@
+
+spring:
+    datasource:
+        url: jdbc:postgresql://localhost:5432/flathub
+        username: flathub-api
+        password: flathub
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        # Crea les taules a la BD automàticament
+        # Noméss ho activem quan volem fer canvis a la BD perquè fa 
+        # que l'aplicació trigui molt en arrencar
+        # generate-ddl: true    
+        show-sql: true            
+#    mail:
+#        host: smtp.gmail.com
+#        port: 587
+#        username:
+#        password:
+#        smtp.auth: true
+#        smtp.starttls.enable: true
+        
+
+hibernate:
+    showSql: true
+    dialect: org.hibernate.dialect.PostgreSQL94Dialect
+

@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components version="0.8" origin="flatpak">
+<component type="desktop">
+    <id>org.gnome.Calendar.desktop</id>
+    <translation type="gettext">gnome-calendar</translation>
+    <name>Calendar</name>
+    <name xml:lang="an">Calandario</name>
+    <name xml:lang="ar">التقويم</name>
+    <name xml:lang="bs">Kalendar</name>
+    <name xml:lang="ca">Calendari</name>
+    <name xml:lang="cs">Kalendář</name>
+    <name xml:lang="da">Kalender</name>
+    <name xml:lang="de">Kalender</name>
+    <name xml:lang="el">Ημερολόγιο</name>
+    <name xml:lang="eo">Kalendaro</name>
+    <name xml:lang="es">Calendario</name>
+    <name xml:lang="eu">Egutegia</name>
+    <name xml:lang="fa">تقویم</name>
+    <name xml:lang="fi">Kalenteri</name>
+    <name xml:lang="fr">Agenda</name>
+    <name xml:lang="fur">Calendari</name>
+    <name xml:lang="ga">Féilire</name>
+    <name xml:lang="gd">Am mìosachan</name>
+    <name xml:lang="gl">Calendario</name>
+    <name xml:lang="he">לוח שנה</name>
+    <name xml:lang="hr">Kalendar</name>
+    <name xml:lang="hu">Naptár</name>
+    <name xml:lang="id">Kalender</name>
+    <name xml:lang="is">Dagatal</name>
+    <name xml:lang="it">Calendario</name>
+    <name xml:lang="ja">カレンダー</name>
+    <name xml:lang="kk">Күнтізбе</name>
+    <name xml:lang="ko">달력</name>
+    <name xml:lang="lt">Kalendorius</name>
+    <name xml:lang="lv">Kalendārs</name>
+    <name xml:lang="nb">Kalender</name>
+    <name xml:lang="nl">Agenda</name>
+    <name xml:lang="oc">Agenda</name>
+    <name xml:lang="pa">ਕੈਲੰਡਰ</name>
+    <name xml:lang="pl">Kalendarz</name>
+    <name xml:lang="pt">Agenda</name>
+    <name xml:lang="pt_BR">Agenda</name>
+    <name xml:lang="ru">Календарь</name>
+    <name xml:lang="sk">Kalendár</name>
+    <name xml:lang="sl">Koledar</name>
+    <name xml:lang="sr">Календар</name>
+    <name xml:lang="sr@latin">Kalendar</name>
+    <name xml:lang="sv">Kalender</name>
+    <name xml:lang="tg">Тақвим</name>
+    <name xml:lang="th">ปฏิทิน</name>
+    <name xml:lang="tr">Takvim</name>
+    <name xml:lang="uk">Календар</name>
+    <name xml:lang="zh_CN">日历</name>
+    <name xml:lang="zh_HK">行事曆</name>
+    <name xml:lang="zh_TW">行事曆</name>
+    <summary>Calendar for GNOME</summary>
+    <summary xml:lang="an">Calandario ta GNOME</summary>
+    <summary xml:lang="ar">تطبيق تقويم لجنوم</summary>
+    <summary xml:lang="bs">Kalendar za GNOME</summary>
+    <summary xml:lang="ca">Calendari per al GNOME</summary>
+    <summary xml:lang="cs">Kalendář pro GNOME</summary>
+    <summary xml:lang="da">Kalender til GNOME</summary>
+    <summary xml:lang="de">Kalender für GNOME</summary>
+    <summary xml:lang="el">Ημερολόγιο του GNOME</summary>
+    <summary xml:lang="eo">Kalendaro por GNOME</summary>
+    <summary xml:lang="es">Calendario para GNOME</summary>
+    <summary xml:lang="eu">GNOMEren egutegia</summary>
+    <summary xml:lang="fa">تقویم برای گنوم</summary>
+    <summary xml:lang="fi">Kalenteri Gnome-työpöydälle</summary>
+    <summary xml:lang="fr">Agenda pour GNOME</summary>
+    <summary xml:lang="fur">Calendari par GNOME</summary>
+    <summary xml:lang="ga">Féilire do GNOME</summary>
+    <summary xml:lang="gd">Mìosachan airson GNOME</summary>
+    <summary xml:lang="gl">Calendario de GNOME</summary>
+    <summary xml:lang="he">לוח שנה עבור GNOME</summary>
+    <summary xml:lang="hr">Kalendar za GNOME</summary>
+    <summary xml:lang="hu">Naptár a GNOME-hoz</summary>
+    <summary xml:lang="id">Kalender untuk GNOME</summary>
+    <summary xml:lang="is">Dagatal fyrir GNOME</summary>
+    <summary xml:lang="it">Calendario per GNOME</summary>
+    <summary xml:lang="ja">GNOME のカレンダー</summary>
+    <summary xml:lang="kk">GNOME үшін күнтізбе</summary>
+    <summary xml:lang="ko">그놈용 달력</summary>
+    <summary xml:lang="lt">GNOME kalendorius</summary>
+    <summary xml:lang="lv">Kalendārs GNOME videi</summary>
+    <summary xml:lang="nb">Kalender for GNOME</summary>
+    <summary xml:lang="nl">Agenda voor Gnome</summary>
+    <summary xml:lang="oc">Agenda per GNOME</summary>
+    <summary xml:lang="pa">ਗਨੋਮ ਲਈ ਕੈਲੰਡਰ</summary>
+    <summary xml:lang="pl">Kalendarz dla środowiska GNOME</summary>
+    <summary xml:lang="pt">Agenda do GNOME</summary>
+    <summary xml:lang="pt_BR">Agenda do GNOME</summary>
+    <summary xml:lang="ro">Calendar pentru GNOME</summary>
+    <summary xml:lang="ru">Календарь для среды рабочего стола GNOME</summary>
+    <summary xml:lang="sk">Kalendár prostredia GNOME</summary>
+    <summary xml:lang="sl">Koledar za GNOME</summary>
+    <summary xml:lang="sr">Календар за Гном</summary>
+    <summary xml:lang="sr@latin">Kalendar za Gnom</summary>
+    <summary xml:lang="sv">Kalender för GNOME</summary>
+    <summary xml:lang="tg">Тақвим барои GNOME</summary>
+    <summary xml:lang="th">ปฏิทินสำหรับ GNOME</summary>
+    <summary xml:lang="tr">GNOME için Takvim</summary>
+    <summary xml:lang="uk">Календар для GNOME</summary>
+    <summary xml:lang="zh_CN">GNOME 日历</summary>
+    <summary xml:lang="zh_TW">GNOME 的行事曆</summary>
+    <description><p>GNOME Calendar is a simple and beautiful calendar application designed to perfectly fit the GNOME desktop. By reusing the components which the GNOME desktop is build on, Calendar nicely integrates with the GNOME ecosystem.</p><p>We aim to find the perfect balance between nicely crafted features and user-centred usability. No excess, no lacks. You&apos;ll feel comfortable using Calendar, like you&apos;ve been using it for ages!</p></description>
+    <description xml:lang="an"><p>Calandario de GNOME ye una aplicación de calandario bonica y sencilla disenyada ta achustar-se perfectament a o escritorio GNOME. Al reutilizar components con os quals s&apos;ha construiu o escritorio GNOME, Calandario s&apos;integra muit bien con l&apos;entorno de GNOME.</p><p>S&apos;ha tractau de buscar l&apos;equilibrio entre caracteristicas bien elaboradas y a usabilidad centrada en l&apos;usuario. No i hai excesos ni carencias. Se sentirá comodo usando Calandario, como si levase anyos usando-lo.</p></description>
+    <description xml:lang="ar"><p>«تقويم جنوم» هو تطبيق تقويم جميل و بسيط مصمّم ليلائم سطح مكتب جنوم تماما. يتكامل التقويم (باستخدام المكونات التي بُني عليها سطح مكتب جنوم) مع نظام جنوم البيئي.</p><p>نسعى لإيجاد التوازن المثالي بين الميزات الجميلة و سهولة الاستخدام. لا زيادة ولا نقصان. ستشعر بالراحة وأنت تستخدم «التقويم» كما لو كنت تستخدمه لأعوام!</p></description>
+    <description xml:lang="bs"><p>GNOME Kalendar je jednostavna i lijepa kalendarska aplikacija  dizajnirana da se savršeno uklapa u GNOME desktop. Koristeći komponente od kojih je GNOME desktop je izgrađena, Kalendar se lijepo integrira sa GNOME ekosistemom.</p><p>Plan nam je naći savršenu ravnotežu između mogućnosti i korisnički orijentsane upotrebljivosti. Ni viška ni manjka. Ako vam je ugodno koristiti kalendar, koristićete ga godinama.</p></description>
+    <description xml:lang="ca"><p>El Calendari del GNOME és una aplicació de calendari simple i bonica dissenyada per encaixar perfectament amb l&apos;escriptori GNOME. Gràcies a la reutilització de components amb què es construeix l&apos;escriptori GNOME, el calendari s&apos;integra bé amb l&apos;ecosistema GNOME.</p><p>El nostre objectiu és trobar l&apos;equilibri perfecte entre característiques ben elaborades i usabilitat centrada en l&apos;usuari. Sense excessos ni mancances. Us trobareu a gust usant el Calendari, com si l&apos;haguéssiu utilitzat sempre!</p></description>
+    <description xml:lang="cs"><p>Kalendář GNOME je jednoduchá a hezká kalendářová aplikace navržená tak, aby skvěle zapadla do pracovního prostředí GNOME. Díky využití komponent, na kterých je pracovní prostředí GNOME vybudováno, Kalendář krásně pasuje do celého ekosystému.</p><p>Cílem vývojářů bylo najít rovnováhu mezi propracovanými funkcemi a použitelností pro uživatele. Nic nepřebývá, nic neschází. Používání Kalendáře vám sedne, jako byste jej používali už věky.</p></description>
+    <description xml:lang="da"><p>GNOME Kalender er et simpelt og smukt kalenderprogram designet til at passe nøjagtigt til GNOME-skrivebordet. Ved at genbruge komponenterne, som GNOME-skrivebordet er bygget med, er Kalender pænt integreret i GNOME-økosystemet.</p><p>Vi forsøger at finde den perfekte balance mellem fint udarbejdede funktioner og brugervenlighed. Ingen overflod, ingen mangler. Du vil kunne bruge Kalender komfortabelt, som havde du brugt programmet i evigheder!</p></description>
+    <description xml:lang="de"><p>GNOME-Kalender ist eine einfache und schöne Kalenderverwaltung, entwickelt, um sich perfekt in die GNOME-Arbeitsumgebung einzufügen. Durch die Wiederverwendung von Komponenten, auf denen die GNOME-Arbeitsumgebung basiert, integriert der Kalender wunderbar mit dem GNOME-Ökosystem.</p><p>Wir streben die perfekte Balance zwischen schön gestalteten Funktionen und Benutzerfreundlichkeit. Nicht mehr, nicht weniger. Sie werden sich bei der Verwendung von Kalender wohl fühlen, so als ob Sie ihn schon seit Jahren nutzen!</p></description>
+    <description xml:lang="el"><p>Το Ημερολόγιο GNOME είναι μια απλή και όμορφη εφαρμογή ημερολογίου που σχεδιάστηκε ώστε να ταιριάζει τέλεια με το γραφικό περιβάλλον GNOME. Με την επαναχρησιμοποίηση των συστατικών με τα οποία το γραφικό περιβάλλον GNOME έχει βασιστεί, το Ημερολόγιο ενσωματώνεται όμορφα στο οικοσύστημα του GNOME.</p><p>Στοχεύουμε στην τέλεια ισορροπία μεταξύ λειτουργιών και χρηστικότητας. Χωρίς υπερβολές, χωρίς στερήσεις. Θα αισθάνεστε άνετα χρησιμοποιώντας το Ημερολόγιο, σαν να το χρησιμοποιούσατε για πολύ καιρό!</p></description>
+    <description xml:lang="eo"><p>GNOME-Kalendaro estas simpla kaj bela kalendar-aplikaĵo desegnita por perfekte konveni la surfacon de GNOME. Per reuzado de la eroj sur kiuj la GNOME-surfaco estas konstruita, Kalendaro agrable integriĝas en la ekosistemo de GNOME.</p><p>Ni celas trovi la perfektan ekvilibron inter agrable formitaj eblecoj kaj uzanto-centrita afableco. Neniuj troigoj, neniuj mankoj. Vi komforte fartos dum uzado de Kalendaro, kiele vi estis uzanta ĝin dum longa tempo!</p></description>
+    <description xml:lang="es"><p>Calendario de GNOME es una aplicación de calendario bonita y sencilla diseñada para ajustarse perfectamente al escritorio GNOME. Al reutilizar componentes con los que se ha construido el escritorio GNOME, Calendario se integra muy bien con el entorno de GNOME.</p><p>Se ha tratado de buscar el equilibrio entre características bien elaboradas y la usabilidad centrada en el usuario. No hay excesos ni carencias. Se sentirá cómodo usando Calendario, como si llevara años usándolo.</p></description>
+    <description xml:lang="eu"><p>GNOMEren Egutegia aplikazio xumea eta polita da egutegia kudeatzeko, GNOME mahaigainarekin oso ondo egokitutakoa. GNOME sisteman ongi bateratua dago, haren osagaiak erabiltzen baititu.</p><p>Ongi garatutako eginbideen eta erabiltzailearen erabilgarritasunaren arteko oreka lortzen saiatu da. Ez dauka gehiegikeririk ez eta gabezirik ere. Egutegia erabiltzean eroso sentituko zara, urte askotan zehar erabiliko bazenu bezala.</p></description>
+    <description xml:lang="fa"><p>تقویم گنوم یک برنامه ساده و زیبای تقویم است که به گونه‌ای طراحی شده است تا کاملا مطابق با میزکار گنوم باشد. با استفاده از اجزایی که میزکار گنوم از آنها تشکیل شده، این تقویم کاملا با فضای گنوم سازگار است.</p><p>هدف ما پیدا کردن یک نقطه عطف بین امکانات کامل و کارایی کاربر محور است. بدون کمی و کاستی و بدون امکانات اضافی. شما در استفاده از تقویم احساس راحتی خواهید داشت، انگار که سال‌هاست از آن استفاده می‌کنید.</p></description>
+    <description xml:lang="fi"><p>Gnomen kalenteri on yksinkertainen ja nätti sovellus tapahtumien sekä aikataulujen hallintaan.</p><p>Tavoitteena on ollut löytää sopiva tasapaino ominaisuuksien sekä käytettävyyden välillä. Ei liikaa, ei liian vähän. Kalenterin käyttö on yhtä helppoa kuin aina ennenkin!</p></description>
+    <description xml:lang="fr"><p>GNOME Agenda est un agenda simple et de belle facture, conçu pour s&apos;intégrer parfaitement au bureau GNOME. En réutilisant les composants sur lesquels le bureau GNOME est construit, Agenda s&apos;intègre à la perfection à l&apos;écosystème GNOME.</p><p>Nous recherchons l&apos;équilibre parfait entre fonctionnalités bien conçues et facilité d&apos;utilisation. Aucun excès, aucun manque. Vous serez à l&apos;aise en utilisant Agenda, comme si vous l&apos;utilisiez depuis des siècles !</p></description>
+    <description xml:lang="fur"><p>GNOME Calendari a je une semplice e biele aplicazion calendari progjetade par incjastrâsi ben tal desktop GNOME. Doprant i components cun la cuâl il desktop GNOME al è costruît, Calendari si integre ben cul ecosisteme GNOME.</p><p>Il nestri obietîf al è chel di cjatâ il perfet belançament tra funzionalitâts ben fatis e doprabilitât utent: nie di plui, nie di mancul. Doprâ Calendari al sarà sempliç e imediât, come che tu lu vessis doprât par agns!</p></description>
+    <description xml:lang="gd"><p>&apos;S e aplacaid mìosachain brèagha simplidh a th&apos; ann am Mìosachan GNOME a chaidh a dhealbhachadh gus freagairt ris an deasg GNOME cho foirfe &apos;s a ghabhas. On a tha e ag ath-chleachdadh co-phàirtean air a bheil an deasg GNOME stèidhichte, nì Mìosachan amalachadh ann an àrainneachd GNOME gu dòigheil.</p><p>Tha sinn ag amas am meidh as fhearr a lorg eadar gleusan air an dèanamh gu math agus an so-chleachdadh. Gun leisgeul, gun dìth. Bidh thu cofhurtail a&apos; cleachdadh Mìosachan mar an robh thu air a chleachdadh fad linntean mar-thà!</p></description>
+    <description xml:lang="gl"><p>Calendario de GNOME é un aplicativo de calendario simple e bonito deseñado para adaptarse perfectamente ao escritorio GNOME. Ao reusar os compoñentes nos que está construído o escritorio GNOME, o Calendario intégrase perfectamente co ecosistema GNOME.</p><p>Tentamos buscar o equilibro entre características ben elaboradas e a usabilidade centrada no usuario. Non hai excesos nin carencias. Sentirase cómodo usando Calendario, como se levase anos usándoo.</p></description>
+    <description xml:lang="he"><p>לוח שנה GNOME הוא יישום לוח שנה פשוט ויפה שעוצב להתאים באופן מושלם לשולחן העבודה GNOME. באמצעות שימוש חוזר ברכיבים אשר עליהם בנוי שולחן העבודה GNOME, לוח השנה משתלב בצורה יפה עם GNOME.</p><p>אנו שואפים למצוא את המאזן המושלם בין תכונות מעוצבות בצורה יפה לבין שימושיות ממוקדת משתמש. ללא עודף, ללא מחסור. תורגש נוחות בשימוש לוח השנה, כאילו הוא בשימוש על ידך כבר שנים!</p></description>
+    <description xml:lang="hr"><p>GNOME kalendar je jednostavna ugodna aplikacija za kalendar dizajnirana kako bi se uklopila u GNOME radnu površinu. Koristi komponente na kojima je GNOME radna površina izgrađena, Kalendar se dobro integrira u GNOME eko sustav.</p><p>Cilj nam je pronalazak ravnoteže između korisnih značajki i upotrebljivosti za korisnike. Bez nedostataka i manjkavosti, osjećati ćete se komforno koristeći Kalendar, kao da ga koristite godinama!</p></description>
+    <description xml:lang="hu"><p>A GNOME Naptár egy egyszerű és gyönyörű naptáralkalmazás, amelyet úgy terveztek, hogy tökéletesen illeszkedjen a GNOME asztalhoz. A GNOME asztalt felépítő összetevők újrafelhasználásával a Naptár nagyon jól integrálódik a GNOME ökoszisztémába.</p><p>Célunk a tökéletes egyensúly megtalálása a szépen kialakított szolgáltatások és a felhasználóközpontú használhatóság között. Túlzások és hiány nélkül. Kényelmesen fogja érezni magát a Naptár használatakor, mintha már évek óta ezt használná!</p></description>
+    <description xml:lang="id"><p>GNOME Calendar adalah aplikasi kalender yang sederhana dan indah, dirancang untuk secara sempurna pas dengan desktop GNOME. Dengan memakai ulang komponen pembangun desktop GNOME, Calendar terintegrasi secara baik dengan ekosistem GNOME.</p><p>Kami berupaya mencari keseimbangan sempurna antara fitur yang dibuat dengan baik dan usabilitas yang terpusat pengguna. Tak ada yang berlebihan, tak ada kekurangan. Anda akan merasa nyaman memakai Calendar, serasa Anda sudah memakainya bertahun-tahun!</p></description>
+    <description xml:lang="is"><p>GNOME Dagatal er einfalt og áferðarfallegt dagatalsforrit, sérstaklega hannað til að falla inn í GNOME skjáborðið. Með því að endurnýta aðrar einingar GNOME skjáborðsins, verður dagatalið órjúfanlegur hluti GNOME vistkerfisins.</p><p>Við reynum að finna rétta jafnvægið á milli fallegrar virkni og notendamiðaðs notagildis. Engu ofaukið, ekkert vantar. Þér á eftir að finnast þægilegt að vinna með dagatalið, rétt eins og þú hafir notað það svo árum skiptir!</p></description>
+    <description xml:lang="it"><p>Calendario per GNOME è un&apos;applicazione di calendario progettata per integrarsi alla perfezione con l&apos;ambiente grafico GNOME. Sfruttando l&apos;insieme di componenti che l&apos;ambiente grafico GNOME mette a disposizione, Calendario si integra con tutto l&apos;ecosistema GNOME.</p><p>Cerchiamo di trovare quel giusto bilanciamento tra nuove e interessanti funzionalità e usabilità utente: niente di più, niente di meno. Usare Calendario risulterà semplice e immediato.</p></description>
+    <description xml:lang="ja"><p>GNOME カレンダーは、GNOME デスクトップ環境のために設計されたシンプルで美しいカレンダーアプリケーションです。GNOME デスクトップ環境を構築するコンポーネントを再利用することで、カレンダーが GNOME のエコシステムとシームレスに統合されています。</p><p>私たちは、うまく細工された機能とユーザー中心のユーザビリティの間の絶妙なバランスを取ることを目指しています。機能としては過不足なく、長年愛用してきたカレンダーのように心地よく感じることでしょう。</p></description>
+    <description xml:lang="kk"><p>GNOME күнтізбе қолданбасы GNOME жұмыс үстел ортасына жарасатындай етіп жасалған қарапайым әрі әдемі күнтізбе қолданбасы. GNOME жұмыс үстелі негізінде жатқан құрауыштарды қолдану арқылы күнтізбе қолданбасы GNOME жүйесімен жақсы үйлеседі.</p><p>Біз кеңейтілген мүмкіндіктер және пайдалану ыңғайлығы арасында теңгерімді табуға тырысамыз. Артығы жоқ, жетпеушілігі жоқ. Calendar қолданбасын қолдануды ыңғайлы екенін өзіңіз де көресіз!</p></description>
+    <description xml:lang="ko"><p>그놈 달력은 그놈 데스크톱에 완벽하게 맞춰 설계한 단순하고 아름다운 달력 프로그램입니다. 그놈 달력은 그놈 데스크톱에 내장한 구성 요소를 재사용하여 그놈 환경에 멋지게 어우러집니다.</p><p>멋지게 가다듬은 기능과 사용자 중심의 활용성간의 균형을 완벽하게 유지하는 것이 저희의 목표입니다. 잘나지도 부족하지도 않습니다. 오랫동안 달력을 사용해보셨던 것처럼 그놈 달력을 편하게 사용하실 수 있습니다!</p></description>
+    <description xml:lang="lt"><p>Gnome kalendorius yra paprastas ir patrauklus įrankis, sukurtas specialiai GNOME darbalaukiui. Panaudojant kitus GNOME komponentus kalendorius patogiai integruotas į GNOME sistemą.</p><p>Mūsų tikslas – tobula gerai paruoštų funkcijų ir į vartotoją orientuotos sąsajos harmonija. Nieko daugiau, nieko mažiau. Naudodami kalendorių jausitės taip, lyg tai jau darėte metų metus!</p></description>
+    <description xml:lang="lv"><p>GNOME kalendārs ir vienkārša un skaista kalendāra lietotne, veidota, lai labi iekļautos GNOME darbvirsmā. Atkārtoti izmantojot komponentes, uz kurām ir veidota GNOME darbvirsma, kalendāra lietotne labi integrējas GNOME ekosistēmā.</p><p>Mēs mēģinām atrast līdzsvaru starp labi veidotām lietotnes iespējām un lietojamību. Ne par daudz, ne par maz. Kalendāra lietotne ir komfortabla un jums liksies, ka esat to lietojuši jau mūžību.</p></description>
+    <description xml:lang="nb"><p>GNOME Kalender er et enkelt og pent kalenderprogram. Det gjenbruker mange av komponentene som GNOME-skrivebordet er bygget på, og kler derfor GNOME-skrivebordet perfekt.</p><p>Vi prøver å finne en perfekt balanse mellom velbygde funksjoner og brukskvalitet. Ikke for mye, og ikke for lite. Du skal føle deg komfortabel med å bruke Kalender, som om du har brukt den i mange år.</p></description>
+    <description xml:lang="nl"><p>Gnome Agenda is een eenvoudig en mooi agendaprogramma dat perfect aansluit bij de Gnome-werkomgeving. Door de onderdelen waarop de Gnome-werkomgeving is gebouwd opnieuw te gebruiken, integreert Agenda mooi binnen het Gnome-systeem.</p><p>We streven ernaar de ideale balans te vinden tussen goede functionaliteit en gebruiksvriendelijkheid. Niet te veel, niet te weinig. U zult zich comfortabel voelen bij het gebruiken van Agenda, alsof u het al jaren gebruikt!</p></description>
+    <description xml:lang="oc"><p>GNOME Agenda es un agenda simple e de plan polit, concebut per s&apos;integrar perfèitament al burèu GNOME. En reütilizant los components suls quals lo burèu GNOME es bastit, Agenda s&apos;intègra a la perfeccion a l&apos;ecosistèma GNOME.</p><p>Recercam l&apos;equilibri perfèit entre foncionalitats plan concebudas e facilitat d&apos;utilizacion. Pas cap d&apos;excès, pas cap de manca. Seretz d&apos;aise en utilizant Agenda, coma se l&apos;utilizàvetz dempuèi de sègles !</p></description>
+    <description xml:lang="pa"><p>ਗਨੋਮ ਕੈਲੰਡਰ ਸਧਾਰਨ ਤੇ ਸੋਹਣੀ ਕੈਲੰਡਰ ਐਪਲੀਕੇਸ਼ਨ ਹੈ, ਜੋ ਕਿ ਗਨੋਮ ਡੈਸਕਟਾਪ ਵਿੱਚ ਫਿੱਟ ਹੋਣ ਲਈ ਤਿਆਰ ਕੀਤੀ ਗਈ ਹੈ। ਗਨੋਮ ਡੈਸਕਟਾਪ ਵਿੱਚ ਮੌਜੂਦ ਭਾਗਾਂ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਤਿਆਰ ਕੀਤੇ ਹੋਣ ਨਾਲ ਕੈਲੰਡਰ ਗਨੋਮ ਸਿਸਟਮ ਦੇ ਨਾਲ ਬਹੁਤ ਵਧੀਆ ਰੂਪ ਵਿੱਚ ਜੁੜਿਆ ਹੈ।</p><p>ਅਸੀਂ ਵਧੀਆ ਤਿਆਰ ਕੀਤੇ ਫੀਚਰਾਂ ਤੇ ਵਰਤੋਂਕਾਰ ਦੀ ਸੌਖ ਦੇ ਵਿਚਾਲੇ ਚੰਗਾ ਤਾਲਮੇਲ ਲੱਭਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ ਹੈ। ਕੋਈ ਬਹਾਨਾ ਨਹੀਂ, ਕੋਈ ਕਮੀ ਨਹੀਂ। ਤੁਸੀਂ ਕੈਲੰਡਰ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਤੁਹਾਨੂੰ ਲੱਗੇਗਾ ਕਿ ਜਿਵੇਂ ਤੁਸੀਂ ਇਸ ਨੂੰ ਸਾਲਾਂ ਤੋਂ ਵਰਤ ਰਹੇ ਹੋ।</p></description>
+    <description xml:lang="pl"><p>Kalendarz GNOME jest prostym i ładnym kalendarzem zaprojektowanym tak, aby jak najlepiej pasował do środowiska GNOME. Dzięki użyciu oprogramowania, na którym oparte jest środowisko GNOME, Kalendarz dobrze się z nim integruje.</p><p>Celem jest znalezienie idealnej równowagi między przydatnymi funkcjami a użytecznością skierowaną na użytkownika.</p></description>
+    <description xml:lang="pt"><p>Agenda do GNOME é uma aplicação simples e bonita, desenhada para uma integração perfeita no ambiente GNOME. Ao usar os mesmos componentes do GNOME, a Agenda integra-se lindamente no ecosistema GNOME.</p><p>Procuramos atingir o equilíbrio perfeito entre funcionalidade e utilização centrada no utilizador. Sem excessos, sem faltas. Sentir-se-á confortável ao usar a Agenda, tal como se a usasse há décadas!</p></description>
+    <description xml:lang="pt_BR"><p>O GNOME Agenda é um aplicativo de agenda simples e bonito projetado para se encaixar perfeitamente ao ambiente GNOME. Por reutilizar os componentes com o qual GNOME é construído, Agenda se integra muito bem à esse ecossistema.</p><p>Nosso objetivo é alcançar o balanço perfeito entre funcionalidades bem construídas e usabilidade focada no usuário. Sem excessos, sem faltas. Você se sentirá confortável usando Agenda, como se usasse-o por anos!</p></description>
+    <description xml:lang="ro"><p>Calendar GNOME este o aplicație calendar simplă și frumoasă concepută pentru a se potrivi perfect pentru desktopul GNOME. Prin reutilizarea componentelor pe care desktopul GNOME este construit, Calendarul se integrează uniform cu ecosistemul GNOME.</p><p>Scopul nostru este de a găsi echilibrul perfect între caracteristici frumoas concepute și gradul de uzabilitate centrat pe utilizator. Fără exces, fără lipsuri. Te vei simți confortabil folosind Calendarul, ca și cum l-ai fi folosit dintotdeauna!</p></description>
+    <description xml:lang="ru"><p>Календарь GNOME представляет собой простое и красивое приложение календаря, разработанное, чтобы полностью соответствовать рабочему столу GNOME. За счет использования тех же компонентов из которых состоит рабочий стол GNOME, календарь красиво интегрируется с экосистемой среды GNOME.</p><p>Мы стремимся найти идеальный баланс между хорошо созданными функциями и ориентированным на пользователя удобством использования. Нет излишеств, нет недостатков. Вы будете чувствовать себя комфортно, используя календарь, будто вы используете его уже годы!</p></description>
+    <description xml:lang="sk"><p>Kalendár prostredia GNOME je jednoduchá a nádherná aplikácia s kalendárom navrhnutá tak, aby perfektne zapasovala do prostredia GNOME. Použitím komponentov, na ktorých je zostavené prostredie GNOME, je Kalendár integrovaný s ekosystémom prostredia GNOME.</p><p>Našim cieľom je nájsť dokonalé vyváženie medzi užitočnými funkciami a použiteľnosťou. Bez zbytočností, bez nedostatkov. Pri používaní programu Kalendár sa budete cítiť pohodlne, ako keby ste ho už používali roky!</p></description>
+    <description xml:lang="sl"><p>Program koledarjev za GNOME je enostaven program, ki je zasnovan za enostavno uporabo. Vključuje elemente, ki so uporabljeni v namizju Gnome.</p><p>Program deluje na ravni optimalne uporabnike izkušnje in najpomembnejših zmožnosti. Ni presežkov, ni pomanjkljivosti. Uporaba programa bo enostavna, kot je od nekdaj bila.</p></description>
+    <description xml:lang="sr"><p>Гномов календар је једноставан и леп програм, осмишљен тако да се савршено уклопи у Гномову радну површ. Користећи састојке на којима је изграђена Гномова радна површ, Календар се одлично уклапа у Гномов екосистем.</p><p>Циљ нам је да пронађемо савршену равнотежу између лепо одрађених функција и једноставности употребе тако да он не угрожава крајње кориснике. Без претеривања, без недостатака. Осећаћете се удобно користећи Календар, као што сте га већ годинама користили.</p></description>
+    <description xml:lang="sr@latin"><p>Gnomov kalendar je jednostavan i lep program, osmišljen tako da se savršeno uklopi u Gnomovu radnu površ. Koristeći sastojke na kojima je izgrađena Gnomova radna površ, Kalendar se odlično uklapa u Gnomov ekosistem.</p><p>Cilj nam je da pronađemo savršenu ravnotežu između lepo odrađenih funkcija i jednostavnosti upotrebe tako da on ne ugrožava krajnje korisnike. Bez preterivanja, bez nedostataka. Osećaćete se udobno koristeći Kalendar, kao što ste ga već godinama koristili.</p></description>
+    <description xml:lang="sv"><p>GNOME Kalender är ett enkelt och snyggt kalenderprogram som är designat att passa in i skrivbordsmiljön GNOME. Genom att återanvända de komponenter som skrivbordsmiljön GNOME är byggd med, integrerar Kalender väl med GNOME-ekosystemet.</p><p>Vår målsättning är att hitta den perfekta balansen mellan väl genomtänkta funktioner och användarcentrerad användbarhet. Inte för mycket, inte för lite. Du kommer att känna dig bekväm med att använda Kalender, som om du har använt den i åratal!</p></description>
+    <description xml:lang="tg"><p>Тақвими GNOME - ин барномаи осон ва зебо аст, ки барои мизи кории GNOME эҷод карда шудааст. Ба воситаи истифодаи такрории унсурҳои сохти мизи кории GNOME, ин тақвим бо экосистемаи GNOME комилан муттаҳид шудааст.</p><p>Мо мехоҳем, ки тавозуни бенуқсонро байни хусусиятҳои ботафсил ва истифодабарии корбарӣ ёбем. Бе изофа ё камбудӣ. Шумо тақвимеро бароҳат истифода мебаред, тавре ки шумо онро солҳои дароз истифода бурдед!</p></description>
+    <description xml:lang="th"><p>ปฏิทินของ GNOME เป็นโปรแกรมปฏิทินที่เรียบง่ายและสวยงาม ออกแบบมาให้เข้ากันกับเดสก์ท็อป GNOME อย่างเหมาะเจาะ ด้วยการใช้องค์ประกอบเดียวกับที่ใช้สร้างเดสก์ท็อป GNOME &quot;ปฏิทิน&quot; จึงเชื่อมรวมกับระบบนิเวศของ GNOME ได้เป็นอย่างดี</p><p>เรามุ่งที่จะหาความสมดุลอย่างเหมาะเจาะระหว่างความสามารถที่สร้างขึ้นอย่างดี กับความสะดวกใช้ที่ผู้ใช้เป็นศูนย์กลาง ไม่ขาดไม่เกิน คุณจะรู้สึกสะดวกสบายในการใช้ &quot;ปฏิทิน&quot; เหมือนที่คุณเคยใช้มาแต่เล็กแต่น้อย!</p></description>
+    <description xml:lang="tr"><p>GNOME Takvim, GNOME masaüstüne mükemmel şekilde uymak üzere tasarlanmış basit ve güzel bir takvim uygulamasıdır. GNOME masaüstünün üzerine kurulu olduğu bileşenleri yeniden kullanan Takvim, GNOME ekosistemi ile uyum içindedir.</p><p>Hoş özellikler ve kullanıcı odaklı kullanılabilirlik arasında mükemmel dengeyi sağlamayı amaçlıyoruz. Ne eksik, ne fazla. Takvim&apos;i kullanırken, sanki onu yıllardır kullanıyormuş gibi rahat hissedeceksiniz!</p></description>
+    <description xml:lang="uk"><p>Календар GNOME — простий і гарний календар створений для стільничного середовища GNOME. Використовуючи компоненти, на яких побудовано стільницю GNOME, календар гарно інтегрується зі всією екосистемою GNOME.</p><p>Ми намагаємось знайти досконалий баланс між зручністю у використання та продуманою функціональністю. Все потрібне й нічого зайвого. Вам буде зручно користуватись календарем, неначе ви ним користувались роками.</p></description>
+    <description xml:lang="zh_CN"><p>GNOME 日历设计简洁美观，符合 GNOME 桌面风格。通过重用组件，日历能够很好地与 GNOME 生态系统结合。</p><p>我们的目标是找到很好的功能和用户为中心的易用性之间的完美平衡。既不多余，也不缺乏。使用日历，您会感觉很舒服！</p></description>
+    <description xml:lang="zh_TW"><p>GNOME《行事曆》是為了能完美搭配 GNOME 桌面而設計的簡單、精美行事曆應用程式。藉著重複使用 GNOME 桌面內建的元件，《行事曆》順利整合到 GNOME 生態系中。</p><p>我們的目標是在精心設計的功能，與以使用者為中心的可用性之間找到完美的平衡點，不多也不少。您會很舒適的使用《行事曆》，就像您過去一直在使用的一樣！</p></description>
+    <icon height="128" width="128" type="cached">128x128/org.gnome.Calendar.png</icon>
+    <icon height="64" width="64" type="cached">64x64/org.gnome.Calendar.png</icon>
+    <categories>
+      <category>Calendar</category>
+      <category>Core</category>
+      <category>Office</category>
+    </categories>
+    <keywords>
+      <keyword>Calendar</keyword>
+      <keyword>Event</keyword>
+      <keyword>Reminder</keyword>
+      <keyword xml:lang="an">Calandario</keyword>
+      <keyword xml:lang="an">Evento</keyword>
+      <keyword xml:lang="an">Recordatorio</keyword>
+      <keyword xml:lang="ar">تذكير</keyword>
+      <keyword xml:lang="ar">تقويم</keyword>
+      <keyword xml:lang="ar">حدث</keyword>
+      <keyword xml:lang="bs">Događaj</keyword>
+      <keyword xml:lang="bs">Kalendar</keyword>
+      <keyword xml:lang="bs">Podsjetnik</keyword>
+      <keyword xml:lang="ca">Calendari</keyword>
+      <keyword xml:lang="ca">Cita</keyword>
+      <keyword xml:lang="ca">Recordatori</keyword>
+      <keyword xml:lang="cs">kalendář</keyword>
+      <keyword xml:lang="cs">připomenutí</keyword>
+      <keyword xml:lang="cs">událost</keyword>
+      <keyword xml:lang="cs">upomínka</keyword>
+      <keyword xml:lang="da">Begivenhed</keyword>
+      <keyword xml:lang="da">Kalender</keyword>
+      <keyword xml:lang="da">Påmindelse</keyword>
+      <keyword xml:lang="de">Erinnerung</keyword>
+      <keyword xml:lang="de">Kalender</keyword>
+      <keyword xml:lang="de">Termin</keyword>
+      <keyword xml:lang="el">Ημερολόγιο</keyword>
+      <keyword xml:lang="el">Συμβάν</keyword>
+      <keyword xml:lang="el">Υπενθύμιση</keyword>
+      <keyword xml:lang="eo">Evento</keyword>
+      <keyword xml:lang="eo">Kalendaro</keyword>
+      <keyword xml:lang="eo">Rememorigilo</keyword>
+      <keyword xml:lang="es">Calendario</keyword>
+      <keyword xml:lang="es">Evento</keyword>
+      <keyword xml:lang="es">Recordatorio</keyword>
+      <keyword xml:lang="eu">Egutegia</keyword>
+      <keyword xml:lang="eu">Gertaera</keyword>
+      <keyword xml:lang="eu">Oroigarria</keyword>
+      <keyword xml:lang="fa">تقویم</keyword>
+      <keyword xml:lang="fa">رویداد</keyword>
+      <keyword xml:lang="fa">یادآوری</keyword>
+      <keyword xml:lang="fi">Kalenteri</keyword>
+      <keyword xml:lang="fi">Muistutus</keyword>
+      <keyword xml:lang="fi">Tapahtuma</keyword>
+      <keyword xml:lang="fr">Agenda</keyword>
+      <keyword xml:lang="fr">Rappel</keyword>
+      <keyword xml:lang="fr">Événement</keyword>
+      <keyword xml:lang="fur">Calendari</keyword>
+      <keyword xml:lang="fur">Events</keyword>
+      <keyword xml:lang="fur">Lunari</keyword>
+      <keyword xml:lang="fur">Promemorie</keyword>
+      <keyword xml:lang="gd">cuimhneachan</keyword>
+      <keyword xml:lang="gd">mìosachan</keyword>
+      <keyword xml:lang="gd">tachartas</keyword>
+      <keyword xml:lang="gl">Calendario</keyword>
+      <keyword xml:lang="gl">Evento</keyword>
+      <keyword xml:lang="gl">Recordatorio</keyword>
+      <keyword xml:lang="he">אירוע</keyword>
+      <keyword xml:lang="he">יומן</keyword>
+      <keyword xml:lang="he">לוח שנה</keyword>
+      <keyword xml:lang="he">מזכיר</keyword>
+      <keyword xml:lang="he">תזכורת</keyword>
+      <keyword xml:lang="he">תזכיר</keyword>
+      <keyword xml:lang="hr">Događaj</keyword>
+      <keyword xml:lang="hr">Kalendar</keyword>
+      <keyword xml:lang="hr">Podsjetnik</keyword>
+      <keyword xml:lang="hu">Emlékeztető</keyword>
+      <keyword xml:lang="hu">Esemény</keyword>
+      <keyword xml:lang="hu">Naptár</keyword>
+      <keyword xml:lang="id">Acara</keyword>
+      <keyword xml:lang="id">Kalender</keyword>
+      <keyword xml:lang="id">Pengingat</keyword>
+      <keyword xml:lang="is">atburður</keyword>
+      <keyword xml:lang="is">dagatal</keyword>
+      <keyword xml:lang="is">viðburður</keyword>
+      <keyword xml:lang="is">áminning</keyword>
+      <keyword xml:lang="it">Calendario</keyword>
+      <keyword xml:lang="it">Eventi</keyword>
+      <keyword xml:lang="it">Evento</keyword>
+      <keyword xml:lang="it">Promemoria</keyword>
+      <keyword xml:lang="ja">イベント</keyword>
+      <keyword xml:lang="ja">カレンダー</keyword>
+      <keyword xml:lang="ja">リマインダー</keyword>
+      <keyword xml:lang="kk">Естелік</keyword>
+      <keyword xml:lang="kk">Күнтізбе</keyword>
+      <keyword xml:lang="kk">Оқиға</keyword>
+      <keyword xml:lang="ko">달력</keyword>
+      <keyword xml:lang="ko">알림</keyword>
+      <keyword xml:lang="ko">행사</keyword>
+      <keyword xml:lang="lt">Kalendorius</keyword>
+      <keyword xml:lang="lt">Priminimas</keyword>
+      <keyword xml:lang="lt">Įvykis</keyword>
+      <keyword xml:lang="lv">Atgādinājums</keyword>
+      <keyword xml:lang="lv">Kalendārs</keyword>
+      <keyword xml:lang="lv">Notikums</keyword>
+      <keyword xml:lang="nb">Hendelse</keyword>
+      <keyword xml:lang="nb">Kalender</keyword>
+      <keyword xml:lang="nb">Påminnelse</keyword>
+      <keyword xml:lang="nl">Afspraak</keyword>
+      <keyword xml:lang="nl">Agenda</keyword>
+      <keyword xml:lang="nl">Evenement</keyword>
+      <keyword xml:lang="nl">Gebeurtenis</keyword>
+      <keyword xml:lang="nl">Herinnering</keyword>
+      <keyword xml:lang="nl">Kalender</keyword>
+      <keyword xml:lang="oc">Agenda</keyword>
+      <keyword xml:lang="oc">Eveniment</keyword>
+      <keyword xml:lang="oc">Rapèl</keyword>
+      <keyword xml:lang="pa">ਈਵੈਂਟ</keyword>
+      <keyword xml:lang="pa">ਕੈਲੰਡਰ</keyword>
+      <keyword xml:lang="pa">ਰੀਮਾਈਡਰ</keyword>
+      <keyword xml:lang="pl">Kalendarz</keyword>
+      <keyword xml:lang="pl">Przypominanie</keyword>
+      <keyword xml:lang="pl">Przypomnienie</keyword>
+      <keyword xml:lang="pl">Wydarzenie</keyword>
+      <keyword xml:lang="pl">Zdarzenie</keyword>
+      <keyword xml:lang="pt">Agenda</keyword>
+      <keyword xml:lang="pt">Evento</keyword>
+      <keyword xml:lang="pt">Lembrete</keyword>
+      <keyword xml:lang="pt_BR">Agenda</keyword>
+      <keyword xml:lang="pt_BR">Evento</keyword>
+      <keyword xml:lang="pt_BR">Lembrete</keyword>
+      <keyword xml:lang="ro">Eveniment</keyword>
+      <keyword xml:lang="ro">Memento</keyword>
+      <keyword xml:lang="ru">Календарь</keyword>
+      <keyword xml:lang="ru">Напоминание</keyword>
+      <keyword xml:lang="ru">Событие</keyword>
+      <keyword xml:lang="sk">Kalendár</keyword>
+      <keyword xml:lang="sk">Pripomienka</keyword>
+      <keyword xml:lang="sk">Udalosť</keyword>
+      <keyword xml:lang="sl">Dogodki</keyword>
+      <keyword xml:lang="sl">Koledar</keyword>
+      <keyword xml:lang="sl">Opomniki</keyword>
+      <keyword xml:lang="sr">догађај</keyword>
+      <keyword xml:lang="sr">календар</keyword>
+      <keyword xml:lang="sr">потсетник</keyword>
+      <keyword xml:lang="sr@latin">događaj</keyword>
+      <keyword xml:lang="sr@latin">kalendar</keyword>
+      <keyword xml:lang="sr@latin">potsetnik</keyword>
+      <keyword xml:lang="sv">Händelse</keyword>
+      <keyword xml:lang="sv">Kalender</keyword>
+      <keyword xml:lang="sv">Påminnelse</keyword>
+      <keyword xml:lang="tg">Ёдрасон</keyword>
+      <keyword xml:lang="tg">Рӯйдод</keyword>
+      <keyword xml:lang="tg">Тақвим</keyword>
+      <keyword xml:lang="th">งานกิจกรรม</keyword>
+      <keyword xml:lang="th">ปฏิทิน</keyword>
+      <keyword xml:lang="th">ปลุกเตือน</keyword>
+      <keyword xml:lang="tr">Hatırlatıcı</keyword>
+      <keyword xml:lang="tr">Olay</keyword>
+      <keyword xml:lang="tr">Takvim</keyword>
+      <keyword xml:lang="uk">Календар</keyword>
+      <keyword xml:lang="uk">Нагадування</keyword>
+      <keyword xml:lang="uk">Подія</keyword>
+      <keyword xml:lang="zh_CN">事件</keyword>
+      <keyword xml:lang="zh_CN">提醒</keyword>
+      <keyword xml:lang="zh_CN">日历</keyword>
+      <keyword xml:lang="zh_TW">事件</keyword>
+      <keyword xml:lang="zh_TW">提醒</keyword>
+      <keyword xml:lang="zh_TW">活動</keyword>
+      <keyword xml:lang="zh_TW">行事曆</keyword>
+      <keyword xml:lang="zh_TW">行程</keyword>
+    </keywords>
+    <kudos>
+      <kudo>AppMenu</kudo>
+      <kudo>HiDpiIcon</kudo>
+      <kudo>ModernToolkit</kudo>
+      <kudo>SearchProvider</kudo>
+    </kudos>
+    <mimetypes>
+      <mimetype>text/calendar</mimetype>
+    </mimetypes>
+    <project_license>GPL-3.0+</project_license>
+    <url type="bugtracker">https://bugzilla.gnome.org/enter_bug.cgi?product=gnome-calendar</url>
+    <url type="homepage">https://wiki.gnome.org/Apps/Calendar</url>
+    <project_group>GNOME</project_group>
+    <screenshots>
+      <screenshot type="default">
+        <image type="source" height="675" width="1200">https://git.gnome.org/browse/gnome-calendar/plain/data/appdata/default.png</image>
+      </screenshot>
+      <screenshot>
+        <caption>Calendar management</caption>
+        <caption xml:lang="an">Chestión d&apos;o calandario</caption>
+        <caption xml:lang="ar">إدارة التقويم</caption>
+        <caption xml:lang="bs">- Upravljanje kalendarom</caption>
+        <caption xml:lang="ca">Gestió del calendari</caption>
+        <caption xml:lang="cs">Správa kalendáře</caption>
+        <caption xml:lang="da">Kalenderhåndtering</caption>
+        <caption xml:lang="de">Kalenderverwaltung</caption>
+        <caption xml:lang="el">Διαχείριση ημερολογίου</caption>
+        <caption xml:lang="eo">Kalendara administrado</caption>
+        <caption xml:lang="es">Gestión del calendario</caption>
+        <caption xml:lang="eu">Egutegiaren kudeaketa</caption>
+        <caption xml:lang="fa">مدیریت تقویم</caption>
+        <caption xml:lang="fi">Kalenterin hallinta</caption>
+        <caption xml:lang="fr">Gestion de l&apos;agenda</caption>
+        <caption xml:lang="fur">Gjestion calendari</caption>
+        <caption xml:lang="gd">Stiùireadh a&apos; mhìosachain</caption>
+        <caption xml:lang="gl">Xestión do calendario</caption>
+        <caption xml:lang="he">ניהול לוח שנה</caption>
+        <caption xml:lang="hr">Upravljanje kalendarom</caption>
+        <caption xml:lang="hu">Naptárkezelés</caption>
+        <caption xml:lang="id">Manajemen kalender</caption>
+        <caption xml:lang="is">Umsýsla dagatals</caption>
+        <caption xml:lang="it">Gestione calendario</caption>
+        <caption xml:lang="ja">カレンダー管理</caption>
+        <caption xml:lang="kk">Күнтізбені басқару</caption>
+        <caption xml:lang="ko">달력 관리자</caption>
+        <caption xml:lang="lt">Kalendoriaus tvarkymas</caption>
+        <caption xml:lang="lv">Kalendāra pārvaldība</caption>
+        <caption xml:lang="nb">Kalenderbehandling</caption>
+        <caption xml:lang="nl">Agendabeheer</caption>
+        <caption xml:lang="oc">Gestion de l&apos;agenda</caption>
+        <caption xml:lang="pa">ਕੈਲੰਡਰ ਪਰਬੰਧ</caption>
+        <caption xml:lang="pl">Zarządzenie kalendarzem</caption>
+        <caption xml:lang="pt">Gestão de agenda</caption>
+        <caption xml:lang="pt_BR">Gerenciamento de agenda</caption>
+        <caption xml:lang="ro">Administrare calendar</caption>
+        <caption xml:lang="ru">Управление календарем</caption>
+        <caption xml:lang="sk">Správa kalendára</caption>
+        <caption xml:lang="sl">Upravljanje s koledarjem</caption>
+        <caption xml:lang="sr">Управљање календаром</caption>
+        <caption xml:lang="sr@latin">Upravljanje kalendarom</caption>
+        <caption xml:lang="sv">­Kalenderhantering</caption>
+        <caption xml:lang="tg">Идоракунии тақвим</caption>
+        <caption xml:lang="th">การจัดการปฏิทิน</caption>
+        <caption xml:lang="tr">Takvim yönetimi</caption>
+        <caption xml:lang="uk">Керування календарем</caption>
+        <caption xml:lang="zh_CN">日历管理</caption>
+        <caption xml:lang="zh_TW">行事曆管理</caption>
+        <image type="source" height="675" width="1200">https://git.gnome.org/browse/gnome-calendar/plain/data/appdata/calendar-management.png</image>
+      </screenshot>
+      <screenshot>
+        <caption>Search for events</caption>
+        <caption xml:lang="an">Buscar eventos</caption>
+        <caption xml:lang="ar">ابحث عن الأحداث</caption>
+        <caption xml:lang="bs">Traži događaje</caption>
+        <caption xml:lang="ca">Cerqueu cites</caption>
+        <caption xml:lang="cs">Vyhledávání událostí</caption>
+        <caption xml:lang="da">Søg efter begivenheder</caption>
+        <caption xml:lang="de">Nach Terminen suchen</caption>
+        <caption xml:lang="el">Αναζήτηση για συμβάντα</caption>
+        <caption xml:lang="eo">Serĉi eventojn</caption>
+        <caption xml:lang="es">Buscar eventos</caption>
+        <caption xml:lang="eu">Bilatu gertaerak</caption>
+        <caption xml:lang="fa">جست‌وجو برای رویدادها</caption>
+        <caption xml:lang="fi">Etsi tapahtumia</caption>
+        <caption xml:lang="fr">Rechercher les événements</caption>
+        <caption xml:lang="fur">Cîr events</caption>
+        <caption xml:lang="gd">Lorg tachartasan</caption>
+        <caption xml:lang="gl">Buscar eventos</caption>
+        <caption xml:lang="he">חיפוש אירועים</caption>
+        <caption xml:lang="hr">Pretraži događaje</caption>
+        <caption xml:lang="hu">Események keresése</caption>
+        <caption xml:lang="id">Cari acara</caption>
+        <caption xml:lang="is">Leita að atburðum</caption>
+        <caption xml:lang="it">Cerca eventi</caption>
+        <caption xml:lang="ja">イベントの検索</caption>
+        <caption xml:lang="kk">Оқиғаларды іздеу</caption>
+        <caption xml:lang="ko">행사 검색</caption>
+        <caption xml:lang="lt">Ieškoti įvykių</caption>
+        <caption xml:lang="lv">Meklēt notikumus</caption>
+        <caption xml:lang="nb">Søk etter hendelser</caption>
+        <caption xml:lang="nl">Zoeken naar afspraken</caption>
+        <caption xml:lang="oc">Recercar los eveniments</caption>
+        <caption xml:lang="pa">ਈਵੈਂਟ ਲੱਭੋ</caption>
+        <caption xml:lang="pl">Wyszukiwanie wydarzeń</caption>
+        <caption xml:lang="pt">Procurar eventos</caption>
+        <caption xml:lang="pt_BR">Pesquisa por eventos</caption>
+        <caption xml:lang="ro">Caută evenimente</caption>
+        <caption xml:lang="ru">Поиск событий</caption>
+        <caption xml:lang="sk">Vyhľadať udalosti</caption>
+        <caption xml:lang="sl">Iskanje dogodkov</caption>
+        <caption xml:lang="sr">Тражи догађаје</caption>
+        <caption xml:lang="sr@latin">Traži događaje</caption>
+        <caption xml:lang="sv">Sök efter händelser</caption>
+        <caption xml:lang="tg">Ҷустуҷӯи рӯйдодҳо</caption>
+        <caption xml:lang="th">ค้นหางานกิจกรรม</caption>
+        <caption xml:lang="tr">Olay ara</caption>
+        <caption xml:lang="uk">Пошук подій</caption>
+        <caption xml:lang="zh_CN">搜索事件</caption>
+        <caption xml:lang="zh_TW">搜尋行程</caption>
+        <image type="source" height="675" width="1200">https://git.gnome.org/browse/gnome-calendar/plain/data/appdata/search.png</image>
+      </screenshot>
+    </screenshots>
+    <releases>
+      <release version="3.22.2" timestamp="1482105600">
+        <description><p>This is the third stable release for GNOME Calendar 3.22, and focuses on bugfixes and stability issues.</p><p>This release also updates translations, and adds new translations.</p><p>Thanks to all the contributors that worked on GNOME Calendar!</p></description>
+      </release>
+    </releases>
+    <languages>
+      <lang percentage="48">an</lang>
+      <lang percentage="98">ar</lang>
+      <lang percentage="48">bs</lang>
+      <lang percentage="99">ca</lang>
+      <lang percentage="100">cs</lang>
+      <lang percentage="100">da</lang>
+      <lang percentage="100">de</lang>
+      <lang percentage="100">el</lang>
+      <lang percentage="100">en_GB</lang>
+      <lang percentage="74">eo</lang>
+      <lang percentage="100">es</lang>
+      <lang percentage="100">eu</lang>
+      <lang percentage="94">fa</lang>
+      <lang percentage="99">fi</lang>
+      <lang percentage="100">fr</lang>
+      <lang percentage="100">fur</lang>
+      <lang percentage="58">ga</lang>
+      <lang percentage="100">gd</lang>
+      <lang percentage="98">gl</lang>
+      <lang percentage="100">he</lang>
+      <lang percentage="87">hr</lang>
+      <lang percentage="100">hu</lang>
+      <lang percentage="100">id</lang>
+      <lang percentage="87">is</lang>
+      <lang percentage="100">it</lang>
+      <lang percentage="87">ja</lang>
+      <lang percentage="100">kk</lang>
+      <lang percentage="100">ko</lang>
+      <lang percentage="100">lt</lang>
+      <lang percentage="100">lv</lang>
+      <lang percentage="97">nb</lang>
+      <lang percentage="100">nl</lang>
+      <lang percentage="83">oc</lang>
+      <lang percentage="48">pa</lang>
+      <lang percentage="100">pl</lang>
+      <lang percentage="100">pt</lang>
+      <lang percentage="100">pt_BR</lang>
+      <lang percentage="74">ro</lang>
+      <lang percentage="100">ru</lang>
+      <lang percentage="100">sk</lang>
+      <lang percentage="87">sl</lang>
+      <lang percentage="100">sr</lang>
+      <lang percentage="100">sr@latin</lang>
+      <lang percentage="100">sv</lang>
+      <lang percentage="76">tg</lang>
+      <lang percentage="100">th</lang>
+      <lang percentage="87">tr</lang>
+      <lang percentage="100">uk</lang>
+      <lang percentage="100">zh_CN</lang>
+      <lang percentage="42">zh_HK</lang>
+      <lang percentage="100">zh_TW</lang>
+    </languages>
+    <bundle type="flatpak" runtime="org.gnome.Platform/x86_64/3.22" sdk="org.gnome.Sdk/x86_64/3.22">app/org.gnome.Calendar/x86_64/stable</bundle>
+  </component>
+  </components>

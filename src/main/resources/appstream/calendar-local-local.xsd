@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+             schemaLocation="xml.xsd"/>
+  <xs:element name="components">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="component"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="version"/>
+      <xs:attribute type="xs:string" name="origin"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="keywords">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="keyword" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="kudos">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="kudo" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="release">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="description"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="version"/>
+      <xs:attribute type="xs:string" name="timestamp"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="kudo">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="AppMenu"/>
+        <xs:enumeration value="HiDpiIcon"/>
+        <xs:enumeration value="ModernToolkit"/>
+        <xs:enumeration value="SearchProvider"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="icon">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="height" use="optional"/>
+          <xs:attribute type="xs:string" name="width" use="optional"/>
+          <xs:attribute type="xs:string" name="type" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="caption">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="xml:lang"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="description">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="p" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="xml:lang"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="screenshot">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="caption" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="image"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="type" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="screenshots">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="screenshot" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="id" type="xs:string"/>
+  <xs:element name="categories">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="category" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="keyword">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="xml:lang"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="lang">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="percentage" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="bundle">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="type"/>
+          <xs:attribute type="xs:string" name="runtime"/>
+          <xs:attribute type="xs:string" name="sdk"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="project_license" type="xs:string"/>
+  <xs:element name="summary">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="xml:lang"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="image">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="type" use="optional"/>
+          <xs:attribute type="xs:string" name="height" use="optional"/>
+          <xs:attribute type="xs:string" name="width" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="languages">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lang" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="url">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="type" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="releases">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="release"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="p" type="xs:string"/>
+  <xs:element name="component">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id"/>
+        <xs:element ref="translation"/>
+        <xs:element ref="name" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="summary" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="description" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="icon" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="categories"/>
+        <xs:element ref="keywords"/>
+        <xs:element ref="kudos"/>
+        <xs:element ref="mimetypes"/>
+        <xs:element ref="project_license"/>
+        <xs:element ref="url" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="project_group"/>
+        <xs:element ref="screenshots"/>
+        <xs:element ref="releases"/>
+        <xs:element ref="languages"/>
+        <xs:element ref="bundle"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="type"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="translation">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="type"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="name">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="xml:lang"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="mimetype" type="xs:string"/>
+  <xs:element name="category">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Calendar"/>
+        <xs:enumeration value="Core"/>
+        <xs:enumeration value="Office"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="project_group" type="xs:string"/>
+  <xs:element name="mimetypes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="mimetype"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
