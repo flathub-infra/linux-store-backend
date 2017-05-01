@@ -3,8 +3,10 @@ package org.flathub.api.controller;
 import org.flathub.api.model.App;
 import org.flathub.api.service.ApiService;
 
+import org.freedesktop.appstream.AppdataParser;
+import org.freedesktop.appstream.ComponentParser;
+import org.freedesktop.appstream.appdata.Component;
 import org.freedesktop.appstream.appdata.Components;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,13 +35,52 @@ public class ApiController {
         List<App> list = service.findAllApps();
 
         //objectToXML();
-        xmlToObject();
+        //xmlToObject();
+        //importGnomeAppData();
 
         return list;
     }
 
+    private void importGnomeAppData() {
 
-    private void xmlToObject() {
+        File file = new File("/home/jorge/IdeaProjects/Flathub/appstream-appdata/src/test/resources/appstream-gnome-apps.xml");
+
+        try {
+            App app;
+            Components components = AppdataParser.parseFile(file);
+
+            for (Component component: components.getComponent()) {
+
+                app = new App();
+
+                System.out.println("--------------------------");
+                System.out.println("Id:" + ComponentParser.getId(component));
+                System.out.println("FlatpakId:" + ComponentParser.getFlatpakId(component));
+
+                app.setName(ComponentParser.getName(component));
+                app.setSummary(ComponentParser.getSummary(component));
+                app.setDescription(ComponentParser.getDescription(component));
+
+                //TODO:
+                //Categories
+                //Icons
+                //Keywords (translatable)
+                //kudos
+                //Screenshots
+                //Languages (percentage)
+                //<bundle type="flatpak" runtime="org.gnome.Platform/x86_64/3.22" sdk="org.gnome.Sdk/x86_64/3.22">app/org.gnome.Weather/x86_64/stable</bundle>
+
+                service.addApp(app);
+
+            }
+
+
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
+
+   /* private void xmlToObject() {
 
         File file = new File("/home/jorge/IdeaProjects/Flathub/api/src/main/resources/appstream/appstream-example.xml");
         App app;
@@ -143,6 +184,6 @@ public class ApiController {
 
 
     }
-
+*/
 
 }
