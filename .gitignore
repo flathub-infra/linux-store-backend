@@ -1,7 +1,12 @@
-target/
-!.mvn/wrapper/maven-wrapper.jar
+# Eclipse
+.classpath
+.project
+.settings
+.metadata
+build
+bin
 
-### STS ###
+# STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -9,16 +14,61 @@ target/
 .settings
 .springBeans
 
-### IntelliJ IDEA ###
+# IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# NetBeans ###
 nbproject/private/
 build/
 nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+nbactions.xml
+nb-configuration.xml
+
+# Spring
+.springBeans
+
+# Class Files #
+*.class
+
+# Package Files #
+#*.jar
+*.war
+*.ear
+
+# Maven #
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Subversion files
+.svn
+
+# Windows
+[Tt]humbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.*
+!.gitignore
+*~
+
+# Mac OS X
+.DS_Store
+._.DS_Store 
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Other
+*.bak
+*.log
