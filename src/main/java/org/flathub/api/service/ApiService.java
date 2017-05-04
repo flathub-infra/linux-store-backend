@@ -1,6 +1,7 @@
 package org.flathub.api.service;
 
 import org.flathub.api.model.App;
+import org.flathub.api.model.FlatpakRepo;
 
 import java.util.List;
 
@@ -10,4 +11,8 @@ import java.util.List;
 public interface ApiService {
     List<App> findAllApps();
     void addApp(App app);
+
+    void addFlatpakRepo(FlatpakRepo repo);
+
+    void updateFlatpakRepo(FlatpakRepo repo);
 }
