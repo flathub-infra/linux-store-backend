@@ -9,10 +9,13 @@ import java.util.List;
  * Created by jorge on 24/03/17.
  */
 public interface ApiService {
+
+
+    void updateApp(App app);
     List<App> findAllApps();
-    void addApp(App app);
+    App findAppByFlatpakAppId(String flatpakAppId);
 
-    void addFlatpakRepo(FlatpakRepo repo);
-
+    FlatpakRepo findRepoByName(String name);
     void updateFlatpakRepo(FlatpakRepo repo);
+
 }

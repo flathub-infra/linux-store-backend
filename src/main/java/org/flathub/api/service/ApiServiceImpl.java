@@ -24,21 +24,27 @@ public class ApiServiceImpl implements ApiService{
 
     @Override
     public List<App> findAllApps() {
-        return appRepository.findAll();
+
+        return appRepository.findAllByOrderByName();
     }
 
     @Override
-    public void addApp(App app) {
+    public App findAppByFlatpakAppId(String flatpakAppId) {
+        return appRepository.findOneByFlatpakAppId(flatpakAppId);
+    }
+
+    @Override
+    public void updateApp(App app) {
         appRepository.save(app);
-    }
-
-    @Override
-    public void addFlatpakRepo(FlatpakRepo repo) {
-        repoRepository.save(repo);
     }
 
     @Override
     public void updateFlatpakRepo(FlatpakRepo repo) {
         repoRepository.save(repo);
+    }
+
+    @Override
+    public FlatpakRepo findRepoByName(String name) {
+        return repoRepository.findOneByName(name);
     }
 }

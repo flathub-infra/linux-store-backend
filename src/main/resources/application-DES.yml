@@ -24,3 +24,11 @@ hibernate:
     showSql: true
     dialect: org.hibernate.dialect.PostgreSQL94Dialect
 
+flathub:
+    appstream-extractor-info: /home/jorge/appstream-extractor/appstream-extractor.info
+    flatpakref:
+        server-path: /var/www/main-store/apps/
+        url:  http://localhost:80/main-store/apps/
+    icons:
+        server-path:  /var/www/main-store/icons/
+        url:  http://localhost:80/main-store/icons/
