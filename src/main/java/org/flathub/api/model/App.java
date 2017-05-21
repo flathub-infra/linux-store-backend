@@ -1,16 +1,22 @@
 package org.flathub.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
 /**
  * Created by jorge on 04/05/17.
  */
+
 @Entity
 public class App {
     private int appId;
+    private String flatpakAppId;
     private String name;
     private String summary;
     private String description;
@@ -19,9 +25,17 @@ public class App {
     private String bugtrackerUrl;
     private String currentRelease;
 
-
     private FlatpakRepo flatpakRepo;
 
+    //FIXME: read value from application-XXX.yml file
+    //@Value("${flathub.icons.url}")
+    private String flathubIconsUrl = "http://localhost:80/main-store/icons/";
+
+    //FIXME: read value from application-XXX.yml file
+    //@Value("${flathub.flatpakref.url}")
+    private String flathubFlatpakRefUrl = "http://localhost:80/main-store/apps/";
+
+    @JsonIgnore
     @Id
     @SequenceGenerator(name="app_app_id_seq",
             sequenceName="app_app_id_seq",
@@ -33,8 +47,19 @@ public class App {
         return appId;
     }
 
+    @JsonProperty
     public void setAppId(int appId) {
         this.appId = appId;
+    }
+
+    @Basic
+    @Column(name = "flatpak_app_id", nullable = true, length = 128)
+    public String getFlatpakAppId() {
+        return flatpakAppId;
+    }
+
+    public void setFlatpakAppId(String flatpakAppId) {
+        this.flatpakAppId = flatpakAppId;
     }
 
     @Basic
@@ -121,6 +146,18 @@ public class App {
             flatpakRepo.getApps().add(this);
 
         }
+    }
+
+    @JsonInclude()
+    @Transient
+    public String getIconUrl() {
+        return flathubIconsUrl + "/" + this.getFlatpakAppId() + ".png";
+    }
+
+    @JsonInclude()
+    @Transient
+    public String getDownloadFlatpakRefUrl() {
+        return flathubFlatpakRefUrl + "/" + this.getFlatpakAppId() + ".flatpakref";
     }
 
     @Override
