@@ -1,0 +1,32 @@
+
+spring:
+    datasource:
+        url: jdbc:hsqldb:mem:flathub
+        username: sa
+        driver-class-name: org.hsqldb.jdbcDriver
+    jpa:
+        database: HSQL
+        # Create BD tables automatically
+        generate-ddl: true
+        show-sql: true            
+#    mail:
+#        host: smtp.gmail.com
+#        port: 587
+#        username:
+#        password:
+#        smtp.auth: true
+#        smtp.starttls.enable: true
+        
+
+hibernate:
+    showSql: true
+    dialect: org.hibernate.dialect.org.hibernate.dialect.HSQLDialect
+
+flathub:
+    appstream-extractor-info: /home/jorge/appstream-extractor/appstream-extractor.info
+    flatpakref:
+        server-path: /var/www/main-store/apps/
+        url:  http://localhost:80/main-store/apps/
+    icons:
+        server-path:  /var/www/main-store/icons/
+        url:  http://localhost:80/main-store/icons/
