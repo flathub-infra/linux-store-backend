@@ -23,9 +23,11 @@ import java.util.Objects;
 /**
  * Created by jorge on 20/05/17.
  */
+@SuppressWarnings("unused")
 @Service
 public class UpdateServicImpl implements UpdateService {
 
+    @SuppressWarnings("unused")
     @Autowired
     private ApiService apiService;
 
@@ -65,7 +67,7 @@ public class UpdateServicImpl implements UpdateService {
 
         if (extractorInfo.exists()) {
 
-            String line = null;
+            String line;
 
             //Use try-with-resource to get auto-closeable reader instance
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(extractorInfo))) {
@@ -80,6 +82,7 @@ public class UpdateServicImpl implements UpdateService {
                     } else if (line.startsWith("COMMIT=")) {
                         info.setCommit(line.replace("COMMIT=", ""));
                     } else if (line.startsWith("DATE=")) {
+                        //TODO: set date
                         //info.setD
                     }
 
@@ -101,6 +104,8 @@ public class UpdateServicImpl implements UpdateService {
     private void updateRepoInfo(AppstreamUpdateInfo appstreamInfo) {
 
         Objects.requireNonNull(appstreamInfo);
+        Objects.requireNonNull(appstreamInfo.getRepoName());
+        Objects.requireNonNull(appstreamInfo.getExportDataPath());
 
         FlatpakRepo repo;
 
