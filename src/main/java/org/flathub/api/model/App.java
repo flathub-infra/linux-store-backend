@@ -3,9 +3,6 @@ package org.flathub.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
@@ -29,11 +26,13 @@ public class App {
 
     //FIXME: read value from application-XXX.yml file
     //@Value("${flathub.icons.url}")
-    private String flathubIconsUrl = "http://localhost:80/main-store/icons/";
+    @SuppressWarnings("FieldCanBeLocal")
+    private final String flathubIconsUrl = "http://localhost:80/main-store/icons/";
 
     //FIXME: read value from application-XXX.yml file
     //@Value("${flathub.flatpakref.url}")
-    private String flathubFlatpakRefUrl = "http://localhost:80/main-store/apps/";
+    @SuppressWarnings("FieldCanBeLocal")
+    private final String flathubFlatpakRefUrl = "http://localhost:80/main-store/apps/";
 
     @JsonIgnore
     @Id
@@ -53,7 +52,7 @@ public class App {
     }
 
     @Basic
-    @Column(name = "flatpak_app_id", nullable = true, length = 128)
+    @Column(name = "flatpak_app_id", nullable = false, length = 128)
     public String getFlatpakAppId() {
         return flatpakAppId;
     }
@@ -63,7 +62,7 @@ public class App {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 128)
+    @Column(name = "name", nullable = false, length = 128)
     public String getName() {
         return name;
     }
@@ -73,7 +72,7 @@ public class App {
     }
 
     @Basic
-    @Column(name = "summary", nullable = true, length = 1024)
+    @Column(name = "summary", length = 1024)
     public String getSummary() {
         return summary;
     }
@@ -83,7 +82,7 @@ public class App {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 4096)
+    @Column(name = "description", length = 4096)
     public String getDescription() {
         return description;
     }
@@ -93,7 +92,7 @@ public class App {
     }
 
     @Basic
-    @Column(name = "project_license", nullable = true, length = 1024)
+    @Column(name = "project_license", length = 1024)
     public String getProjectLicense() {
         return projectLicense;
     }
@@ -103,7 +102,7 @@ public class App {
     }
 
     @Basic
-    @Column(name = "homepage_url", nullable = true, length = 2048)
+    @Column(name = "homepage_url", length = 2048)
     public String getHomepageUrl() {
         return homepageUrl;
     }
@@ -113,7 +112,7 @@ public class App {
     }
 
     @Basic
-    @Column(name = "bugtracker_url", nullable = true, length = 2048)
+    @Column(name = "bugtracker_url", length = 2048)
     public String getBugtrackerUrl() {
         return bugtrackerUrl;
     }
@@ -123,7 +122,7 @@ public class App {
     }
 
     @Basic
-    @Column(name = "current_release", nullable = true, length = 1024)
+    @Column(name = "current_release", length = 1024)
     public String getCurrentRelease() {
         return currentRelease;
     }
@@ -160,6 +159,7 @@ public class App {
         return flathubFlatpakRefUrl + "/" + this.getFlatpakAppId() + ".flatpakref";
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

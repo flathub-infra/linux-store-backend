@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 @SuppressWarnings("unused")
 @Service
-public class UpdateServicImpl implements UpdateService {
+public class UpdateServiceImpl implements UpdateService {
 
     @SuppressWarnings("unused")
     @Autowired
@@ -88,8 +88,8 @@ public class UpdateServicImpl implements UpdateService {
 
                 }
 
-                File exportDataFoder = new File(info.getExportDataPath());
-                if (exportDataFoder.exists() && exportDataFoder.isDirectory()) {
+                File exportDataFolder = new File(info.getExportDataPath());
+                if (exportDataFolder.exists() && exportDataFolder.isDirectory()) {
                     info.setUpdatesAvailable(true);
                 }
 

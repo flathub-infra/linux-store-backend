@@ -35,7 +35,7 @@ public class FlatpakRepo {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 128)
+    @Column(name = "name", nullable = false, length = 128)
     public String getName() {
         return name;
     }
@@ -45,7 +45,7 @@ public class FlatpakRepo {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 1024)
+    @Column(name = "description", length = 1024)
     public String getDescription() {
         return description;
     }
@@ -55,7 +55,7 @@ public class FlatpakRepo {
     }
 
     @Basic
-    @Column(name = "url", nullable = true, length = 2048)
+    @Column(name = "url", length = 2048)
     public String getUrl() {
         return url;
     }
@@ -65,7 +65,7 @@ public class FlatpakRepo {
     }
 
     @Basic
-    @Column(name = "homepage_url", nullable = true, length = 2048)
+    @Column(name = "homepage_url", length = 2048)
     public String getHomepageUrl() {
         return homepageUrl;
     }
@@ -75,7 +75,7 @@ public class FlatpakRepo {
     }
 
     @Basic
-    @Column(name = "default_branch", nullable = true, length = 128)
+    @Column(name = "default_branch", length = 128)
     public String getDefaultBranch() {
         return defaultBranch;
     }
@@ -85,7 +85,7 @@ public class FlatpakRepo {
     }
 
     @Basic
-    @Column(name = "gpgkey", nullable = true, length = 5120)
+    @Column(name = "gpgkey", length = 5120)
     public String getGpgkey() {
         return gpgkey;
     }
@@ -113,9 +113,10 @@ public class FlatpakRepo {
     }
 
     public FlatpakRepo() {
-        this.apps = new ArrayList<App>();
+        this.apps = new ArrayList<>();
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
