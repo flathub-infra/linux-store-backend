@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
  * Created by jorge on 04/05/17.
  */
 @Repository
-public interface FlatpakRepoRepository extends JpaRepository<FlatpakRepo, Integer>{
+public interface FlatpakRepoRepository extends JpaRepository<FlatpakRepo, Integer> {
 
-    FlatpakRepo findOneByName(String name);
+  FlatpakRepo findOneByName(String name);
 }

@@ -1,5 +1,6 @@
 package org.flathub.api.controller;
 
+import java.util.List;
 import org.flathub.api.model.App;
 import org.flathub.api.service.ApiService;
 import org.flathub.api.service.UpdateService;
@@ -9,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 /**
  * Created by jorge on 24/03/17.
  */
@@ -19,20 +18,20 @@ import java.util.List;
 @RequestMapping("/apps")
 class ApiController {
 
-    @Autowired
-    private ApiService apiService;
+  @Autowired
+  private ApiService apiService;
 
-    @Autowired
-    private UpdateService updateService;
+  @Autowired
+  private UpdateService updateService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<App> findAll() {
-        return  apiService.findAllApps();
-    }
+  @RequestMapping(method = RequestMethod.GET)
+  public List<App> findAll() {
+    return apiService.findAllApps();
+  }
 
-    @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public void updateRepoInfo() {
-        updateService.updateFlathubInfo();
-    }
+  @RequestMapping(value = "/update", method = RequestMethod.GET)
+  public void updateRepoInfo() {
+    updateService.updateFlathubInfo();
+  }
 
 }
