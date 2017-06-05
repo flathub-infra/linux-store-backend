@@ -6,8 +6,6 @@ spring:
         password: flathub
         driver-class-name: org.postgresql.Driver
     jpa:
-        # Create BD tables automatically
-        # generate-ddl: true    
         show-sql: true            
 #    mail:
 #        host: smtp.gmail.com
@@ -23,7 +21,7 @@ hibernate:
     dialect: org.hibernate.dialect.PostgreSQL94Dialect
 
 flathub:
-    appstream-extractor-info: /home/jorge/appstream-extractor/appstream-extractor.info
+    appstream-extractor-info: /var/lib/appstream-extractor/appstream-extractor.info
     flatpakref:
         server-path: /var/www/main-store/apps/
         url:  http://localhost:80/main-store/apps/
