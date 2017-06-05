@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/apps")
+@RequestMapping("/v1")
 class ApiController {
 
   @Autowired
@@ -24,12 +24,12 @@ class ApiController {
   @Autowired
   private UpdateService updateService;
 
-  @RequestMapping(method = RequestMethod.GET)
+  @RequestMapping(value = "/apps", method = RequestMethod.GET)
   public List<App> findAll() {
     return apiService.findAllApps();
   }
 
-  @RequestMapping(value = "/update", method = RequestMethod.GET)
+  @RequestMapping(value = "/apps/update", method = RequestMethod.GET)
   public void updateRepoInfo() {
     updateService.updateFlathubInfo();
   }
