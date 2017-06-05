@@ -4,10 +4,12 @@ spring:
         url: jdbc:hsqldb:mem:flathub
         username: sa
         driver-class-name: org.hsqldb.jdbcDriver
+        #data: classpath*:data.sql
     jpa:
         database: HSQL
         # Create BD tables automatically
-        generate-ddl: true
+        hibernate:
+            ddl-auto: create
         show-sql: true            
 #    mail:
 #        host: smtp.gmail.com
