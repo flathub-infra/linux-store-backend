@@ -10,7 +10,7 @@ This is a simple Spring Boot App implementing a backend for [linux-store-fronten
 For the backend:
 * Java 7+ (java-8-oracle recommended)
 * maven
-* appstream-java compiled and present in your local maven repository
+* [appstream-appdata-java](https://github.com/jgarciao/appstream-appdata-java) compiled and present in your local maven repository
 
 For the script appstream-extractor (info below):
 * flatpak
