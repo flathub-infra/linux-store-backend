@@ -14,12 +14,15 @@ import org.flathub.api.model.FlatpakRepo;
 import org.flathub.api.util.FlatpakRefFileCreator;
 import org.freedesktop.appstream.AppdataComponent;
 import org.freedesktop.appstream.AppdataParser;
+import org.freedesktop.appstream.appdata.Icon;
 import org.rauschig.jarchivelib.ArchiveFormat;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
 import org.rauschig.jarchivelib.CompressionType;
 import org.rauschig.jarchivelib.Compressor;
 import org.rauschig.jarchivelib.CompressorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,7 +34,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class UpdateServiceImpl implements UpdateService {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(UpdateServiceImpl.class);
   private static final String APPSTREAM_TYPE_DESKTOP = "desktop";
+  private static final String ICON_HEIGHT_HIDPI = "128";
+  private static final String ICON_HEIGHT_DEFAULT = "64";
+
+
   @SuppressWarnings("unused")
   @Autowired
   private ApiService apiService;
@@ -39,6 +47,8 @@ public class UpdateServiceImpl implements UpdateService {
   private String flathubAppStreamExtractorInfoFile;
   @Value("${flathub.flatpakref.server-path}")
   private String flathubFlatpakRefServerPath;
+  @Value("${flathub.icons.server-path}")
+  private String flathubIconsServerPath;
 
   @Override
   public void updateFlathubInfo() {
@@ -50,6 +60,8 @@ public class UpdateServiceImpl implements UpdateService {
 
       if (updateInfo.isUpdatesAvailable()) {
         updateRepoInfo(updateInfo);
+      } else {
+        LOGGER.info("No updates available");
       }
 
     } catch (IOException e) {
@@ -109,6 +121,8 @@ public class UpdateServiceImpl implements UpdateService {
 
     FlatpakRepo repo;
 
+    LOGGER.info("Updating repo info for " + appstreamInfo.getRepoName());
+
     repo = apiService.findRepoByName(appstreamInfo.getRepoName());
     if (repo == null) {
       addFlathubRepo();
@@ -147,6 +161,48 @@ public class UpdateServiceImpl implements UpdateService {
             app.setSummary(component.findDefaultSummary());
             app.setDescription(component.findDefaultDescription());
             app.setProjectLicense(component.getProjectLicense());
+
+            Icon icon = component.findIconByHeight(ICON_HEIGHT_HIDPI);
+            if (icon == null) {
+              icon = component.findIconByHeight(ICON_HEIGHT_DEFAULT);
+            }
+            if (icon != null) {
+
+              String iconPath;
+
+              if(icon.getValue().contains(icon.getHeight() + "x" + icon.getWidth())){
+                iconPath = appstreamInfo.getExportDataPath() + File.separator + "icons" +
+                  File.separator + icon.getValue();
+              }
+              else {
+                iconPath = appstreamInfo.getExportDataPath() + File.separator + "icons" +
+                  File.separator + icon.getHeight() + "x" + icon.getWidth() +
+                  File.separator + icon.getValue();
+              }
+
+              File iconFile = new File(iconPath);
+
+              try {
+
+                if (iconFile.isFile()) {
+
+                  File destIconPath = new File(
+                    flathubIconsServerPath + File.separator + app.getFlatpakAppId() + ".png");
+
+                  if (!destIconPath.exists()) {
+                    java.nio.file.Files.copy(iconFile.toPath(), destIconPath.toPath());
+                  }
+                }
+                else{
+                  LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
+                }
+              } catch (IOException e) {
+                LOGGER.error("Error copying icon", e);
+              }
+            }
+            else{
+              LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
+            }
 
             //TODO:
             //Categories
