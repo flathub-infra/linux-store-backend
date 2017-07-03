@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by jorge on 24/03/17.
  */
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:80", "http://45.55.104.129:80"})
 @RestController
-@RequestMapping("/v1")
-class ApiController {
+@RequestMapping("/api/v1")
+public class ApiController {
 
   @Autowired
   private ApiService apiService;
