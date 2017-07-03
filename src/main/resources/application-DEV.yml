@@ -1,9 +1,9 @@
 
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/flathub
-        username: flathub-api
-        password: flathub
+        url: jdbc:postgresql://localhost:5432/linuxstore
+        username: linuxstore
+        password: linuxstore
         driver-class-name: org.postgresql.Driver
     jpa:
         show-sql: true            
