@@ -1,0 +1,30 @@
+
+spring:
+    datasource:
+        url: jdbc:postgresql://postgresdb:5432/linuxstore
+        username: linuxstore
+        password: linuxstore
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        show-sql: true            
+#    mail:
+#        host: smtp.gmail.com
+#        port: 587
+#        username:
+#        password:
+#        smtp.auth: true
+#        smtp.starttls.enable: true
+        
+
+hibernate:
+    showSql: true
+    dialect: org.hibernate.dialect.PostgreSQL94Dialect
+
+flathub:
+    appstream-extractor-info: /var/lib/appstream-extractor/appstream-extractor.info
+    flatpakref:
+        server-path: /var/www/main-store/apps/
+        url:  http://localhost:80/main-store/apps/
+    icons:
+        server-path:  /var/www/main-store/icons/
+        url:  http://localhost:80/main-store/icons/
