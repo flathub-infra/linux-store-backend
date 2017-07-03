@@ -25,11 +25,15 @@ public class App {
   //FIXME: read value from application-XXX.yml file
   //@Value("${flathub.icons.url}")
   @SuppressWarnings("FieldCanBeLocal")
-  private final String flathubIconsUrl = "http://localhost:80/main-store/icons/";
+  //private final String flathubIconsUrl = "http://localhost/main-store/icons";
+  private final String flathubIconsUrl = "/main-store/icons";
+
   //FIXME: read value from application-XXX.yml file
   //@Value("${flathub.flatpakref.url}")
   @SuppressWarnings("FieldCanBeLocal")
-  private final String flathubFlatpakRefUrl = "http://localhost:80/main-store/apps/";
+  //private final String flathubFlatpakRefUrl = "http://localhost/main-store/apps";
+  private final String flathubFlatpakRefUrl = "/main-store/apps";
+
   private int appId;
   private String flatpakAppId;
   private String name;
