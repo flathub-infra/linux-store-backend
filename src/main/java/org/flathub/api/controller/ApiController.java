@@ -29,9 +29,4 @@ public class ApiController {
     return apiService.findAllApps();
   }
 
-  @RequestMapping(value = "/apps/update", method = RequestMethod.GET)
-  public void updateRepoInfo() {
-    updateService.updateFlathubInfo();
-  }
-
 }
