@@ -4,8 +4,6 @@ This is a simple Spring Boot App implementing a backend for [linux-store-fronten
 * Implements a system to get the list of apps and runtimes published in flatpak repos like [Flathub](http://flathub.org) and others 
 * Stores the information in a relational database
 * Offers a simple REST API to get this information
-
-See demo at http://45.55.104.129/apps
    
 # Requirements
 
