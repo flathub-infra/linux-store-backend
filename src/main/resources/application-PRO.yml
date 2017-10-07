@@ -3,7 +3,8 @@ spring:
     datasource:
         url: jdbc:postgresql://postgresdb:5432/linuxstore
         username: linuxstore
-        password: linuxstore
+        # Passwords are stored in a external configuration file
+        # More information at README.md
         driver-class-name: org.postgresql.Driver
     jpa:
         show-sql: true            
