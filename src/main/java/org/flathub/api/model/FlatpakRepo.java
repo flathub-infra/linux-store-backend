@@ -24,6 +24,7 @@ public class FlatpakRepo {
   private String description;
   private String url;
   private String homepageUrl;
+  private String downloadFlatpakRepoUrl;
   private String defaultBranch;
   private String gpgkey;
   private List<App> apps;
@@ -85,6 +86,16 @@ public class FlatpakRepo {
 
   public void setHomepageUrl(String homepageUrl) {
     this.homepageUrl = homepageUrl;
+  }
+
+  @Basic
+  @Column(name = "download_flatpakrepo_url", length = 2048)
+  public String getDownloadFlatpakRepoUrl() {
+    return downloadFlatpakRepoUrl;
+  }
+
+  public void setDownloadFlatpakRepoUrl(String downloadFlatpakRepoUrl) {
+    this.downloadFlatpakRepoUrl = downloadFlatpakRepoUrl;
   }
 
   @Basic
