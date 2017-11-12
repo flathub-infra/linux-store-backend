@@ -1,0 +1,48 @@
+version: '2'
+
+services:
+  frontend:
+    image: jgarciao/linux-store-frontend
+    volumes:
+      - /var/www/main-store/:/var/www/main-store/
+    depends_on:
+      - backend1
+      - backend2
+    ports:
+      - "80:80"
+  backend1:
+    image: jgarciao/linux-store-backend
+    volumes:
+      - /opt/linux-store/:/opt/linux-store/
+      - /var/www/main-store/:/var/www/main-store/
+      - /var/lib/appstream-extractor:/var/lib/appstream-extractor
+      
+    environment:
+      - SPRING_PROFILES_ACTIVE=PRO,SCHED
+      - JAVA_OPTS=-Dspring.config.location=/opt/linux-store/linux-store-backend-passwords.yml
+    ports:
+      - "8080"
+    depends_on:
+      - postgresdb
+  backend2:
+    image: jgarciao/linux-store-backend
+    volumes:
+      - /opt/linux-store/:/opt/linux-store/
+      - /var/www/main-store/:/var/www/main-store/
+      - /var/lib/appstream-extractor:/var/lib/appstream-extractor
+    environment:
+      - SPRING_PROFILES_ACTIVE=PRO
+      - JAVA_OPTS=-Dspring.config.location=/opt/linux-store/linux-store-backend-passwords.yml
+    ports:
+      - "8080" 
+    depends_on:
+      - postgresdb   
+  postgresdb:
+    image: postgres:9.6-alpine
+    volumes:
+      - /var/lib/postgresql-docker/data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: linuxstore
+      POSTGRES_DB: linuxstore
