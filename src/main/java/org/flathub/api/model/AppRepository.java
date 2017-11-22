@@ -12,5 +12,7 @@ public interface AppRepository extends JpaRepository<App, Integer> {
 
   List<App> findAllByOrderByName();
 
+  List<App> findByCategories_Name(String categoryName);
+
   App findOneByFlatpakAppId(String flatpakAppId);
 }
