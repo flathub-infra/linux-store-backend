@@ -1,6 +1,7 @@
 package org.flathub.api.model;
 
 import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppRepository extends JpaRepository<App, Integer> {
 
-  List<App> findAllByOrderByName();
+
+  List<App> findAll(Sort sort);
 
   App findOneByFlatpakAppId(String flatpakAppId);
 }

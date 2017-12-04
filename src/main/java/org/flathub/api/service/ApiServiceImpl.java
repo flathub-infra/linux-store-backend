@@ -6,6 +6,8 @@ import org.flathub.api.model.AppRepository;
 import org.flathub.api.model.FlatpakRepo;
 import org.flathub.api.model.FlatpakRepoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,8 +25,8 @@ public class ApiServiceImpl implements ApiService {
 
   @Override
   public List<App> findAllApps() {
-
-    return appRepository.findAllByOrderByName();
+    Sort.Order order = new Sort.Order(Direction.ASC, "name").ignoreCase();
+    return appRepository.findAll(new Sort(order));
   }
 
   @Override
