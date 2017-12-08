@@ -1,10 +1,8 @@
 package org.flathub.api.service;
 
 import java.util.List;
-import org.flathub.api.model.App;
-import org.flathub.api.model.AppRepository;
-import org.flathub.api.model.FlatpakRepo;
-import org.flathub.api.model.FlatpakRepoRepository;
+
+import org.flathub.api.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -20,6 +18,9 @@ public class ApiServiceImpl implements ApiService {
   private AppRepository appRepository;
 
   @Autowired
+  private CategoryRepository categoryRepository;
+
+  @Autowired
   private FlatpakRepoRepository repoRepository;
 
 
@@ -30,9 +31,26 @@ public class ApiServiceImpl implements ApiService {
   }
 
   @Override
+  public List<App> findAllAppsByCategoryName(String categoryName) {
+    return appRepository.findByCategories_Name(categoryName);
+  }
+
+  @Override
   public App findAppByFlatpakAppId(String flatpakAppId) {
     return appRepository.findOneByFlatpakAppId(flatpakAppId);
   }
+
+  @Override
+  public void updateCategory(Category category) {
+    categoryRepository.save(category);
+  }
+
+  @Override
+  public Category findCategoryByName(String categoryName) {
+    return categoryRepository.findOneByName(categoryName);
+  }
+
+
 
   @Override
   public void updateApp(App app) {

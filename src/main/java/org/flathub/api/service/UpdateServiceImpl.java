@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.JAXBException;
 import org.flathub.api.model.App;
+import org.flathub.api.model.Category;
 import org.flathub.api.model.FlatpakRepo;
 import org.flathub.api.util.FlatpakRefFileCreator;
 import org.freedesktop.appstream.AppdataComponent;
@@ -161,6 +162,20 @@ public class UpdateServiceImpl implements UpdateService {
             app.setSummary(component.findDefaultSummary());
             app.setDescription(component.findDefaultDescription());
             app.setProjectLicense(component.getProjectLicense());
+
+            if(component.getCategories() != null && component.getCategories().getCategory() != null) {
+              for (String categoryName : component.getCategories().getCategory()) {
+                if(!"".equalsIgnoreCase(categoryName)){
+
+                  Category category = apiService.findCategoryByName(categoryName);
+                  if (category == null) {
+                    category = new Category(categoryName);
+                    apiService.updateCategory(category);
+                  }
+                  app.addCategory(category);
+                }
+              }
+            }
 
             Icon icon = component.findIconByHeight(ICON_HEIGHT_HIDPI);
             if (icon == null) {

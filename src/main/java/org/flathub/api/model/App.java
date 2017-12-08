@@ -3,17 +3,12 @@ package org.flathub.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by jorge on 04/05/17.
@@ -44,6 +39,7 @@ public class App {
   private String bugtrackerUrl;
   private String currentRelease;
   private FlatpakRepo flatpakRepo;
+  private Set<Category> categories = new HashSet<>();
 
   @JsonIgnore
   @Id
@@ -171,52 +167,65 @@ public class App {
     return flathubFlatpakRefUrl + "/" + this.getFlatpakAppId() + ".flatpakref";
   }
 
-  @SuppressWarnings("SimplifiableIfStatement")
+  @ManyToMany(cascade = {
+    CascadeType.PERSIST,
+    CascadeType.MERGE
+  })
+  @JoinTable(name = "app_category",
+    joinColumns = @JoinColumn(name = "app_id"),
+    inverseJoinColumns = @JoinColumn(name = "category_id")
+  )
+  public Set<Category> getCategories() {
+    return categories;
+  }
+
+  public void setCategories(Set<Category> categories) {
+    this.categories = categories;
+  }
+
+  public void addCategory(Category category) {
+    categories.add(category);
+    if (!category.getApps().contains(
+      this)) {// warning this may cause performance issues if you have a large data set since this operation is O(n)
+      category.getApps().add(this);
+    }
+  }
+
+  public void removeCategory(Category category) {
+    categories.remove(category);
+    category.getApps().remove(this);
+  }
+
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+    if (this == o) return true;
+    if (!(o instanceof App)) return false;
 
     App app = (App) o;
 
-    if (appId != app.appId) {
+    if (appId != app.appId) return false;
+    if (flathubIconsUrl != null ? !flathubIconsUrl.equals(app.flathubIconsUrl) : app.flathubIconsUrl != null)
       return false;
-    }
-    if (name != null ? !name.equals(app.name) : app.name != null) {
+    if (flathubFlatpakRefUrl != null ? !flathubFlatpakRefUrl.equals(app.flathubFlatpakRefUrl) : app.flathubFlatpakRefUrl != null)
       return false;
-    }
-    if (summary != null ? !summary.equals(app.summary) : app.summary != null) {
-      return false;
-    }
-    if (description != null ? !description.equals(app.description) : app.description != null) {
-      return false;
-    }
-    if (projectLicense != null ? !projectLicense.equals(app.projectLicense)
-      : app.projectLicense != null) {
-      return false;
-    }
-    if (homepageUrl != null ? !homepageUrl.equals(app.homepageUrl) : app.homepageUrl != null) {
-      return false;
-    }
-    if (bugtrackerUrl != null ? !bugtrackerUrl.equals(app.bugtrackerUrl)
-      : app.bugtrackerUrl != null) {
-      return false;
-    }
-    if (currentRelease != null ? !currentRelease.equals(app.currentRelease)
-      : app.currentRelease != null) {
-      return false;
-    }
+    if (!flatpakAppId.equals(app.flatpakAppId)) return false;
+    if (!name.equals(app.name)) return false;
+    if (summary != null ? !summary.equals(app.summary) : app.summary != null) return false;
+    if (description != null ? !description.equals(app.description) : app.description != null) return false;
+    if (projectLicense != null ? !projectLicense.equals(app.projectLicense) : app.projectLicense != null) return false;
+    if (homepageUrl != null ? !homepageUrl.equals(app.homepageUrl) : app.homepageUrl != null) return false;
+    if (bugtrackerUrl != null ? !bugtrackerUrl.equals(app.bugtrackerUrl) : app.bugtrackerUrl != null) return false;
+    if (currentRelease != null ? !currentRelease.equals(app.currentRelease) : app.currentRelease != null) return false;
     return flatpakRepo != null ? flatpakRepo.equals(app.flatpakRepo) : app.flatpakRepo == null;
   }
 
   @Override
   public int hashCode() {
-    int result = appId;
-    result = 31 * result + (name != null ? name.hashCode() : 0);
+    int result = flathubIconsUrl != null ? flathubIconsUrl.hashCode() : 0;
+    result = 31 * result + (flathubFlatpakRefUrl != null ? flathubFlatpakRefUrl.hashCode() : 0);
+    result = 31 * result + appId;
+    result = 31 * result + flatpakAppId.hashCode();
+    result = 31 * result + name.hashCode();
     result = 31 * result + (summary != null ? summary.hashCode() : 0);
     result = 31 * result + (description != null ? description.hashCode() : 0);
     result = 31 * result + (projectLicense != null ? projectLicense.hashCode() : 0);

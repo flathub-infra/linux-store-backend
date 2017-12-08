@@ -5,10 +5,7 @@ import org.flathub.api.model.App;
 import org.flathub.api.service.ApiService;
 import org.flathub.api.service.UpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by jorge on 24/03/17.
@@ -27,6 +24,11 @@ public class ApiController {
   @RequestMapping(value = "/apps", method = RequestMethod.GET)
   public List<App> findAll() {
     return apiService.findAllApps();
+  }
+
+  @RequestMapping(value = "/apps/category/{categoryName}", method = RequestMethod.GET)
+  public List<App> findAllByCategory(@PathVariable String categoryName) {
+    return apiService.findAllAppsByCategoryName(categoryName);
   }
 
 }
