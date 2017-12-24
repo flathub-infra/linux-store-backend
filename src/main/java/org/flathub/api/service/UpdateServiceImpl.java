@@ -12,6 +12,7 @@ import javax.xml.bind.JAXBException;
 import org.flathub.api.model.App;
 import org.flathub.api.model.Category;
 import org.flathub.api.model.FlatpakRepo;
+import org.flathub.api.model.Screenshot;
 import org.flathub.api.util.FlatpakRefFileCreator;
 import org.freedesktop.appstream.AppdataComponent;
 import org.freedesktop.appstream.AppdataParser;
@@ -39,7 +40,13 @@ public class UpdateServiceImpl implements UpdateService {
   private static final String APPSTREAM_TYPE_DESKTOP = "desktop";
   private static final String ICON_HEIGHT_HIDPI = "128";
   private static final String ICON_HEIGHT_DEFAULT = "64";
+  private static final String SCREENSHOT_WIDTH_THUMBNAIL = "224";
+  private static final String SCREENSHOT_WIDTH_MOBILE = "624";
+  private static final String SCREENSHOT_WIDTH_DESKTOP = "752";
 
+  private static final String SCREENSHOT_RESOLUTION_THUMBNAIL = "224x126";
+  private static final String SCREENSHOT_RESOLUTION_MOBILE = "624x351";
+  private static final String SCREENSHOT_RESOLUTION_DESKTOP = "752x423";
 
   @SuppressWarnings("unused")
   @Autowired
@@ -163,20 +170,6 @@ public class UpdateServiceImpl implements UpdateService {
             app.setDescription(component.findDefaultDescription());
             app.setProjectLicense(component.getProjectLicense());
 
-            if(component.getCategories() != null && component.getCategories().getCategory() != null) {
-              for (String categoryName : component.getCategories().getCategory()) {
-                if(!"".equalsIgnoreCase(categoryName)){
-
-                  Category category = apiService.findCategoryByName(categoryName);
-                  if (category == null) {
-                    category = new Category(categoryName);
-                    apiService.updateCategory(category);
-                  }
-                  app.addCategory(category);
-                }
-              }
-            }
-
             Icon icon = component.findIconByHeight(ICON_HEIGHT_HIDPI);
             if (icon == null) {
               icon = component.findIconByHeight(ICON_HEIGHT_DEFAULT);
@@ -185,11 +178,10 @@ public class UpdateServiceImpl implements UpdateService {
 
               String iconPath;
 
-              if(icon.getValue().contains(icon.getHeight() + "x" + icon.getWidth())){
+              if (icon.getValue().contains(icon.getHeight() + "x" + icon.getWidth())) {
                 iconPath = appstreamInfo.getExportDataPath() + File.separator + "icons" +
                   File.separator + icon.getValue();
-              }
-              else {
+              } else {
                 iconPath = appstreamInfo.getExportDataPath() + File.separator + "icons" +
                   File.separator + icon.getHeight() + "x" + icon.getWidth() +
                   File.separator + icon.getValue();
@@ -207,32 +199,84 @@ public class UpdateServiceImpl implements UpdateService {
                   if (!destIconPath.exists()) {
                     java.nio.file.Files.copy(iconFile.toPath(), destIconPath.toPath());
                   }
-                }
-                else{
+                } else {
                   LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
                 }
               } catch (IOException e) {
                 LOGGER.error("Error copying icon", e);
               }
-            }
-            else{
+            } else {
               LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
             }
 
             //TODO:
-            //Categories
-            //Icons
             //Keywords (translatable)
             //kudos
-            //Screenshots
             //Languages (percentage)
             //<bundle type="flatpak" runtime="org.gnome.Platform/x86_64/3.22" sdk="org.gnome.Sdk/x86_64/3.22">app/org.gnome.Weather/x86_64/stable</bundle>
 
             app.setFlatpakRepo(repo);
             apiService.updateApp(app);
 
+            LOGGER.info("Screenshots for " + app.getFlatpakAppId());
+
+            if (component.getScreenshots() != null
+              && component.getScreenshots().getScreenshot() != null
+              && component.getScreenshots().getScreenshot().size() > 0) {
+              app.getScreenshots().clear();
+              //apiService.updateApp(app);
+              apiService.deleteScrenshotsByApp(app);
+
+              for (org.freedesktop.appstream.appdata.Screenshot appStreamScreenshot : component
+                .getScreenshots().getScreenshot()) {
+
+                Screenshot screenshot = new Screenshot();
+
+                /*if(SCREENSHOT_WIDTH_THUMBNAIL.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
+                  screenshot.setThumbUrl(appStreamScreenshot.getImage().getValue());
+                }
+                if(SCREENSHOT_WIDTH_MOBILE.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
+                  screenshot.setImgMobileUrl(appStreamScreenshot.getImage().getValue());
+                }
+                if(SCREENSHOT_WIDTH_DESKTOP.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
+                  screenshot.setImgDesktopUrl(appStreamScreenshot.getImage().getValue());
+                }*/
+
+                String currentResolution =
+                  appStreamScreenshot.getImage().getWidth() + "x" + appStreamScreenshot.getImage()
+                    .getHeight();
+                screenshot.setThumbUrl(appStreamScreenshot.getImage().getValue()
+                  .replace(currentResolution, SCREENSHOT_RESOLUTION_THUMBNAIL));
+                screenshot.setImgMobileUrl(appStreamScreenshot.getImage().getValue()
+                  .replace(currentResolution, SCREENSHOT_RESOLUTION_MOBILE));
+                screenshot.setImgDesktopUrl(appStreamScreenshot.getImage().getValue()
+                  .replace(currentResolution, SCREENSHOT_RESOLUTION_DESKTOP));
+                screenshot.setApp(app);
+                apiService.updateScreenshot(screenshot);
+                app.addScreenshot(screenshot);
+              }
+
+              apiService.updateApp(app);
+            }
+
+            if (component.getCategories() != null
+              && component.getCategories().getCategory() != null) {
+              for (String categoryName : component.getCategories().getCategory()) {
+                if (!"".equalsIgnoreCase(categoryName)) {
+
+                  Category category = apiService.findCategoryByName(categoryName);
+                  if (category == null) {
+                    category = new Category(categoryName);
+                    apiService.updateCategory(category);
+                  }
+                  app.addCategory(category);
+                }
+              }
+              apiService.updateApp(app);
+            }
+
             File destFlatpakRefFile = new File(flathubFlatpakRefServerPath + File.separator +
-              app.getFlatpakAppId()  + ".flatpakref");
+              app.getFlatpakAppId() + ".flatpakref");
 
             if (!destFlatpakRefFile.exists()) {
               try {

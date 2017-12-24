@@ -4,6 +4,7 @@ import java.util.List;
 import org.flathub.api.model.App;
 import org.flathub.api.model.Category;
 import org.flathub.api.model.FlatpakRepo;
+import org.flathub.api.model.Screenshot;
 
 /**
  * Created by jorge on 24/03/17.
@@ -26,5 +27,7 @@ public interface ApiService {
 
   void updateFlatpakRepo(FlatpakRepo repo);
 
+  void updateScreenshot(Screenshot screenshot);
 
+  void deleteScrenshotsByApp(App app);
 }

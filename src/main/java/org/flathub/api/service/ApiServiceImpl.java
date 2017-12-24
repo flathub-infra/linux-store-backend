@@ -21,6 +21,9 @@ public class ApiServiceImpl implements ApiService {
   private CategoryRepository categoryRepository;
 
   @Autowired
+  private ScreenshotRepository screenshotRepository;
+
+  @Autowired
   private FlatpakRepoRepository repoRepository;
 
 
@@ -60,6 +63,16 @@ public class ApiServiceImpl implements ApiService {
   @Override
   public void updateFlatpakRepo(FlatpakRepo repo) {
     repoRepository.save(repo);
+  }
+
+  @Override
+  public void updateScreenshot(Screenshot screenshot) {
+    screenshotRepository.save(screenshot);
+  }
+
+  @Override
+  public void deleteScrenshotsByApp(App app) {
+    screenshotRepository.deleteScrenshotsByApp(app);
   }
 
   @Override
