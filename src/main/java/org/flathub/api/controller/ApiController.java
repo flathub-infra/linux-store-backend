@@ -1,6 +1,11 @@
 package org.flathub.api.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.flathub.api.dto.AppDto;
+import org.flathub.api.dto.AppFullDto;
+import org.flathub.api.dto.AppMapper;
 import org.flathub.api.model.App;
 import org.flathub.api.service.ApiService;
 import org.flathub.api.service.UpdateService;
@@ -21,14 +26,27 @@ public class ApiController {
   @Autowired
   private UpdateService updateService;
 
+  @Autowired
+  private AppMapper mapper;
+
   @RequestMapping(value = "/apps", method = RequestMethod.GET)
-  public List<App> findAll() {
-    return apiService.findAllApps();
+  public List<AppDto> findAll() {
+
+    return mapper.appsToAppDtos(apiService.findAllApps());
   }
 
   @RequestMapping(value = "/apps/category/{categoryName}", method = RequestMethod.GET)
-  public List<App> findAllByCategory(@PathVariable String categoryName) {
-    return apiService.findAllAppsByCategoryName(categoryName);
+  public List<AppDto> findAllByCategory(@PathVariable String categoryName) {
+    return mapper.appsToAppDtos(apiService.findAllAppsByCategoryName(categoryName));
   }
+
+
+  @RequestMapping(value = "/apps/{flatpakAppId:.+}", method = RequestMethod.GET)
+  public AppFullDto findAppFlatpakAppId(@PathVariable String flatpakAppId) {
+    return mapper.appToAppFullDto(apiService.findAppByFlatpakAppId(flatpakAppId));
+  }
+
+
+
 
 }
