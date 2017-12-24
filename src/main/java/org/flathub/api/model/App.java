@@ -40,6 +40,7 @@ public class App {
   private String currentRelease;
   private FlatpakRepo flatpakRepo;
   private Set<Category> categories = new HashSet<>();
+  private Set<Screenshot> screenshots = new HashSet<>();
 
   @JsonIgnore
   @Id
@@ -153,6 +154,8 @@ public class App {
       flatpakRepo.getApps().add(this);
 
     }
+
+
   }
 
   @JsonInclude()
@@ -170,7 +173,7 @@ public class App {
   @ManyToMany(cascade = {
     CascadeType.PERSIST,
     CascadeType.MERGE
-  })
+  }, fetch = FetchType.LAZY)
   @JoinTable(name = "app_category",
     joinColumns = @JoinColumn(name = "app_id"),
     inverseJoinColumns = @JoinColumn(name = "category_id")
@@ -184,55 +187,39 @@ public class App {
   }
 
   public void addCategory(Category category) {
-    categories.add(category);
-    if (!category.getApps().contains(
-      this)) {// warning this may cause performance issues if you have a large data set since this operation is O(n)
-      category.getApps().add(this);
+
+    if(!this.categories.contains(category)) {
+      categories.add(category);
     }
+
+//    if (!category.getApps().contains(this)) {// warning this may cause performance issues if you have a large data set since this operation is O(n)
+//      category.getApps().add(this);
+//    }
   }
 
   public void removeCategory(Category category) {
     categories.remove(category);
-    category.getApps().remove(this);
+    //category.getApps().remove(this);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof App)) return false;
-
-    App app = (App) o;
-
-    if (appId != app.appId) return false;
-    if (flathubIconsUrl != null ? !flathubIconsUrl.equals(app.flathubIconsUrl) : app.flathubIconsUrl != null)
-      return false;
-    if (flathubFlatpakRefUrl != null ? !flathubFlatpakRefUrl.equals(app.flathubFlatpakRefUrl) : app.flathubFlatpakRefUrl != null)
-      return false;
-    if (!flatpakAppId.equals(app.flatpakAppId)) return false;
-    if (!name.equals(app.name)) return false;
-    if (summary != null ? !summary.equals(app.summary) : app.summary != null) return false;
-    if (description != null ? !description.equals(app.description) : app.description != null) return false;
-    if (projectLicense != null ? !projectLicense.equals(app.projectLicense) : app.projectLicense != null) return false;
-    if (homepageUrl != null ? !homepageUrl.equals(app.homepageUrl) : app.homepageUrl != null) return false;
-    if (bugtrackerUrl != null ? !bugtrackerUrl.equals(app.bugtrackerUrl) : app.bugtrackerUrl != null) return false;
-    if (currentRelease != null ? !currentRelease.equals(app.currentRelease) : app.currentRelease != null) return false;
-    return flatpakRepo != null ? flatpakRepo.equals(app.flatpakRepo) : app.flatpakRepo == null;
+  @OneToMany(mappedBy = "app", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  public Set<Screenshot> getScreenshots() {
+    return screenshots;
   }
 
-  @Override
-  public int hashCode() {
-    int result = flathubIconsUrl != null ? flathubIconsUrl.hashCode() : 0;
-    result = 31 * result + (flathubFlatpakRefUrl != null ? flathubFlatpakRefUrl.hashCode() : 0);
-    result = 31 * result + appId;
-    result = 31 * result + flatpakAppId.hashCode();
-    result = 31 * result + name.hashCode();
-    result = 31 * result + (summary != null ? summary.hashCode() : 0);
-    result = 31 * result + (description != null ? description.hashCode() : 0);
-    result = 31 * result + (projectLicense != null ? projectLicense.hashCode() : 0);
-    result = 31 * result + (homepageUrl != null ? homepageUrl.hashCode() : 0);
-    result = 31 * result + (bugtrackerUrl != null ? bugtrackerUrl.hashCode() : 0);
-    result = 31 * result + (currentRelease != null ? currentRelease.hashCode() : 0);
-    result = 31 * result + (flatpakRepo != null ? flatpakRepo.hashCode() : 0);
-    return result;
+  public void setScreenshots(Set<Screenshot> screenshots) {
+    this.screenshots = screenshots;
   }
+
+  public void addScreenshot(Screenshot screenshot) {
+
+    if(!this.getScreenshots().contains(screenshot)) {
+      this.screenshots.add(screenshot);
+    }
+    if (screenshot.getApp() != this) {
+        screenshot.setApp(this);
+    }
+
+  }
+
 }

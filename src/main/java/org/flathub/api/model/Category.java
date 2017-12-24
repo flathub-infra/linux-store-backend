@@ -18,7 +18,7 @@ public class Category {
 
   private int categoryId;
   private String name;
-  private Set<App> apps = new HashSet<>();
+  //private Set<App> apps = new HashSet<>();
 
   @JsonIgnore
   @Id
@@ -47,15 +47,15 @@ public class Category {
     this.name = name;
   }
 
-  @JsonIgnore
-  @ManyToMany(mappedBy = "categories")
-  public Set<App> getApps() {
-    return apps;
-  }
-
-  public void setApps(Set<App> apps) {
-    this.apps = apps;
-  }
+//  @JsonIgnore
+//  @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+//  public Set<App> getApps() {
+//    return apps;
+//  }
+//
+//  public void setApps(Set<App> apps) {
+//    this.apps = apps;
+//  }
 
   public Category() {
   }
