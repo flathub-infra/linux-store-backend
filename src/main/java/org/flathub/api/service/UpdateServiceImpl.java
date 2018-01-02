@@ -152,6 +152,7 @@ public class UpdateServiceImpl implements UpdateService {
 
         for (AppdataComponent component : componentList) {
 
+          //if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType()) && "com.play0ad.zeroad".equalsIgnoreCase(component.getFlatpakId())) {
           if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
 
             app = apiService.findAppByFlatpakAppId(component.getFlatpakId());
@@ -218,13 +219,14 @@ public class UpdateServiceImpl implements UpdateService {
             app.setFlatpakRepo(repo);
             apiService.updateApp(app);
 
-            LOGGER.info("Screenshots for " + app.getFlatpakAppId());
 
+            LOGGER.info("Screenshots for " + app.getFlatpakAppId());
             if (component.getScreenshots() != null
               && component.getScreenshots().getScreenshot() != null
               && component.getScreenshots().getScreenshot().size() > 0) {
+
+              //Remove existing screenshots
               app.getScreenshots().clear();
-              //apiService.updateApp(app);
               apiService.deleteScrenshotsByApp(app);
 
               for (org.freedesktop.appstream.appdata.Screenshot appStreamScreenshot : component
@@ -252,11 +254,10 @@ public class UpdateServiceImpl implements UpdateService {
                 screenshot.setImgDesktopUrl(appStreamScreenshot.getImage().getValue()
                   .replace(currentResolution, SCREENSHOT_RESOLUTION_DESKTOP));
                 screenshot.setApp(app);
-                apiService.updateScreenshot(screenshot);
                 app.addScreenshot(screenshot);
+                apiService.updateScreenshot(screenshot);
               }
 
-              apiService.updateApp(app);
             }
 
             if (component.getCategories() != null
