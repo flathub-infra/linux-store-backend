@@ -40,7 +40,7 @@ public class App {
   private String currentRelease;
   private FlatpakRepo flatpakRepo;
   private Set<Category> categories = new HashSet<>();
-  private Set<Screenshot> screenshots = new HashSet<>();
+  private List<Screenshot> screenshots = new ArrayList<>();
 
   @JsonIgnore
   @Id
@@ -149,13 +149,6 @@ public class App {
   @JsonProperty
   public void setFlatpakRepo(FlatpakRepo repo) {
     this.flatpakRepo = repo;
-//    if (!flatpakRepo.getApps().contains(
-//      this)) {// warning this may cause performance issues if you have a large data set since this operation is O(n)
-//      flatpakRepo.getApps().add(this);
-//
-//    }
-
-
   }
 
   @JsonInclude()
@@ -192,34 +185,36 @@ public class App {
       categories.add(category);
     }
 
-//    if (!category.getApps().contains(this)) {// warning this may cause performance issues if you have a large data set since this operation is O(n)
-//      category.getApps().add(this);
-//    }
   }
 
   public void removeCategory(Category category) {
     categories.remove(category);
-    //category.getApps().remove(this);
   }
 
-  @OneToMany(mappedBy = "app", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  public Set<Screenshot> getScreenshots() {
+  @OneToMany(mappedBy = "app",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true,
+    fetch = FetchType.LAZY)
+  public List<Screenshot> getScreenshots() {
     return screenshots;
   }
 
-  public void setScreenshots(Set<Screenshot> screenshots) {
+  public void setScreenshots(List<Screenshot> screenshots) {
     this.screenshots = screenshots;
   }
 
   public void addScreenshot(Screenshot screenshot) {
 
-    if(!this.getScreenshots().contains(screenshot)) {
-      this.screenshots.add(screenshot);
-    }
-    if (screenshot.getApp() != this) {
-        screenshot.setApp(this);
-    }
+    this.screenshots.add(screenshot);
+    screenshot.setApp(this);
 
   }
+
+  public void removeScreenshot(Screenshot screenshot) {
+
+    this.screenshots.remove(screenshot);
+    screenshot.setApp(null);
+  }
+
 
 }

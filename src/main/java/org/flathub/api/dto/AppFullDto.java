@@ -1,6 +1,8 @@
 package org.flathub.api.dto;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.flathub.api.model.Category;
 import org.flathub.api.model.Screenshot;
@@ -21,7 +23,7 @@ public class AppFullDto {
   private String downloadFlatpakRefUrl;
   private String currentRelease;
   private Set<CategoryDto> categories = new HashSet<>();
-  private Set<Screenshot> screenshots = new HashSet<>();
+  private List<Screenshot> screenshots = new ArrayList<>();
 
   public String getFlatpakAppId() {
     return flatpakAppId;
@@ -111,11 +113,11 @@ public class AppFullDto {
     this.categories = categories;
   }
 
-  public Set<Screenshot> getScreenshots() {
+  public List<Screenshot> getScreenshots() {
     return screenshots;
   }
 
-  public void setScreenshots(Set<Screenshot> screenshots) {
+  public void setScreenshots(List<Screenshot> screenshots) {
     this.screenshots = screenshots;
   }
 

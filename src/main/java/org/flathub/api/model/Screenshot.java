@@ -74,7 +74,6 @@ public class Screenshot {
   @JsonProperty
   public void setApp(App app) {
     this.app = app;
-    app.addScreenshot(this);
   }
 
   public Screenshot() {
