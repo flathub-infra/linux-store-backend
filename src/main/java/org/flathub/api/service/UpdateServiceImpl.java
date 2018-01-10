@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.JAXBException;
@@ -47,6 +48,9 @@ public class UpdateServiceImpl implements UpdateService {
   private static final String SCREENSHOT_RESOLUTION_THUMBNAIL = "224x126";
   private static final String SCREENSHOT_RESOLUTION_MOBILE = "624x351";
   private static final String SCREENSHOT_RESOLUTION_DESKTOP = "752x423";
+
+  private static final String MSG_DESCRIPTION_NOT_AVAILABLE="No description available";
+  No description available"
 
   @SuppressWarnings("unused")
   @Autowired
@@ -153,23 +157,43 @@ public class UpdateServiceImpl implements UpdateService {
         for (AppdataComponent component : componentList) {
 
           //if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType()) && "com.play0ad.zeroad".equalsIgnoreCase(component.getFlatpakId())) {
+          //if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType()) && "io.atom.Atom".equalsIgnoreCase(component.getFlatpakId())) {
           if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
 
             app = apiService.findAppByFlatpakAppId(component.getFlatpakId());
             if (app == null) {
-              app = new App();
               isNewApp = true;
+              app = new App();
+              app.setFirstReleaseDate(OffsetDateTime.now());
+
+              //TODO: setFirstReleaseVersion
+              //app.setFirstReleaseVersion("2.0.0");
             }
 
-            System.out.println("--------------------------");
-            System.out.println("Id:" + component.getId());
-            System.out.println("FlatpakId:" + component.getFlatpakId());
+            //System.out.println("--------------------------");
+            //System.out.println("Id:" + component.getId());
+            //System.out.println("FlatpakId:" + component.getFlatpakId());
 
             app.setFlatpakAppId(component.getFlatpakId());
             app.setName(component.findDefaultName());
             app.setSummary(component.findDefaultSummary());
-            app.setDescription(component.findDefaultDescription());
+
+            if("".equalsIgnoreCase(component.findDefaultDescription())){
+              app.setDescription(MSG_DESCRIPTION_NOT_AVAILABLE);
+            }
+            else{
+              app.setDescription(component.findDefaultDescription());
+            }
+
             app.setProjectLicense(component.getProjectLicense());
+
+            //TODO: setCurrentReleaseVersion and currentReleaseDate after detecting a new release
+            //app.setCurrentReleaseVersion("2.0.0");
+            //app.setCurrentReleaseDate(OffsetDateTime.now());
+
+            //TODO: set rating  & Rating count
+            //app.setRating(4.3);
+            //app.setRatingVotes(50);
 
             Icon icon = component.findIconByHeight(ICON_HEIGHT_HIDPI);
             if (icon == null) {
