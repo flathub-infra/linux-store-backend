@@ -9,6 +9,8 @@ public class AppDto {
   private String name;
   private String summary;
   private String iconUrl;
+  private double rating;
+  private int ratingVotes;
 
   public String getFlatpakAppId() {
     return flatpakAppId;
@@ -42,4 +44,19 @@ public class AppDto {
     this.iconUrl = iconUrl;
   }
 
+  public double getRating() {
+    return rating;
+  }
+
+  public void setRating(double rating) {
+    this.rating = rating;
+  }
+
+  public int getRatingVotes() {
+    return ratingVotes;
+  }
+
+  public void setRatingVotes(int ratingVotes) {
+    this.ratingVotes = ratingVotes;
+  }
 }
