@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.OffsetDateTime;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,9 +38,17 @@ public class App {
   private String projectLicense;
   private String homepageUrl;
   private String bugtrackerUrl;
-  private String currentRelease;
+  private String currentReleaseVersion;
+  private OffsetDateTime currentReleaseDate;
+  private String firstReleaseVersion;
+  private OffsetDateTime firstReleaseDate;
   private FlatpakRepo flatpakRepo;
+  private double rating;
+  private int ratingVotes;
   private Set<Category> categories = new HashSet<>();
+  private List<Screenshot> screenshots = new ArrayList<>();
+
+
 
   @JsonIgnore
   @Id
@@ -129,13 +138,62 @@ public class App {
   }
 
   @Basic
-  @Column(name = "current_release", length = 1024)
-  public String getCurrentRelease() {
-    return currentRelease;
+  @Column(name = "current_release_version", length = 1024)
+  public String getCurrentReleaseVersion() {
+    return currentReleaseVersion;
   }
 
-  public void setCurrentRelease(String currentRelease) {
-    this.currentRelease = currentRelease;
+  public void setCurrentReleaseVersion(String currentReleaseVersion) {
+    this.currentReleaseVersion = currentReleaseVersion;
+  }
+
+  @Column(name = "current_release_date")
+  public OffsetDateTime getCurrentReleaseDate() {
+    return currentReleaseDate;
+  }
+
+  public void setCurrentReleaseDate(OffsetDateTime currentReleaseDate) {
+    this.currentReleaseDate = currentReleaseDate;
+  }
+
+  @Basic
+  @Column(name = "first_release_version", length = 1024)
+  public String getFirstReleaseVersion() {
+    return firstReleaseVersion;
+  }
+
+  public void setFirstReleaseVersion(String firstReleaseVersion) {
+    this.firstReleaseVersion = firstReleaseVersion;
+  }
+
+  @Column(name = "first_release_date")
+  public OffsetDateTime getFirstReleaseDate() {
+
+    return firstReleaseDate;
+  }
+
+  public void setFirstReleaseDate(OffsetDateTime firstReleaseDate) {
+    this.firstReleaseDate = firstReleaseDate;
+  }
+
+  @Basic
+  @Column(name = "rating")
+  public double getRating() {
+    return rating;
+  }
+
+  public void setRating(double rating) {
+    this.rating = rating;
+  }
+
+  @Basic
+  @Column(name = "rating_votes")
+  public int getRatingVotes() {
+    return ratingVotes;
+  }
+
+  public void setRatingVotes(int ratingVotes) {
+    this.ratingVotes = ratingVotes;
   }
 
   @JsonIgnore
@@ -148,11 +206,6 @@ public class App {
   @JsonProperty
   public void setFlatpakRepo(FlatpakRepo repo) {
     this.flatpakRepo = repo;
-    if (!flatpakRepo.getApps().contains(
-      this)) {// warning this may cause performance issues if you have a large data set since this operation is O(n)
-      flatpakRepo.getApps().add(this);
-
-    }
   }
 
   @JsonInclude()
@@ -170,7 +223,7 @@ public class App {
   @ManyToMany(cascade = {
     CascadeType.PERSIST,
     CascadeType.MERGE
-  })
+  }, fetch = FetchType.LAZY)
   @JoinTable(name = "app_category",
     joinColumns = @JoinColumn(name = "app_id"),
     inverseJoinColumns = @JoinColumn(name = "category_id")
@@ -184,55 +237,41 @@ public class App {
   }
 
   public void addCategory(Category category) {
-    categories.add(category);
-    if (!category.getApps().contains(
-      this)) {// warning this may cause performance issues if you have a large data set since this operation is O(n)
-      category.getApps().add(this);
+
+    if(!this.categories.contains(category)) {
+      categories.add(category);
     }
+
   }
 
   public void removeCategory(Category category) {
     categories.remove(category);
-    category.getApps().remove(this);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof App)) return false;
-
-    App app = (App) o;
-
-    if (appId != app.appId) return false;
-    if (flathubIconsUrl != null ? !flathubIconsUrl.equals(app.flathubIconsUrl) : app.flathubIconsUrl != null)
-      return false;
-    if (flathubFlatpakRefUrl != null ? !flathubFlatpakRefUrl.equals(app.flathubFlatpakRefUrl) : app.flathubFlatpakRefUrl != null)
-      return false;
-    if (!flatpakAppId.equals(app.flatpakAppId)) return false;
-    if (!name.equals(app.name)) return false;
-    if (summary != null ? !summary.equals(app.summary) : app.summary != null) return false;
-    if (description != null ? !description.equals(app.description) : app.description != null) return false;
-    if (projectLicense != null ? !projectLicense.equals(app.projectLicense) : app.projectLicense != null) return false;
-    if (homepageUrl != null ? !homepageUrl.equals(app.homepageUrl) : app.homepageUrl != null) return false;
-    if (bugtrackerUrl != null ? !bugtrackerUrl.equals(app.bugtrackerUrl) : app.bugtrackerUrl != null) return false;
-    if (currentRelease != null ? !currentRelease.equals(app.currentRelease) : app.currentRelease != null) return false;
-    return flatpakRepo != null ? flatpakRepo.equals(app.flatpakRepo) : app.flatpakRepo == null;
+  @OneToMany(mappedBy = "app",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true,
+    fetch = FetchType.LAZY)
+  public List<Screenshot> getScreenshots() {
+    return screenshots;
   }
 
-  @Override
-  public int hashCode() {
-    int result = flathubIconsUrl != null ? flathubIconsUrl.hashCode() : 0;
-    result = 31 * result + (flathubFlatpakRefUrl != null ? flathubFlatpakRefUrl.hashCode() : 0);
-    result = 31 * result + appId;
-    result = 31 * result + flatpakAppId.hashCode();
-    result = 31 * result + name.hashCode();
-    result = 31 * result + (summary != null ? summary.hashCode() : 0);
-    result = 31 * result + (description != null ? description.hashCode() : 0);
-    result = 31 * result + (projectLicense != null ? projectLicense.hashCode() : 0);
-    result = 31 * result + (homepageUrl != null ? homepageUrl.hashCode() : 0);
-    result = 31 * result + (bugtrackerUrl != null ? bugtrackerUrl.hashCode() : 0);
-    result = 31 * result + (currentRelease != null ? currentRelease.hashCode() : 0);
-    result = 31 * result + (flatpakRepo != null ? flatpakRepo.hashCode() : 0);
-    return result;
+  public void setScreenshots(List<Screenshot> screenshots) {
+    this.screenshots = screenshots;
   }
+
+  public void addScreenshot(Screenshot screenshot) {
+
+    this.screenshots.add(screenshot);
+    screenshot.setApp(this);
+
+  }
+
+  public void removeScreenshot(Screenshot screenshot) {
+
+    this.screenshots.remove(screenshot);
+    screenshot.setApp(null);
+  }
+
+
 }

@@ -24,14 +24,19 @@ public class ScheduledTasks {
   // Run at application start
   @EventListener(ContextRefreshedEvent.class)
   public void contextRefreshedEvent() {
-    updateFlathubInfo();
+      this.updateFlathubInfo();
   }
 
-  @Scheduled(cron = "0 30 */2 * * *")
+  @Scheduled(cron = "0 */10 * * * *")
   public void updateFlathubInfo() {
 
     logger.info("Updating Flathub info");
-    updateService.updateFlathubInfo();
+    try {
+      updateService.updateFlathubInfo();
+    }
+    catch (Exception e){
+      logger.error("An error occurred while updating flathub info",e);
+    }
   }
 
 }

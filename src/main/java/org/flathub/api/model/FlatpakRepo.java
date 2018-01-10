@@ -3,14 +3,18 @@ package org.flathub.api.model;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
 
 /**
  * Created by jorge on 04/05/17.
@@ -118,20 +122,23 @@ public class FlatpakRepo {
     this.gpgkey = gpgkey;
   }
 
-  public void addApp(App app) {
-    this.apps.add(app);
-    if (app.getFlatpakRepo() != this) {
-      app.setFlatpakRepo(this);
-    }
-  }
 
-  @OneToMany(mappedBy = "flatpakRepo")
+
+  @OneToMany(mappedBy = "flatpakRepo",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true,
+    fetch = FetchType.LAZY)
   public List<App> getApps() {
     return apps;
   }
 
   public void setApps(List<App> apps) {
     this.apps = apps;
+  }
+
+  public void addApp(App app) {
+    this.apps.add(app);
+    app.setFlatpakRepo(this);
   }
 
   @SuppressWarnings("SimplifiableIfStatement")
