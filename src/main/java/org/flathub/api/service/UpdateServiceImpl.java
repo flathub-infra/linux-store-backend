@@ -50,8 +50,7 @@ public class UpdateServiceImpl implements UpdateService {
   private static final String SCREENSHOT_RESOLUTION_DESKTOP = "752x423";
 
   private static final String MSG_DESCRIPTION_NOT_AVAILABLE="No description available";
-  No description available"
-
+  
   @SuppressWarnings("unused")
   @Autowired
   private ApiService apiService;
