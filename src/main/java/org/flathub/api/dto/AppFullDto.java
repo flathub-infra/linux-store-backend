@@ -1,10 +1,11 @@
 package org.flathub.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.flathub.api.model.Category;
 import org.flathub.api.model.Screenshot;
 
 /**
@@ -21,7 +22,14 @@ public class AppFullDto {
   private String bugtrackerUrl;
   private String iconUrl;
   private String downloadFlatpakRefUrl;
-  private String currentRelease;
+  private String currentReleaseVersion;
+  private OffsetDateTime currentReleaseDate;
+  private String firstReleaseVersion;
+  private OffsetDateTime firstReleaseDate;
+  private double rating;
+  private int ratingVotes;
+
+
   private Set<CategoryDto> categories = new HashSet<>();
   private List<Screenshot> screenshots = new ArrayList<>();
 
@@ -97,12 +105,54 @@ public class AppFullDto {
     this.downloadFlatpakRefUrl = downloadFlatpakRefUrl;
   }
 
-  public String getCurrentRelease() {
-    return currentRelease;
+  public String getCurrentReleaseVersion() {
+    return currentReleaseVersion;
   }
 
-  public void setCurrentRelease(String currentRelease) {
-    this.currentRelease = currentRelease;
+  public void setCurrentReleaseVersion(String currentReleaseVersion) {
+    this.currentReleaseVersion = currentReleaseVersion;
+  }
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "GMT")
+  public OffsetDateTime getCurrentReleaseDate() {
+    return currentReleaseDate;
+  }
+
+  public void setCurrentReleaseDate(OffsetDateTime currentReleaseDate) {
+    this.currentReleaseDate = currentReleaseDate;
+  }
+
+  public String getFirstReleaseVersion() {
+    return firstReleaseVersion;
+  }
+
+  public void setFirstReleaseVersion(String firstReleaseVersion) {
+    this.firstReleaseVersion = firstReleaseVersion;
+  }
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "GMT")
+  public OffsetDateTime getFirstReleaseDate() {
+    return firstReleaseDate;
+  }
+
+  public void setFirstReleaseDate(OffsetDateTime firstReleaseDate) {
+    this.firstReleaseDate = firstReleaseDate;
+  }
+
+  public double getRating() {
+    return rating;
+  }
+
+  public void setRating(double rating) {
+    this.rating = rating;
+  }
+
+  public int getRatingVotes() {
+    return ratingVotes;
+  }
+
+  public void setRatingVotes(int ratingVotes) {
+    this.ratingVotes = ratingVotes;
   }
 
   public Set<CategoryDto> getCategories() {

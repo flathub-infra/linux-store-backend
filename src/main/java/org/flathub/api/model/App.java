@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.OffsetDateTime;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,10 +38,17 @@ public class App {
   private String projectLicense;
   private String homepageUrl;
   private String bugtrackerUrl;
-  private String currentRelease;
+  private String currentReleaseVersion;
+  private OffsetDateTime currentReleaseDate;
+  private String firstReleaseVersion;
+  private OffsetDateTime firstReleaseDate;
   private FlatpakRepo flatpakRepo;
+  private double rating;
+  private int ratingVotes;
   private Set<Category> categories = new HashSet<>();
   private List<Screenshot> screenshots = new ArrayList<>();
+
+
 
   @JsonIgnore
   @Id
@@ -130,13 +138,62 @@ public class App {
   }
 
   @Basic
-  @Column(name = "current_release", length = 1024)
-  public String getCurrentRelease() {
-    return currentRelease;
+  @Column(name = "current_release_version", length = 1024)
+  public String getCurrentReleaseVersion() {
+    return currentReleaseVersion;
   }
 
-  public void setCurrentRelease(String currentRelease) {
-    this.currentRelease = currentRelease;
+  public void setCurrentReleaseVersion(String currentReleaseVersion) {
+    this.currentReleaseVersion = currentReleaseVersion;
+  }
+
+  @Column(name = "current_release_date")
+  public OffsetDateTime getCurrentReleaseDate() {
+    return currentReleaseDate;
+  }
+
+  public void setCurrentReleaseDate(OffsetDateTime currentReleaseDate) {
+    this.currentReleaseDate = currentReleaseDate;
+  }
+
+  @Basic
+  @Column(name = "first_release_version", length = 1024)
+  public String getFirstReleaseVersion() {
+    return firstReleaseVersion;
+  }
+
+  public void setFirstReleaseVersion(String firstReleaseVersion) {
+    this.firstReleaseVersion = firstReleaseVersion;
+  }
+
+  @Column(name = "first_release_date")
+  public OffsetDateTime getFirstReleaseDate() {
+
+    return firstReleaseDate;
+  }
+
+  public void setFirstReleaseDate(OffsetDateTime firstReleaseDate) {
+    this.firstReleaseDate = firstReleaseDate;
+  }
+
+  @Basic
+  @Column(name = "rating")
+  public double getRating() {
+    return rating;
+  }
+
+  public void setRating(double rating) {
+    this.rating = rating;
+  }
+
+  @Basic
+  @Column(name = "rating_votes")
+  public int getRatingVotes() {
+    return ratingVotes;
+  }
+
+  public void setRatingVotes(int ratingVotes) {
+    this.ratingVotes = ratingVotes;
   }
 
   @JsonIgnore
