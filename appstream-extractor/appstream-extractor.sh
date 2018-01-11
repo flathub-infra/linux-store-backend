@@ -32,7 +32,7 @@ function create-required-folders {
 
 function update-appstream {
 	echo "Updating appstream info for remote: $FLATPAK_REMOTE_NAME"
-	/usr/bin/timeout 300s /usr/bin/flatpak update $FLATPAK_REMOTE_NAME --appstream
+	/usr/bin/timeout 300s /usr/bin/flatpak update --appstream
 }
 
 function extract-appstream {
