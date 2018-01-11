@@ -7,17 +7,11 @@
 APPSTREAM_EXTRACTOR_HOME=/var/lib/appstream-extractor
 
 APPSTREAM_EXTRACTOR_INFO=$APPSTREAM_EXTRACTOR_HOME/appstream-extractor.info
-APPSTREAM_EXTRACTOR_LOG_FOLDER=$APPSTREAM_EXTRACTOR_HOME/log
-APPSTREAM_EXTRACTOR_LOG=$APPSTREAM_EXTRACTOR_LOG_FOLDER/appstream-extractor.log
 APPSTREAM_EXTRACTOR_DEST_FOLDER=$APPSTREAM_EXTRACTOR_HOME/export-data
 
 FLATPAK_OSTREE_REPO_PATH=/var/lib/flatpak/repo/
 FLATPAK_REMOTE_NAME=flathub
 FLATPAK_REF_APPSTREAM_X86_64=flathub/appstream/x86_64 
-
-function log {
-	echo `date +"%Y-%m-%d_%H:%M:%S"`: $1 >> $APPSTREAM_EXTRACTOR_LOG
-}
 
 function check-required-programs {
 	command -v flatpak >/dev/null 2>&1 || { echo >&2 "I require flatpak but it's not installed.  Aborting."; exit 1; }
@@ -33,16 +27,12 @@ function create-required-folders {
 		exit
 	fi;
 
-	mkdir -p $APPSTREAM_EXTRACTOR_LOG_FOLDER;
-	if [ $? -ne 0 ]; then
-		exit
-	fi;
 }
 
 
 function update-appstream {
-	log "Updating appstream info for remote: $FLATPAK_REMOTE_NAME"
-	/usr/bin/timeout 300s /usr/bin/flatpak update $FLATPAK_REMOTE_NAME --appstream   >> $APPSTREAM_EXTRACTOR_LOG
+	echo "Updating appstream info for remote: $FLATPAK_REMOTE_NAME"
+	/usr/bin/timeout 300s /usr/bin/flatpak update $FLATPAK_REMOTE_NAME --appstream
 }
 
 function extract-appstream {
@@ -61,14 +51,14 @@ function extract-appstream {
 	echo "FILE=$APPSTREAM_EXTRACT_FILE"                     >> $APPSTREAM_EXTRACTOR_INFO
 	echo "EXPORT_DATA=$APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER" >> $APPSTREAM_EXTRACTOR_INFO
 
-	log "Extracting appstream info $APPSTREAM_EXTRACT_FILE"
+	echo "Extracting appstream info $APPSTREAM_EXTRACT_FILE"
 	/usr/bin/ostree --repo=$FLATPAK_OSTREE_REPO_PATH  export $FLATPAK_REF_APPSTREAM_X86_64 | /bin/gzip > $APPSTREAM_EXTRACT_FILE
 
-	#log "Uncopressing $APPSTREAM_EXTRACT_FILE"
+	#echo "Uncopressing $APPSTREAM_EXTRACT_FILE"
 	mkdir $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER
 	/bin/tar -xf $APPSTREAM_EXTRACT_FILE -C $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER
 	
-	#log "Uncopressing $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER/appstream.xml.gz"
+	#echo "Uncopressing $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER/appstream.xml.gz"
 	/bin/gunzip --force $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER/appstream.xml.gz
 }
 
