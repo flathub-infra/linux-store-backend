@@ -3,8 +3,6 @@ version: '2'
 services:
   frontend:
     image: jgarciao/linux-store-frontend
-    volumes:
-      - /var/www/main-store/:/var/www/main-store/
     depends_on:
       - backend1
       - backend2
@@ -14,12 +12,10 @@ services:
     image: jgarciao/linux-store-backend
     volumes:
       - /opt/linux-store/:/opt/linux-store/
-      - /var/www/main-store/:/var/www/main-store/
-      - /var/lib/appstream-extractor:/var/lib/appstream-extractor
-      
+      - /var/lib/appstream-extractor:/var/lib/appstream-extractor  
     environment:
       - SPRING_PROFILES_ACTIVE=PRO,SCHED
-      - JAVA_OPTS=-Dspring.config.location=/opt/linux-store/linux-store-backend-passwords.yml
+      - JAVA_OPTS=-Duser.timezone=GMT -Dspring.config.location=/opt/linux-store/linux-store-backend-passwords.yml
     ports:
       - "8080"
     depends_on:
@@ -28,11 +24,10 @@ services:
     image: jgarciao/linux-store-backend
     volumes:
       - /opt/linux-store/:/opt/linux-store/
-      - /var/www/main-store/:/var/www/main-store/
       - /var/lib/appstream-extractor:/var/lib/appstream-extractor
     environment:
       - SPRING_PROFILES_ACTIVE=PRO
-      - JAVA_OPTS=-Dspring.config.location=/opt/linux-store/linux-store-backend-passwords.yml
+      - JAVA_OPTS=-Duser.timezone=GMT -Dspring.config.location=/opt/linux-store/linux-store-backend-passwords.yml
     ports:
       - "8080" 
     depends_on:

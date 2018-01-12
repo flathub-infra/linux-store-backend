@@ -1,15 +1,12 @@
 
 spring:
     datasource:
-        url: jdbc:hsqldb:mem:flathub
-        username: sa
-        driver-class-name: org.hsqldb.jdbcDriver
-        #data: classpath*:data.sql
+        url: jdbc:postgresql://postgresdb:5432/linuxstore
+        username: linuxstore
+        # Passwords are stored in a external configuration file
+        # More information at README.md
+        driver-class-name: org.postgresql.Driver
     jpa:
-        database: HSQL
-        # Create BD tables automatically
-        hibernate:
-            ddl-auto: create
         show-sql: true            
 #    mail:
 #        host: smtp.gmail.com
@@ -22,7 +19,7 @@ spring:
 
 hibernate:
     showSql: true
-    dialect: org.hibernate.dialect.org.hibernate.dialect.HSQLDialect
+    dialect: org.hibernate.dialect.PostgreSQL94Dialect
 
 flathub:
     appstream-extractor-info: /var/lib/appstream-extractor/appstream-extractor.info

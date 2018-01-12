@@ -18,17 +18,8 @@ import java.util.Set;
 @Entity
 public class App {
 
-  //FIXME: read value from application-XXX.yml file
-  //@Value("${flathub.icons.url}")
-  @SuppressWarnings("FieldCanBeLocal")
-  //private final String flathubIconsUrl = "http://localhost/main-store/icons";
-  private final String flathubIconsUrl = "/main-store/icons";
-
-  //FIXME: read value from application-XXX.yml file
-  //@Value("${flathub.flatpakref.url}")
-  @SuppressWarnings("FieldCanBeLocal")
-  //private final String flathubFlatpakRefUrl = "http://localhost/main-store/apps";
-  private final String flathubFlatpakRefUrl = "/main-store/apps";
+  private final String flathubIconsUrl = "https://dl.flathub.org/repo/appstream/x86_64/icons/64x64";
+  private final String flathubFlatpakRefUrl = "https://dl.flathub.org/repo/appstream";
 
   private int appId;
   private String flatpakAppId;

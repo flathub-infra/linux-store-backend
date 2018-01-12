@@ -56,10 +56,10 @@ public class UpdateServiceImpl implements UpdateService {
   private ApiService apiService;
   @Value("${flathub.appstream-extractor-info}")
   private String flathubAppStreamExtractorInfoFile;
-  @Value("${flathub.flatpakref.server-path}")
-  private String flathubFlatpakRefServerPath;
-  @Value("${flathub.icons.server-path}")
-  private String flathubIconsServerPath;
+//  @Value("${flathub.flatpakref.server-path}")
+//  private String flathubFlatpakRefServerPath;
+//  @Value("${flathub.icons.server-path}")
+//  private String flathubIconsServerPath;
 
   @Override
   public void updateFlathubInfo() {
@@ -194,44 +194,44 @@ public class UpdateServiceImpl implements UpdateService {
             //app.setRating(4.3);
             //app.setRatingVotes(50);
 
-            Icon icon = component.findIconByHeight(ICON_HEIGHT_HIDPI);
-            if (icon == null) {
-              icon = component.findIconByHeight(ICON_HEIGHT_DEFAULT);
-            }
-            if (icon != null) {
-
-              String iconPath;
-
-              if (icon.getValue().contains(icon.getHeight() + "x" + icon.getWidth())) {
-                iconPath = appstreamInfo.getExportDataPath() + File.separator + "icons" +
-                  File.separator + icon.getValue();
-              } else {
-                iconPath = appstreamInfo.getExportDataPath() + File.separator + "icons" +
-                  File.separator + icon.getHeight() + "x" + icon.getWidth() +
-                  File.separator + icon.getValue();
-              }
-
-              File iconFile = new File(iconPath);
-
-              try {
-
-                if (iconFile.isFile()) {
-
-                  File destIconPath = new File(
-                    flathubIconsServerPath + File.separator + app.getFlatpakAppId() + ".png");
-
-                  if (!destIconPath.exists()) {
-                    java.nio.file.Files.copy(iconFile.toPath(), destIconPath.toPath());
-                  }
-                } else {
-                  LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
-                }
-              } catch (IOException e) {
-                LOGGER.error("Error copying icon", e);
-              }
-            } else {
-              LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
-            }
+//            Icon icon = component.findIconByHeight(ICON_HEIGHT_HIDPI);
+//            if (icon == null) {
+//              icon = component.findIconByHeight(ICON_HEIGHT_DEFAULT);
+//            }
+//            if (icon != null) {
+//
+//              String iconPath;
+//
+//              if (icon.getValue().contains(icon.getHeight() + "x" + icon.getWidth())) {
+//                iconPath = appstreamInfo.getExportDataPath() + File.separator + "icons" +
+//                  File.separator + icon.getValue();
+//              } else {
+//                iconPath = appstreamInfo.getExportDataPath() + File.separator + "icons" +
+//                  File.separator + icon.getHeight() + "x" + icon.getWidth() +
+//                  File.separator + icon.getValue();
+//              }
+//
+//              File iconFile = new File(iconPath);
+//
+//              try {
+//
+//                if (iconFile.isFile()) {
+//
+//                  File destIconPath = new File(
+//                    flathubIconsServerPath + File.separator + app.getFlatpakAppId() + ".png");
+//
+//                  if (!destIconPath.exists()) {
+//                    java.nio.file.Files.copy(iconFile.toPath(), destIconPath.toPath());
+//                  }
+//                } else {
+//                  LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
+//                }
+//              } catch (IOException e) {
+//                LOGGER.error("Error copying icon", e);
+//              }
+//            } else {
+//              LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
+//            }
 
             //TODO:
             //Keywords (translatable)
@@ -299,17 +299,17 @@ public class UpdateServiceImpl implements UpdateService {
               apiService.updateApp(app);
             }
 
-            File destFlatpakRefFile = new File(flathubFlatpakRefServerPath + File.separator +
-              app.getFlatpakAppId() + ".flatpakref");
-
-            if (!destFlatpakRefFile.exists()) {
-              try {
-                FlatpakRefFileCreator.createFlatpakRefFile(
-                  destFlatpakRefFile.getPath(), app);
-              } catch (IOException e) {
-                e.printStackTrace();
-              }
-            }
+//            File destFlatpakRefFile = new File(flathubFlatpakRefServerPath + File.separator +
+//              app.getFlatpakAppId() + ".flatpakref");
+//
+//            if (!destFlatpakRefFile.exists()) {
+//              try {
+//                FlatpakRefFileCreator.createFlatpakRefFile(
+//                  destFlatpakRefFile.getPath(), app);
+//              } catch (IOException e) {
+//                e.printStackTrace();
+//              }
+//            }
 
           }
 

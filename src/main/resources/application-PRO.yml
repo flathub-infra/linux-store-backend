@@ -1,7 +1,7 @@
 
 spring:
     datasource:
-        url: jdbc:postgresql://postgresdb:5432/linuxstore
+        url: jdbc:postgresql://localhost:5432/linuxstore
         username: linuxstore
         # Passwords are stored in a external configuration file
         # More information at README.md
@@ -23,9 +23,9 @@ hibernate:
 
 flathub:
     appstream-extractor-info: /var/lib/appstream-extractor/appstream-extractor.info
-    flatpakref:
-        server-path: /var/www/main-store/apps/
-        url:  http://localhost:80/main-store/apps/
-    icons:
-        server-path:  /var/www/main-store/icons/
-        url:  http://localhost:80/main-store/icons/
+#    flatpakref:
+#        server-path: /var/www/main-store/apps/
+#        url:  http://localhost:80/main-store/apps/
+#    icons:
+#        server-path:  /var/www/main-store/icons/
+#        url:  http://localhost:80/main-store/icons/
