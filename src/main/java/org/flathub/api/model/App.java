@@ -18,8 +18,8 @@ import java.util.Set;
 @Entity
 public class App {
 
-  private final String flathubIconsUrl = "https://dl.flathub.org/repo/appstream/x86_64/icons/64x64";
-  private final String flathubFlatpakRefUrl = "https://dl.flathub.org/repo/appstream";
+  private final String flathubIconsUrl = "/repo/appstream/x86_64/icons/128x128";
+  private final String flathubFlatpakRefUrl = "/repo/appstream";
 
   private int appId;
   private String flatpakAppId;
