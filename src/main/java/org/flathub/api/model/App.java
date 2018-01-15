@@ -18,7 +18,8 @@ import java.util.Set;
 @Entity
 public class App {
 
-  private final String flathubIconsUrl = "/repo/appstream/x86_64/icons/128x128";
+  private final String flathubIconsDesktopUrl = "/repo/appstream/x86_64/icons/128x128";
+  private final String flathubIconsMobileUrl = "/repo/appstream/x86_64/icons/64x64";
   private final String flathubFlatpakRefUrl = "/repo/appstream";
 
   private int appId;
@@ -201,8 +202,14 @@ public class App {
 
   @JsonInclude()
   @Transient
-  public String getIconUrl() {
-    return flathubIconsUrl + "/" + this.getFlatpakAppId() + ".png";
+  public String getIconDesktopUrl() {
+    return flathubIconsDesktopUrl + "/" + this.getFlatpakAppId() + ".png";
+  }
+
+  @JsonInclude()
+  @Transient
+  public String getIconMobileUrl() {
+    return flathubIconsMobileUrl + "/" + this.getFlatpakAppId() + ".png";
   }
 
   @JsonInclude()

@@ -20,7 +20,8 @@ public class AppFullDto {
   private String projectLicense;
   private String homepageUrl;
   private String bugtrackerUrl;
-  private String iconUrl;
+  private String iconDesktopUrl;
+  private String iconMobileUrl;
   private String downloadFlatpakRefUrl;
   private String currentReleaseVersion;
   private OffsetDateTime currentReleaseDate;
@@ -89,12 +90,20 @@ public class AppFullDto {
     this.bugtrackerUrl = bugtrackerUrl;
   }
 
-  public String getIconUrl() {
-    return iconUrl;
+  public String getIconDesktopUrl() {
+    return iconDesktopUrl;
   }
 
-  public void setIconUrl(String iconUrl) {
-    this.iconUrl = iconUrl;
+  public void setIconDesktopUrl(String iconDesktopUrl) {
+    this.iconDesktopUrl = iconDesktopUrl;
+  }
+
+  public String getIconMobileUrl() {
+    return iconMobileUrl;
+  }
+
+  public void setIconMobileUrl(String iconMobileUrl) {
+    this.iconMobileUrl = iconMobileUrl;
   }
 
   public String getDownloadFlatpakRefUrl() {

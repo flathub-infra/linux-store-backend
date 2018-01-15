@@ -8,7 +8,8 @@ public class AppDto {
   private String flatpakAppId;
   private String name;
   private String summary;
-  private String iconUrl;
+  private String iconDesktopUrl;
+  private String iconMobileUrl;
   private double rating;
   private int ratingVotes;
 
@@ -36,12 +37,20 @@ public class AppDto {
     this.summary = summary;
   }
 
-  public String getIconUrl() {
-    return iconUrl;
+  public String getIconDesktopUrl() {
+    return iconDesktopUrl;
   }
 
-  public void setIconUrl(String iconUrl) {
-    this.iconUrl = iconUrl;
+  public void setIconDesktopUrl(String iconDesktopUrl) {
+    this.iconDesktopUrl = iconDesktopUrl;
+  }
+
+  public String getIconMobileUrl() {
+    return iconMobileUrl;
+  }
+
+  public void setIconMobileUrl(String iconMobileUrl) {
+    this.iconMobileUrl = iconMobileUrl;
   }
 
   public double getRating() {
