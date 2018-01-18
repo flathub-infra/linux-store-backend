@@ -31,6 +31,7 @@ public class FlatpakRepo {
   private String downloadFlatpakRepoUrl;
   private String defaultBranch;
   private String gpgkey;
+  private String currentOstreeCommit;
   private List<App> apps;
 
   public FlatpakRepo() {
@@ -123,6 +124,15 @@ public class FlatpakRepo {
   }
 
 
+  @Basic
+  @Column(name = "current_ostree_commit", length = 128)
+  public String getCurrentOstreeCommit() {
+    return currentOstreeCommit;
+  }
+
+  public void setCurrentOstreeCommit(String currentOstreeCommit) {
+    this.currentOstreeCommit = currentOstreeCommit;
+  }
 
   @OneToMany(mappedBy = "flatpakRepo",
     cascade = CascadeType.ALL,

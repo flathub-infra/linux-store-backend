@@ -14,10 +14,8 @@ import org.flathub.api.model.App;
 import org.flathub.api.model.Category;
 import org.flathub.api.model.FlatpakRepo;
 import org.flathub.api.model.Screenshot;
-import org.flathub.api.util.FlatpakRefFileCreator;
 import org.freedesktop.appstream.AppdataComponent;
 import org.freedesktop.appstream.AppdataParser;
-import org.freedesktop.appstream.appdata.Icon;
 import org.rauschig.jarchivelib.ArchiveFormat;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
@@ -49,17 +47,30 @@ public class UpdateServiceImpl implements UpdateService {
   private static final String SCREENSHOT_RESOLUTION_MOBILE = "624x351";
   private static final String SCREENSHOT_RESOLUTION_DESKTOP = "752x423";
 
-  private static final String MSG_DESCRIPTION_NOT_AVAILABLE="No description available";
-  
+  private static final String MSG_DESCRIPTION_NOT_AVAILABLE = "No description available";
+
   @SuppressWarnings("unused")
   @Autowired
   private ApiService apiService;
+
   @Value("${flathub.appstream-extractor-info}")
   private String flathubAppStreamExtractorInfoFile;
-//  @Value("${flathub.flatpakref.server-path}")
-//  private String flathubFlatpakRefServerPath;
-//  @Value("${flathub.icons.server-path}")
-//  private String flathubIconsServerPath;
+
+  @Value("${flathub.update-service.icons.import-icons}")
+  private boolean copyAppstreamIconsToServer;
+
+  @Value("${flathub.update-service.icons.desktop-import-path}")
+  private String iconDesktopPath;
+
+  @Value("${flathub.update-service.icons.mobile-import-path}")
+  private String iconMobilePath;
+
+  @Value("${flathub.update-service.flatpakref.generate-flatpakref}")
+  private boolean generateFlatpakref;
+
+  @Value("${flathub.update-service.flatpakref.dest-path}")
+  private String flatpakrefDestPath;
+
 
   @Override
   public void updateFlathubInfo() {
@@ -67,16 +78,25 @@ public class UpdateServiceImpl implements UpdateService {
     AppstreamUpdateInfo updateInfo;
 
     try {
+
       updateInfo = getAppStreamUpdateInfo();
 
-      if (updateInfo.isUpdatesAvailable()) {
-        updateRepoInfo(updateInfo);
+      LOGGER.info("Searching updates for " + updateInfo.getRepoName() + " from appstream...");
+
+      FlatpakRepo repo = apiService.findRepoByName(updateInfo.getRepoName());
+      if (repo == null) {
+        addFlathubRepo();
+        repo = apiService.findRepoByName(updateInfo.getRepoName());
+      }
+
+      if (updateInfo.isUpdatesAvailable() && !updateInfo.getCommit().equalsIgnoreCase(repo.getCurrentOstreeCommit())) {
+        updateRepoInfo(repo, updateInfo);
       } else {
-        LOGGER.info("No updates available");
+        LOGGER.info(repo.getName() + " is already up to date");
       }
 
     } catch (IOException e) {
-      e.printStackTrace();
+      LOGGER.error("Error updating appstream info for repo", e);
     }
 
   }
@@ -124,77 +144,185 @@ public class UpdateServiceImpl implements UpdateService {
   }
 
 
-  private void updateRepoInfo(AppstreamUpdateInfo appstreamInfo) {
+  private void updateRepoInfo(FlatpakRepo repo, AppstreamUpdateInfo appstreamInfo) {
 
-    Objects.requireNonNull(appstreamInfo);
-    Objects.requireNonNull(appstreamInfo.getRepoName());
-    Objects.requireNonNull(appstreamInfo.getExportDataPath());
-
-    FlatpakRepo repo;
-
-    LOGGER.info("Updating repo info for " + appstreamInfo.getRepoName());
-
-    repo = apiService.findRepoByName(appstreamInfo.getRepoName());
-    if (repo == null) {
-      addFlathubRepo();
-      repo = apiService.findRepoByName(appstreamInfo.getRepoName());
-    }
-
-    Objects.requireNonNull(repo);
     boolean isNewApp = false;
 
-    File exportDataFolder = new File(appstreamInfo.getExportDataPath());
-    if (exportDataFolder.exists() && exportDataFolder.isDirectory()) {
+    LOGGER.info("Updating repo info for " + repo.getName());
 
-      File appstreamFile = new File(
-        appstreamInfo.getExportDataPath() + File.separator + "appstream.xml");
+    try {
 
-      try {
-        App app;
-        List<AppdataComponent> componentList = AppdataParser.parseAppdataFile(appstreamFile);
+      List<AppdataComponent> componentList = appstreamInfo.getAppData();
 
-        for (AppdataComponent component : componentList) {
+      for (AppdataComponent component : componentList) {
 
-          //if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType()) && "com.play0ad.zeroad".equalsIgnoreCase(component.getFlatpakId())) {
-          //if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType()) && "io.atom.Atom".equalsIgnoreCase(component.getFlatpakId())) {
-          if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
+        //if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType()) && "com.play0ad.zeroad".equalsIgnoreCase(component.getFlatpakId())) {
+        //if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType()) && "io.atom.Atom".equalsIgnoreCase(component.getFlatpakId())) {
+        if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
 
-            app = apiService.findAppByFlatpakAppId(component.getFlatpakId());
-            if (app == null) {
-              isNewApp = true;
-              app = new App();
-              app.setFirstReleaseDate(OffsetDateTime.now());
+          App app = apiService.findAppByFlatpakAppId(component.getFlatpakId());
 
-              //TODO: setFirstReleaseVersion
-              //app.setFirstReleaseVersion("2.0.0");
-            }
+          if (app == null) {
+            app = new App();
+            isNewApp = true;
+          }
 
-            //System.out.println("--------------------------");
-            //System.out.println("Id:" + component.getId());
-            //System.out.println("FlatpakId:" + component.getFlatpakId());
+          app.setFlatpakAppId(component.getFlatpakId());
+          app.setName(component.findDefaultName());
+          app.setSummary(component.findDefaultSummary());
+          app.setProjectLicense(component.getProjectLicense());
+          app.setDescription(getDescription(component));
+          setReleaseInfo(app, component, isNewApp);
 
-            app.setFlatpakAppId(component.getFlatpakId());
-            app.setName(component.findDefaultName());
-            app.setSummary(component.findDefaultSummary());
+          importIcons(app, component, copyAppstreamIconsToServer);
 
-            if("".equalsIgnoreCase(component.findDefaultDescription())){
-              app.setDescription(MSG_DESCRIPTION_NOT_AVAILABLE);
-            }
-            else{
-              app.setDescription(component.findDefaultDescription());
-            }
+          //TODO:
+          //Keywords (translatable)
+          //kudos
+          //Languages (percentage)
+          //<bundle type="flatpak" runtime="org.gnome.Platform/x86_64/3.22" sdk="org.gnome.Sdk/x86_64/3.22">app/org.gnome.Weather/x86_64/stable</bundle>
 
-            app.setProjectLicense(component.getProjectLicense());
+          app.setFlatpakRepo(repo);
+          apiService.updateApp(app);
 
-            //TODO: setCurrentReleaseVersion and currentReleaseDate after detecting a new release
-            //app.setCurrentReleaseVersion("2.0.0");
-            //app.setCurrentReleaseDate(OffsetDateTime.now());
+          importScreenshots(app, component);
+          importCategories(app, component);
 
-            //TODO: set rating  & Rating count
-            //app.setRating(4.3);
-            //app.setRatingVotes(50);
+          if (generateFlatpakref) {
+            generateFlatpakrefFile(app);
+          }
+        }
+      }
 
-//            Icon icon = component.findIconByHeight(ICON_HEIGHT_HIDPI);
+      //Once imported delete the appdata folder
+      // exportDataFolder.delete();
+
+      repo.setCurrentOstreeCommit(appstreamInfo.getCommit());
+      apiService.updateFlatpakRepo(repo);
+
+    } catch (JAXBException e) {
+      LOGGER.error("Error while parsing appdata for repo " + repo.getName(), e);
+    }
+
+  }
+
+
+  private void generateFlatpakrefFile(App app) {
+
+    //            File destFlatpakRefFile = new File(flathubFlatpakRefServerPath + File.separator +
+//              app.getFlatpakAppId() + ".flatpakref");
+//
+//            if (!destFlatpakRefFile.exists()) {
+//              try {
+//                FlatpakRefFileCreator.createFlatpakRefFile(
+//                  destFlatpakRefFile.getPath(), app);
+//              } catch (IOException e) {
+//                e.printStackTrace();
+//              }
+//            }
+
+  }
+
+  private void setReleaseInfo(App app, AppdataComponent component, boolean isNewApp) {
+
+    if (isNewApp) {
+      app.setFirstReleaseDate(OffsetDateTime.now());
+      //TODO: setFirstReleaseVersion
+      //app.setFirstReleaseVersion("2.0.0");
+    }
+
+    //TODO: setCurrentReleaseVersion and currentReleaseDate after detecting a new release
+    //app.setCurrentReleaseVersion("2.0.0");
+    //app.setCurrentReleaseDate(OffsetDateTime.now());
+  }
+
+  private String getDescription(AppdataComponent component) {
+
+    if ("".equalsIgnoreCase(component.findDefaultDescription())) {
+      return MSG_DESCRIPTION_NOT_AVAILABLE;
+    } else {
+      return component.findDefaultDescription();
+    }
+
+  }
+
+  private void importRatings(App app, AppdataComponent component) {
+
+    //TODO: set rating  & Rating count
+    //app.setRating(4.3);
+    //app.setRatingVotes(50);
+
+  }
+
+  private void importScreenshots(App app, AppdataComponent component) {
+
+    LOGGER.info("Screenshots for " + app.getFlatpakAppId());
+    if (component.getScreenshots() != null
+      && component.getScreenshots().getScreenshot() != null
+      && component.getScreenshots().getScreenshot().size() > 0) {
+
+      //Remove existing screenshots
+      app.getScreenshots().clear();
+      apiService.deleteScrenshotsByApp(app);
+
+      for (org.freedesktop.appstream.appdata.Screenshot appStreamScreenshot : component
+        .getScreenshots().getScreenshot()) {
+
+        Screenshot screenshot = new Screenshot();
+
+                /*if(SCREENSHOT_WIDTH_THUMBNAIL.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
+                  screenshot.setThumbUrl(appStreamScreenshot.getImage().getValue());
+                }
+                if(SCREENSHOT_WIDTH_MOBILE.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
+                  screenshot.setImgMobileUrl(appStreamScreenshot.getImage().getValue());
+                }
+                if(SCREENSHOT_WIDTH_DESKTOP.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
+                  screenshot.setImgDesktopUrl(appStreamScreenshot.getImage().getValue());
+                }*/
+
+        String currentResolution =
+          appStreamScreenshot.getImage().getWidth() + "x" + appStreamScreenshot.getImage()
+            .getHeight();
+        screenshot.setThumbUrl(appStreamScreenshot.getImage().getValue()
+          .replace(currentResolution, SCREENSHOT_RESOLUTION_THUMBNAIL));
+        screenshot.setImgMobileUrl(appStreamScreenshot.getImage().getValue()
+          .replace(currentResolution, SCREENSHOT_RESOLUTION_MOBILE));
+        screenshot.setImgDesktopUrl(appStreamScreenshot.getImage().getValue()
+          .replace(currentResolution, SCREENSHOT_RESOLUTION_DESKTOP));
+        screenshot.setApp(app);
+        app.addScreenshot(screenshot);
+        apiService.updateScreenshot(screenshot);
+      }
+
+    }
+
+  }
+
+
+  private void importCategories(App app, AppdataComponent component) {
+
+    if (component.getCategories() != null
+      && component.getCategories().getCategory() != null) {
+      for (String categoryName : component.getCategories().getCategory()) {
+        if (!"".equalsIgnoreCase(categoryName)) {
+
+          Category category = apiService.findCategoryByName(categoryName);
+          if (category == null) {
+            category = new Category(categoryName);
+            apiService.updateCategory(category);
+          }
+          app.addCategory(category);
+        }
+      }
+      apiService.updateApp(app);
+    }
+
+  }
+
+  private void importIcons(App app, AppdataComponent component,
+    boolean copyAppstreamIconsToServer) {
+
+    //            Icon icon = component.findIconByHeight(ICON_HEIGHT_HIDPI);
 //            if (icon == null) {
 //              icon = component.findIconByHeight(ICON_HEIGHT_DEFAULT);
 //            }
@@ -232,99 +360,6 @@ public class UpdateServiceImpl implements UpdateService {
 //            } else {
 //              LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
 //            }
-
-            //TODO:
-            //Keywords (translatable)
-            //kudos
-            //Languages (percentage)
-            //<bundle type="flatpak" runtime="org.gnome.Platform/x86_64/3.22" sdk="org.gnome.Sdk/x86_64/3.22">app/org.gnome.Weather/x86_64/stable</bundle>
-
-            app.setFlatpakRepo(repo);
-            apiService.updateApp(app);
-
-
-            LOGGER.info("Screenshots for " + app.getFlatpakAppId());
-            if (component.getScreenshots() != null
-              && component.getScreenshots().getScreenshot() != null
-              && component.getScreenshots().getScreenshot().size() > 0) {
-
-              //Remove existing screenshots
-              app.getScreenshots().clear();
-              apiService.deleteScrenshotsByApp(app);
-
-              for (org.freedesktop.appstream.appdata.Screenshot appStreamScreenshot : component
-                .getScreenshots().getScreenshot()) {
-
-                Screenshot screenshot = new Screenshot();
-
-                /*if(SCREENSHOT_WIDTH_THUMBNAIL.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
-                  screenshot.setThumbUrl(appStreamScreenshot.getImage().getValue());
-                }
-                if(SCREENSHOT_WIDTH_MOBILE.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
-                  screenshot.setImgMobileUrl(appStreamScreenshot.getImage().getValue());
-                }
-                if(SCREENSHOT_WIDTH_DESKTOP.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
-                  screenshot.setImgDesktopUrl(appStreamScreenshot.getImage().getValue());
-                }*/
-
-                String currentResolution =
-                  appStreamScreenshot.getImage().getWidth() + "x" + appStreamScreenshot.getImage()
-                    .getHeight();
-                screenshot.setThumbUrl(appStreamScreenshot.getImage().getValue()
-                  .replace(currentResolution, SCREENSHOT_RESOLUTION_THUMBNAIL));
-                screenshot.setImgMobileUrl(appStreamScreenshot.getImage().getValue()
-                  .replace(currentResolution, SCREENSHOT_RESOLUTION_MOBILE));
-                screenshot.setImgDesktopUrl(appStreamScreenshot.getImage().getValue()
-                  .replace(currentResolution, SCREENSHOT_RESOLUTION_DESKTOP));
-                screenshot.setApp(app);
-                app.addScreenshot(screenshot);
-                apiService.updateScreenshot(screenshot);
-              }
-
-            }
-
-            if (component.getCategories() != null
-              && component.getCategories().getCategory() != null) {
-              for (String categoryName : component.getCategories().getCategory()) {
-                if (!"".equalsIgnoreCase(categoryName)) {
-
-                  Category category = apiService.findCategoryByName(categoryName);
-                  if (category == null) {
-                    category = new Category(categoryName);
-                    apiService.updateCategory(category);
-                  }
-                  app.addCategory(category);
-                }
-              }
-              apiService.updateApp(app);
-            }
-
-//            File destFlatpakRefFile = new File(flathubFlatpakRefServerPath + File.separator +
-//              app.getFlatpakAppId() + ".flatpakref");
-//
-//            if (!destFlatpakRefFile.exists()) {
-//              try {
-//                FlatpakRefFileCreator.createFlatpakRefFile(
-//                  destFlatpakRefFile.getPath(), app);
-//              } catch (IOException e) {
-//                e.printStackTrace();
-//              }
-//            }
-
-          }
-
-        }
-
-        //Once imported delete the appdata folder
-        //exportDataFolder.delete();
-
-      } catch (JAXBException e) {
-        e.printStackTrace();
-      }
-
-
-    }
-
 
   }
 
@@ -433,6 +468,7 @@ public class UpdateServiceImpl implements UpdateService {
       return repoName;
     }
 
+
     public void setRepoName(String repoName) {
       this.repoName = repoName;
     }
@@ -467,6 +503,23 @@ public class UpdateServiceImpl implements UpdateService {
 
     public void setCommitDate(LocalDateTime commitDate) {
       this.commitDate = commitDate;
+    }
+
+    public List<AppdataComponent> getAppData() throws JAXBException {
+
+      List<AppdataComponent> componentList = null;
+
+      File exportDataFolder = new File(this.getExportDataPath());
+      if (exportDataFolder.exists() && exportDataFolder.isDirectory()) {
+
+        File appstreamFile = new File(this.getExportDataPath() + File.separator + "appstream.xml");
+
+        componentList = AppdataParser.parseAppdataFile(appstreamFile);
+
+      }
+
+      return componentList;
+
     }
   }
 

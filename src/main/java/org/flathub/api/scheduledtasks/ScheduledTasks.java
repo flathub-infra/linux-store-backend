@@ -30,13 +30,8 @@ public class ScheduledTasks {
   @Scheduled(cron = "0 */10 * * * *")
   public void updateFlathubInfo() {
 
-    logger.info("Updating Flathub info");
-    try {
-      updateService.updateFlathubInfo();
-    }
-    catch (Exception e){
-      logger.error("An error occurred while updating flathub info",e);
-    }
+    updateService.updateFlathubInfo();
+
   }
 
 }
