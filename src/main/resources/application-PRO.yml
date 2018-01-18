@@ -7,6 +7,9 @@ spring:
         # More information at README.md
         driver-class-name: org.postgresql.Driver
     jpa:
+        ## This is important
+        # Hibernate ddl auto (create, create-drop, validate, update)
+        hibernate.ddl-auto: validate
         show-sql: true            
 #    mail:
 #        host: smtp.gmail.com
