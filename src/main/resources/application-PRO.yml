@@ -26,9 +26,12 @@ hibernate:
 
 flathub:
     appstream-extractor-info: /var/lib/appstream-extractor/appstream-extractor.info
-#    flatpakref:
-#        server-path: /var/www/main-store/apps/
-#        url:  http://localhost:80/main-store/apps/
-#    icons:
-#        server-path:  /var/www/main-store/icons/
-#        url:  http://localhost:80/main-store/icons/
+    update-service:
+      icons:
+        import-icons: false
+        dest-path: /opt/linux-store/www/repo/appstream/x86_64/icons/
+        desktop-import-path: /opt/linux-store/www/repo/appstream/x86_64/icons/128x128/
+        mobile-import-path: /opt/linux-store/www/repo/appstream/x86_64/icons/64x64/
+      flatpakref:
+        generate-flatpakref: false
+        dest-path: /opt/linux-store/www/repo/appstream/

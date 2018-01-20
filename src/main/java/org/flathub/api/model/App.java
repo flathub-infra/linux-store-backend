@@ -18,9 +18,8 @@ import java.util.Set;
 @Entity
 public class App {
 
-  private final String flathubIconsDesktopUrl = "/repo/appstream/x86_64/icons/128x128";
-  private final String flathubIconsMobileUrl = "/repo/appstream/x86_64/icons/64x64";
-  private final String flathubFlatpakRefUrl = "/repo/appstream";
+
+  private final String FLATPAKREF_BASE_PATH = "/repo/appstream";
 
   private int appId;
   private String flatpakAppId;
@@ -37,6 +36,8 @@ public class App {
   private FlatpakRepo flatpakRepo;
   private double rating;
   private int ratingVotes;
+  private String iconDesktopUrl;
+  private String iconMobileUrl;
   private Set<Category> categories = new HashSet<>();
   private List<Screenshot> screenshots = new ArrayList<>();
 
@@ -188,6 +189,26 @@ public class App {
     this.ratingVotes = ratingVotes;
   }
 
+  @Basic
+  @Column(name = "icon_desktop_url", length = 2048)
+  public String getIconDesktopUrl() {
+    return iconDesktopUrl;
+  }
+
+  public void setIconDesktopUrl(String iconDesktopUrl) {
+    this.iconDesktopUrl = iconDesktopUrl;
+  }
+
+  @Basic
+  @Column(name = "icon_mobile_url", length = 2048)
+  public String getIconMobileUrl() {
+    return iconMobileUrl;
+  }
+
+  public void setIconMobileUrl(String iconMobileUrl) {
+    this.iconMobileUrl = iconMobileUrl;
+  }
+
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "flatpak_repo_id", referencedColumnName = "flatpak_repo_id")
@@ -200,22 +221,22 @@ public class App {
     this.flatpakRepo = repo;
   }
 
-  @JsonInclude()
-  @Transient
-  public String getIconDesktopUrl() {
-    return flathubIconsDesktopUrl + "/" + this.getFlatpakAppId() + ".png";
-  }
-
-  @JsonInclude()
-  @Transient
-  public String getIconMobileUrl() {
-    return flathubIconsMobileUrl + "/" + this.getFlatpakAppId() + ".png";
-  }
+//  @JsonInclude()
+//  @Transient
+//  public String getIconDesktopUrl() {
+//    return flathubIconsDesktopUrl + "/" + this.getFlatpakAppId() + ".png";
+//  }
+//
+//  @JsonInclude()
+//  @Transient
+//  public String getIconMobileUrl() {
+//    return flathubIconsMobileUrl + "/" + this.getFlatpakAppId() + ".png";
+//  }
 
   @JsonInclude()
   @Transient
   public String getDownloadFlatpakRefUrl() {
-    return flathubFlatpakRefUrl + "/" + this.getFlatpakAppId() + ".flatpakref";
+    return FLATPAKREF_BASE_PATH + "/" + this.getFlatpakAppId() + ".flatpakref";
   }
 
   @ManyToMany(cascade = {
