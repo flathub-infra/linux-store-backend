@@ -28,8 +28,8 @@ services:
       - /opt/linux-store/:/opt/linux-store/
       - /var/lib/appstream-extractor:/var/lib/appstream-extractor
     environment:
-      - SPRING_PROFILES_ACTIVE=PRO
-      - JAVA_OPTS=-Duser.timezone=GMT -Dspring.config.location=/opt/linux-store/linux-store-backend-passwords.yml
+      - SPRING_PROFILES_ACTIVE=PRO      
+      - JAVA_OPTS=-Duser.timezone=GMT -Dspring.config.location=/opt/linux-store/PRO/linux-store-backend-passwords.yml  -Dflyway.enabled=false
     ports:
       - "8080" 
     depends_on:
