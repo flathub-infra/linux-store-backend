@@ -2,7 +2,9 @@ version: '2'
 
 services:
   frontend:
-    image: jgarciao/linux-store-frontend
+    image: jgarciao/linux-store-frontend    
+    volumes:
+      - /opt/linux-store/www/repo/:/usr/share/nginx/html/repo/
     depends_on:
       - backend1
       - backend2
