@@ -6,7 +6,7 @@
 
   <groupId>org.flathub</groupId>
   <artifactId>linux-store-backend</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
   <packaging>jar</packaging>
 
   <name>api</name>
