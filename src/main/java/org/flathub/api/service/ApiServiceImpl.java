@@ -35,7 +35,8 @@ public class ApiServiceImpl implements ApiService {
 
   @Override
   public List<App> findAllAppsByCategoryName(String categoryName) {
-    return appRepository.findByCategories_Name(categoryName);
+    Sort.Order order = new Sort.Order(Direction.ASC, "name").ignoreCase();
+    return appRepository.findByCategories_Name(categoryName, new Sort(order));
   }
 
   @Override
