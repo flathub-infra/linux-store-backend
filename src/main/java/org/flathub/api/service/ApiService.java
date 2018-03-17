@@ -21,6 +21,8 @@ public interface ApiService {
 
   List<App> findAllAppsByCategoryName(String categoryName);
 
+  List<App> findAllAppsByCollectionName(String collectionName);
+
   App findAppByFlatpakAppId(String flatpakAppId);
 
   FlatpakRepo findRepoByName(String name);
@@ -30,4 +32,6 @@ public interface ApiService {
   void updateScreenshot(Screenshot screenshot);
 
   void deleteScrenshotsByApp(App app);
+
+
 }

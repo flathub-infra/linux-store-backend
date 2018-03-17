@@ -40,6 +40,11 @@ public class ApiController {
     return mapper.appsToAppDtos(apiService.findAllAppsByCategoryName(categoryName));
   }
 
+  @RequestMapping(value = "/apps/collection/{collectionName}", method = RequestMethod.GET)
+  public List<AppDto> findAllByCollection(@PathVariable String collectionName) {
+    return mapper.appsToAppDtos(apiService.findAllAppsByCollectionName(collectionName));
+  }
+
 
   @RequestMapping(value = "/apps/{flatpakAppId:.+}", method = RequestMethod.GET)
   public AppFullDto findAppFlatpakAppId(@PathVariable String flatpakAppId) {

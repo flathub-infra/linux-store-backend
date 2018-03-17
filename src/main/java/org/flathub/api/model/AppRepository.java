@@ -1,5 +1,6 @@
 package org.flathub.api.model;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +17,9 @@ public interface AppRepository extends JpaRepository<App, Integer> {
 
   List<App> findByCategories_Name(String categoryName, Sort sort);
 
+  List<App> findTop25ByCurrentReleaseDateGreaterThanEqual(OffsetDateTime offsetDateTime, Sort sort);
+
   App findOneByFlatpakAppId(String flatpakAppId);
+
+
 }
