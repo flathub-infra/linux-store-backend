@@ -5,9 +5,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import javax.xml.bind.JAXBException;
 import org.flathub.api.model.App;
 import org.flathub.api.model.Category;
@@ -16,6 +19,7 @@ import org.flathub.api.model.Screenshot;
 import org.flathub.api.util.FlatpakRefFileCreator;
 import org.freedesktop.appstream.AppdataComponent;
 import org.freedesktop.appstream.AppdataParser;
+import org.freedesktop.appstream.ReleaseInfo;
 import org.freedesktop.appstream.appdata.Icon;
 import org.rauschig.jarchivelib.ArchiveFormat;
 import org.rauschig.jarchivelib.Archiver;
@@ -39,13 +43,18 @@ public class UpdateServiceImpl implements UpdateService {
   private static final Logger LOGGER = LoggerFactory.getLogger(UpdateServiceImpl.class);
   private static final String APPSTREAM_TYPE_DESKTOP = "desktop";
   private static final String ICON_BASE_RELATIVE_PATH = "/repo/appstream/x86_64/icons/";
-  private static final String ICON_HEIGHT_HIDPI = "128";
-  private static final String ICON_HEIGHT_DEFAULT = "64";
+  private static final short ICON_HEIGHT_HIDPI = 128;
+  private static final short ICON_HEIGHT_DEFAULT = 64;
   private static final String ICON_TYPE_CACHED = "cached";
   private static final String ICON_TYPE_REMOTE = "remote";
-  private static final String SCREENSHOT_WIDTH_THUMBNAIL = "224";
-  private static final String SCREENSHOT_WIDTH_MOBILE = "624";
-  private static final String SCREENSHOT_WIDTH_DESKTOP = "752";
+
+  private static final short SCREENSHOT_WIDTH_THUMBNAIL = 224;
+  private static final short SCREENSHOT_WIDTH_MOBILE = 624;
+  private static final short SCREENSHOT_WIDTH_DESKTOP = 752;
+
+  private static final short SCREENSHOT_HEIGHT_THUMBNAIL = 126;
+  private static final short SCREENSHOT_HEIGHT_MOBILE = 351;
+  private static final short SCREENSHOT_HEIGHT_DESKTOP = 423;
 
   private static final String SCREENSHOT_RESOLUTION_THUMBNAIL = "224x126";
   private static final String SCREENSHOT_RESOLUTION_MOBILE = "624x351";
@@ -149,7 +158,7 @@ public class UpdateServiceImpl implements UpdateService {
 
   private void updateRepoInfo(FlatpakRepo repo, AppstreamUpdateInfo appstreamInfo) {
 
-    boolean isNewApp = false;
+    boolean isNewApp;
 
     LOGGER.info("Updating repo info for " + repo.getName());
 
@@ -166,6 +175,9 @@ public class UpdateServiceImpl implements UpdateService {
           if (app == null) {
             app = new App();
             isNewApp = true;
+          }
+          else{
+            isNewApp = false;
           }
 
           app.setFlatpakAppId(component.getFlatpakId());
@@ -229,15 +241,40 @@ public class UpdateServiceImpl implements UpdateService {
 
   private void setReleaseInfo(App app, AppdataComponent component, boolean isNewApp) {
 
+    Optional<ReleaseInfo> releaseInfo = component.findReleaseInfoByMostRecent();
+    OffsetDateTime releaseDate;
+    String releaseVersion = "";
+    String releaseDescription = "";
+
     if (isNewApp) {
-      app.setFirstReleaseDate(OffsetDateTime.now());
-      //TODO: setFirstReleaseVersion
-      //app.setFirstReleaseVersion("2.0.0");
+      app.setInStoreSinceDate(OffsetDateTime.now());
     }
 
-    //TODO: setCurrentReleaseVersion and currentReleaseDate after detecting a new release
-    //app.setCurrentReleaseVersion("2.0.0");
-    //app.setCurrentReleaseDate(OffsetDateTime.now());
+    if (releaseInfo.isPresent()) {
+
+      if (releaseInfo.get().getTimestamp() != 0) {
+        Instant instant = Instant.ofEpochSecond(releaseInfo.get().getTimestamp());
+        releaseDate = instant.atOffset(ZoneOffset.UTC);
+      } else {
+        releaseDate = OffsetDateTime.now();
+      }
+
+      if (releaseInfo.get().getVersion() != null) {
+        releaseVersion = releaseInfo.get().getVersion();
+      }
+
+      if(releaseInfo.get().getDescription() != null){
+        releaseDescription = releaseInfo.get().getDescription();
+      }
+
+      app.setCurrentReleaseDate(releaseDate);
+
+    }
+
+    app.setCurrentReleaseVersion(releaseVersion);
+    app.setCurrentReleaseDescription(releaseDescription);
+
+
   }
 
   private String getDescription(AppdataComponent component) {
@@ -264,38 +301,23 @@ public class UpdateServiceImpl implements UpdateService {
   private void importScreenshots(App app, AppdataComponent component) {
 
     LOGGER.info("Screenshots for " + app.getFlatpakAppId());
-    if (component.getScreenshots() != null
-      && component.getScreenshots().getScreenshot() != null
-      && component.getScreenshots().getScreenshot().size() > 0) {
 
-      //Remove existing screenshots
+    if (component.getScreenshots() != null
+      && component.getScreenshots().size() > 0) {
+
+      //Remove existing screenshots in the database
       app.getScreenshots().clear();
       apiService.deleteScrenshotsByApp(app);
 
-      for (org.freedesktop.appstream.appdata.Screenshot appStreamScreenshot : component
-        .getScreenshots().getScreenshot()) {
+
+      for (org.freedesktop.appstream.ScreenshotInfo appStreamScreenshotInfo : component.getScreenshots()) {
 
         Screenshot screenshot = new Screenshot();
 
-                /*if(SCREENSHOT_WIDTH_THUMBNAIL.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
-                  screenshot.setThumbUrl(appStreamScreenshot.getImage().getValue());
-                }
-                if(SCREENSHOT_WIDTH_MOBILE.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
-                  screenshot.setImgMobileUrl(appStreamScreenshot.getImage().getValue());
-                }
-                if(SCREENSHOT_WIDTH_DESKTOP.equalsIgnoreCase(appStreamScreenshot.getImage().getWidth())){
-                  screenshot.setImgDesktopUrl(appStreamScreenshot.getImage().getValue());
-                }*/
+        screenshot.setThumbUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_WIDTH_THUMBNAIL).orElse(""));
+        screenshot.setImgMobileUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_WIDTH_MOBILE).orElse(""));
+        screenshot.setImgDesktopUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_WIDTH_DESKTOP).orElse(""));
 
-        String currentResolution =
-          appStreamScreenshot.getImage().getWidth() + "x" + appStreamScreenshot.getImage()
-            .getHeight();
-        screenshot.setThumbUrl(appStreamScreenshot.getImage().getValue()
-          .replace(currentResolution, SCREENSHOT_RESOLUTION_THUMBNAIL));
-        screenshot.setImgMobileUrl(appStreamScreenshot.getImage().getValue()
-          .replace(currentResolution, SCREENSHOT_RESOLUTION_MOBILE));
-        screenshot.setImgDesktopUrl(appStreamScreenshot.getImage().getValue()
-          .replace(currentResolution, SCREENSHOT_RESOLUTION_DESKTOP));
         screenshot.setApp(app);
         app.addScreenshot(screenshot);
         apiService.updateScreenshot(screenshot);
@@ -304,6 +326,8 @@ public class UpdateServiceImpl implements UpdateService {
     }
 
   }
+
+
 
 
   private void importCategories(App app, AppdataComponent component) {
@@ -358,7 +382,7 @@ public class UpdateServiceImpl implements UpdateService {
 
 
   private void copyAppstreamIconToServer(App app, AppstreamUpdateInfo appstreamInfo,
-    AppdataComponent component, String height) {
+    AppdataComponent component, short height) {
 
     Icon icon = component.findIconByHeight(height);
 

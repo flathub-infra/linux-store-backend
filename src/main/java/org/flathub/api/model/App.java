@@ -31,8 +31,8 @@ public class App {
   private String bugtrackerUrl;
   private String currentReleaseVersion;
   private OffsetDateTime currentReleaseDate;
-  private String firstReleaseVersion;
-  private OffsetDateTime firstReleaseDate;
+  private String currentReleaseDescription;
+  private OffsetDateTime inStoreSinceDate;
   private FlatpakRepo flatpakRepo;
   private double rating;
   private int ratingVotes;
@@ -150,23 +150,23 @@ public class App {
   }
 
   @Basic
-  @Column(name = "first_release_version", length = 1024)
-  public String getFirstReleaseVersion() {
-    return firstReleaseVersion;
+  @Column(name = "current_release_description", length = 4096)
+  public String getCurrentReleaseDescription() {
+    return currentReleaseDescription;
   }
 
-  public void setFirstReleaseVersion(String firstReleaseVersion) {
-    this.firstReleaseVersion = firstReleaseVersion;
+  public void setCurrentReleaseDescription(String currentReleaseDescription) {
+    this.currentReleaseDescription = currentReleaseDescription;
   }
 
-  @Column(name = "first_release_date")
-  public OffsetDateTime getFirstReleaseDate() {
+  @Column(name = "in_store_since_date")
+  public OffsetDateTime getInStoreSinceDate() {
 
-    return firstReleaseDate;
+    return inStoreSinceDate;
   }
 
-  public void setFirstReleaseDate(OffsetDateTime firstReleaseDate) {
-    this.firstReleaseDate = firstReleaseDate;
+  public void setInStoreSinceDate(OffsetDateTime inStoreSinceDate) {
+    this.inStoreSinceDate = inStoreSinceDate;
   }
 
   @Basic

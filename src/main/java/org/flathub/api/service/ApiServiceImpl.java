@@ -1,11 +1,20 @@
 package org.flathub.api.service;
 
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
-
-import org.flathub.api.model.*;
+import org.flathub.api.model.App;
+import org.flathub.api.model.AppRepository;
+import org.flathub.api.model.Category;
+import org.flathub.api.model.CategoryRepository;
+import org.flathub.api.model.FlatpakRepo;
+import org.flathub.api.model.FlatpakRepoRepository;
+import org.flathub.api.model.Screenshot;
+import org.flathub.api.model.ScreenshotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,6 +22,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ApiServiceImpl implements ApiService {
+
+  private static final String COLLECTION_NAME_RECENTLY_UPDATED = "recently-updated";
 
   @Autowired
   private AppRepository appRepository;
@@ -37,6 +48,28 @@ public class ApiServiceImpl implements ApiService {
   public List<App> findAllAppsByCategoryName(String categoryName) {
     Sort.Order order = new Sort.Order(Direction.ASC, "name").ignoreCase();
     return appRepository.findByCategories_Name(categoryName, new Sort(order));
+  }
+
+  @Override
+  public List<App> findAllAppsByCollectionName(String collectionName) {
+
+    if (COLLECTION_NAME_RECENTLY_UPDATED.equalsIgnoreCase(collectionName)) {
+     return this.findRecentlyUpdatedApps();
+    } else {
+      return new ArrayList<>();
+    }
+  }
+
+  private List<App> findRecentlyUpdatedApps(){
+
+    Sort sort = new Sort(
+      new Order(Direction.DESC, "currentReleaseDate"),
+      new Order(Direction.ASC, "name").ignoreCase()
+    );
+
+    return appRepository
+      .findTop25ByCurrentReleaseDateGreaterThanEqual(OffsetDateTime.now().minusDays(30), sort);
+
   }
 
   @Override

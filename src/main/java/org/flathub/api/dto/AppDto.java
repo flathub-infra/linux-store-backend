@@ -1,5 +1,7 @@
 package org.flathub.api.dto;
 
+import java.time.OffsetDateTime;
+
 /**
  * Created by jorge on 18/12/17.
  */
@@ -10,6 +12,9 @@ public class AppDto {
   private String summary;
   private String iconDesktopUrl;
   private String iconMobileUrl;
+  private String currentReleaseVersion;
+  private OffsetDateTime currentReleaseDate;
+  private OffsetDateTime inStoreSinceDate;
   private double rating;
   private int ratingVotes;
 
@@ -67,5 +72,30 @@ public class AppDto {
 
   public void setRatingVotes(int ratingVotes) {
     this.ratingVotes = ratingVotes;
+  }
+
+
+  public String getCurrentReleaseVersion() {
+    return currentReleaseVersion;
+  }
+
+  public void setCurrentReleaseVersion(String currentReleaseVersion) {
+    this.currentReleaseVersion = currentReleaseVersion;
+  }
+
+  public OffsetDateTime getCurrentReleaseDate() {
+    return currentReleaseDate;
+  }
+
+  public void setCurrentReleaseDate(OffsetDateTime currentReleaseDate) {
+    this.currentReleaseDate = currentReleaseDate;
+  }
+
+  public OffsetDateTime getInStoreSinceDate() {
+    return inStoreSinceDate;
+  }
+
+  public void setInStoreSinceDate(OffsetDateTime inStoreSinceDate) {
+    this.inStoreSinceDate = inStoreSinceDate;
   }
 }

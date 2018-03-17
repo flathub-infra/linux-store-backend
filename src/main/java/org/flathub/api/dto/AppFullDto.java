@@ -25,8 +25,8 @@ public class AppFullDto {
   private String downloadFlatpakRefUrl;
   private String currentReleaseVersion;
   private OffsetDateTime currentReleaseDate;
-  private String firstReleaseVersion;
-  private OffsetDateTime firstReleaseDate;
+  private String currentReleaseDescription;
+  private OffsetDateTime inStoreSinceDate;
   private double rating;
   private int ratingVotes;
 
@@ -131,21 +131,21 @@ public class AppFullDto {
     this.currentReleaseDate = currentReleaseDate;
   }
 
-  public String getFirstReleaseVersion() {
-    return firstReleaseVersion;
+  public String getCurrentReleaseDescription() {
+    return currentReleaseDescription;
   }
 
-  public void setFirstReleaseVersion(String firstReleaseVersion) {
-    this.firstReleaseVersion = firstReleaseVersion;
+  public void setCurrentReleaseDescription(String currentReleaseDescription) {
+    this.currentReleaseDescription = currentReleaseDescription;
   }
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "GMT")
-  public OffsetDateTime getFirstReleaseDate() {
-    return firstReleaseDate;
+  public OffsetDateTime getInStoreSinceDate() {
+    return inStoreSinceDate;
   }
 
-  public void setFirstReleaseDate(OffsetDateTime firstReleaseDate) {
-    this.firstReleaseDate = firstReleaseDate;
+  public void setInStoreSinceDate(OffsetDateTime inStoreSinceDate) {
+    this.inStoreSinceDate = inStoreSinceDate;
   }
 
   public double getRating() {
