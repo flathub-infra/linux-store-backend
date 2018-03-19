@@ -5,6 +5,6 @@ package org.flathub.api.service;
  */
 public interface UpdateService {
 
-  void updateFlathubInfo();
+  void updateFlathubInfo(boolean forceUpdate);
 
 }

@@ -26,7 +26,7 @@ public class ScheduledTasks {
   public void contextRefreshedEvent() {
 
     try {
-      updateService.updateFlathubInfo();
+      updateService.updateFlathubInfo(true);
     }
     catch (Exception e){
       logger.error("Error updating repo info", e);
@@ -37,7 +37,7 @@ public class ScheduledTasks {
   public void updateFlathubInfo() {
 
     try {
-      updateService.updateFlathubInfo();
+      updateService.updateFlathubInfo(false);
     }
     catch (Exception e){
       logger.error("Error updating repo info", e);

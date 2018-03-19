@@ -48,10 +48,6 @@ public class UpdateServiceImpl implements UpdateService {
   private static final String ICON_TYPE_CACHED = "cached";
   private static final String ICON_TYPE_REMOTE = "remote";
 
-  private static final short SCREENSHOT_WIDTH_THUMBNAIL = 224;
-  private static final short SCREENSHOT_WIDTH_MOBILE = 624;
-  private static final short SCREENSHOT_WIDTH_DESKTOP = 752;
-
   private static final short SCREENSHOT_HEIGHT_THUMBNAIL = 126;
   private static final short SCREENSHOT_HEIGHT_MOBILE = 351;
   private static final short SCREENSHOT_HEIGHT_DESKTOP = 423;
@@ -84,7 +80,7 @@ public class UpdateServiceImpl implements UpdateService {
 
 
   @Override
-  public void updateFlathubInfo() {
+  public void updateFlathubInfo(boolean forceUpdate) {
 
     AppstreamUpdateInfo updateInfo;
 
@@ -100,8 +96,8 @@ public class UpdateServiceImpl implements UpdateService {
         repo = apiService.findRepoByName(updateInfo.getRepoName());
       }
 
-      if (updateInfo.isUpdatesAvailable() && !updateInfo.getCommit()
-        .equalsIgnoreCase(repo.getCurrentOstreeCommit())) {
+      if (forceUpdate || (updateInfo.isUpdatesAvailable() && !updateInfo.getCommit()
+        .equalsIgnoreCase(repo.getCurrentOstreeCommit()))) {
         updateRepoInfo(repo, updateInfo);
       } else {
         LOGGER.info(repo.getName() + " is already up to date");
@@ -314,9 +310,9 @@ public class UpdateServiceImpl implements UpdateService {
 
         Screenshot screenshot = new Screenshot();
 
-        screenshot.setThumbUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_WIDTH_THUMBNAIL).orElse(""));
-        screenshot.setImgMobileUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_WIDTH_MOBILE).orElse(""));
-        screenshot.setImgDesktopUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_WIDTH_DESKTOP).orElse(""));
+        screenshot.setThumbUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_THUMBNAIL).orElse(""));
+        screenshot.setImgMobileUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_MOBILE).orElse(""));
+        screenshot.setImgDesktopUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_DESKTOP).orElse(""));
 
         screenshot.setApp(app);
         app.addScreenshot(screenshot);
