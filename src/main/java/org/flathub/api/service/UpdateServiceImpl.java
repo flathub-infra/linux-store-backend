@@ -154,7 +154,7 @@ public class UpdateServiceImpl implements UpdateService {
 
   private void updateRepoInfo(FlatpakRepo repo, AppstreamUpdateInfo appstreamInfo) {
 
-    boolean isNewApp;
+
 
     LOGGER.info("Updating repo info for " + repo.getName());
 
@@ -164,40 +164,12 @@ public class UpdateServiceImpl implements UpdateService {
 
       for (AppdataComponent component : componentList) {
 
-        if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
-
-          App app = apiService.findAppByFlatpakAppId(component.getFlatpakId());
-
-          if (app == null) {
-            app = new App();
-            isNewApp = true;
-          }
-          else{
-            isNewApp = false;
-          }
-
-          app.setFlatpakAppId(component.getFlatpakId());
-          app.setName(component.findDefaultName());
-          app.setSummary(component.findDefaultSummary());
-          app.setProjectLicense(component.getProjectLicense());
-          app.setDescription(getDescription(component));
-          setReleaseInfo(app, component, isNewApp);
-          importIcons(app, appstreamInfo, component, copyAppstreamIconsToServer);
-
-          //TODO:
-          //Keywords (translatable)
-          //kudos
-          //Languages (percentage)
-          //<bundle type="flatpak" runtime="org.gnome.Platform/x86_64/3.22" sdk="org.gnome.Sdk/x86_64/3.22">app/org.gnome.Weather/x86_64/stable</bundle>
-
-          app.setFlatpakRepo(repo);
-          apiService.updateApp(app);
-
-          importScreenshots(app, component);
-          importCategories(app, component);
-
-          if (generateFlatpakref) {
-            generateFlatpakrefFile(app);
+        if(!this.componentContainsRequiredAppdataInfo(component)){
+          LOGGER.info("Component " + component.getFlatpakId() + " does not provide some required appdata info. Ignoring it");
+        }
+        else{
+          if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
+            updateAppInfo(repo, appstreamInfo, component);
           }
         }
       }
@@ -214,6 +186,76 @@ public class UpdateServiceImpl implements UpdateService {
 
   }
 
+  private void updateAppInfo(FlatpakRepo repo, AppstreamUpdateInfo appstreamInfo, AppdataComponent component) {
+
+    boolean appDataIsIncomplete = false;
+    boolean isNewApp;
+    App app = apiService.findAppByFlatpakAppId(component.getFlatpakId());
+
+    if (app == null) {
+      app = new App();
+      isNewApp = true;
+    }
+    else{
+      isNewApp = false;
+    }
+
+    app.setFlatpakAppId(component.getFlatpakId());
+    app.setName(component.findDefaultName());
+    app.setSummary(component.findDefaultSummary());
+    app.setProjectLicense(component.getProjectLicense());
+    app.setDescription(getDescription(component));
+    setReleaseInfo(app, component, isNewApp);
+    importIcons(app, appstreamInfo, component, copyAppstreamIconsToServer);
+
+    //TODO:
+    //Keywords (translatable)
+    //kudos
+    //Languages (percentage)
+    //<bundle type="flatpak" runtime="org.gnome.Platform/x86_64/3.22" sdk="org.gnome.Sdk/x86_64/3.22">app/org.gnome.Weather/x86_64/stable</bundle>
+
+    app.setFlatpakRepo(repo);
+    apiService.updateApp(app);
+
+    importScreenshots(app, component);
+    importCategories(app, component);
+
+    if (generateFlatpakref) {
+      generateFlatpakrefFile(app);
+    }
+
+  }
+
+  /**
+   * Check if the component contains the required appdata:
+   *  - For all components: FlatpakId, Name, Summary
+   *  - For apps require also: Description, Icon
+   * @param component
+   * @return true if the component has the required info for its type
+   */
+  private boolean componentContainsRequiredAppdataInfo(AppdataComponent component){
+
+    boolean appDataIsComplete = true;
+
+    appDataIsComplete = appDataIsComplete && component.getFlatpakId() != null && !"".equalsIgnoreCase(component.getFlatpakId());
+    appDataIsComplete = appDataIsComplete && component.findDefaultName() != null && !"".equalsIgnoreCase(component.findDefaultName());
+    appDataIsComplete = appDataIsComplete && component.findDefaultSummary() != null && !"".equalsIgnoreCase(component.findDefaultSummary());
+
+    if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
+
+      //appDataIsComplete = appDataIsComplete && component.findDefaultDescription() != null && !"".equalsIgnoreCase(component.findDefaultDescription());
+
+      String hiDpiIconUrl = component.findIconUrl(ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_HIDPI);
+      String defaultIconUrl = component.findIconUrl(ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_DEFAULT);
+      appDataIsComplete = appDataIsComplete && (!"".equalsIgnoreCase(hiDpiIconUrl) || !"".equalsIgnoreCase(defaultIconUrl));
+    }
+
+    if(!appDataIsComplete){
+      LOGGER.info(component.getFlatpakId());
+    }
+
+    return appDataIsComplete;
+  }
 
   private void generateFlatpakrefFile(App app) {
 
