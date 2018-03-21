@@ -1,6 +1,5 @@
 package org.flathub.api.service;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.flathub.api.model.App;
@@ -14,7 +13,6 @@ import org.flathub.api.model.ScreenshotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 /**
@@ -61,15 +59,7 @@ public class ApiServiceImpl implements ApiService {
   }
 
   private List<App> findRecentlyUpdatedApps(){
-
-    Sort sort = new Sort(
-      new Order(Direction.DESC, "currentReleaseDate"),
-      new Order(Direction.ASC, "name").ignoreCase()
-    );
-
-    return appRepository
-      .findTop25ByCurrentReleaseDateGreaterThanEqual(OffsetDateTime.now().minusDays(30), sort);
-
+    return appRepository.findRecentlyAddedOrUpdated();
   }
 
   @Override
