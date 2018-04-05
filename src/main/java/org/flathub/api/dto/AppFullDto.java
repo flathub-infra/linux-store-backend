@@ -17,9 +17,13 @@ public class AppFullDto {
   private String name;
   private String summary;
   private String description;
+  private String developerName;
   private String projectLicense;
   private String homepageUrl;
   private String bugtrackerUrl;
+  private String helpUrl;
+  private String donationUrl;
+  private String translateUrl;
   private String iconDesktopUrl;
   private String iconMobileUrl;
   private String downloadFlatpakRefUrl;
@@ -180,4 +184,35 @@ public class AppFullDto {
     this.screenshots = screenshots;
   }
 
+  public String getDeveloperName() {
+    return developerName;
+  }
+
+  public void setDeveloperName(String developerName) {
+    this.developerName = developerName;
+  }
+
+  public String getHelpUrl() {
+    return helpUrl;
+  }
+
+  public void setHelpUrl(String helpUrl) {
+    this.helpUrl = helpUrl;
+  }
+
+  public String getDonationUrl() {
+    return donationUrl;
+  }
+
+  public void setDonationUrl(String donationUrl) {
+    this.donationUrl = donationUrl;
+  }
+
+  public String getTranslateUrl() {
+    return translateUrl;
+  }
+
+  public void setTranslateUrl(String translateUrl) {
+    this.translateUrl = translateUrl;
+  }
 }

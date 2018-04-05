@@ -26,9 +26,13 @@ public class App {
   private String name;
   private String summary;
   private String description;
+  private String developerName;
   private String projectLicense;
   private String homepageUrl;
   private String bugtrackerUrl;
+  private String helpUrl;
+  private String donationUrl;
+  private String translateUrl;
   private String currentReleaseVersion;
   private OffsetDateTime currentReleaseDate;
   private String currentReleaseDescription;
@@ -207,6 +211,46 @@ public class App {
 
   public void setIconMobileUrl(String iconMobileUrl) {
     this.iconMobileUrl = iconMobileUrl;
+  }
+
+  @Basic
+  @Column(name = "developer_name", length = 1024)
+  public String getDeveloperName() {
+    return developerName;
+  }
+
+  public void setDeveloperName(String developerName) {
+    this.developerName = developerName;
+  }
+
+  @Basic
+  @Column(name = "help_url", length = 2048)
+  public String getHelpUrl() {
+    return helpUrl;
+  }
+
+  public void setHelpUrl(String helpUrl) {
+    this.helpUrl = helpUrl;
+  }
+
+  @Basic
+  @Column(name = "donation_url", length = 2048)
+  public String getDonationUrl() {
+    return donationUrl;
+  }
+
+  public void setDonationUrl(String donationUrl) {
+    this.donationUrl = donationUrl;
+  }
+
+  @Basic
+  @Column(name = "translate_url", length = 2048)
+  public String getTranslateUrl() {
+    return translateUrl;
+  }
+
+  public void setTranslateUrl(String translateUrl) {
+    this.translateUrl = translateUrl;
   }
 
   @JsonIgnore

@@ -203,6 +203,26 @@ public class UpdateServiceImpl implements UpdateService {
     app.setFlatpakAppId(component.getFlatpakId());
     app.setName(component.findDefaultName());
     app.setSummary(component.findDefaultSummary());
+
+    app.setHomepageUrl(component.findHomepageUrl().orElse(""));
+    app.setDonationUrl(component.findDonationUrl().orElse(""));
+    app.setHelpUrl(component.findHelpUrl().orElse(""));
+    app.setBugtrackerUrl(component.findBugtrackerUrl().orElse(""));
+    app.setTranslateUrl(component.findTranslateUrl().orElse(""));
+
+    //FIXME: this is a temporally hack pending a real fix in appstream-appdata-java
+    if(component.getDeveloperName() != null){
+      if(component.getDeveloperName().contains("GNOME")){
+        app.setDeveloperName("The GNOME Project");
+      }
+      else if(component.getDeveloperName().contains("Pitivi")){
+        app.setDeveloperName("The Pitivi Team");
+      }
+      else{
+        app.setDeveloperName(component.getDeveloperName());
+      }
+    }
+
     app.setProjectLicense(component.getProjectLicense());
     app.setDescription(getDescription(component));
     setReleaseInfo(app, component, isNewApp);
