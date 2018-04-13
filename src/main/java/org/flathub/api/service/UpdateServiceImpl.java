@@ -222,17 +222,7 @@ public class UpdateServiceImpl implements UpdateService {
     app.setHelpUrl(component.findHelpUrl().orElse(""));
     app.setBugtrackerUrl(component.findBugtrackerUrl().orElse(""));
     app.setTranslateUrl(component.findTranslateUrl().orElse(""));
-
-    //FIXME: this is a temporally hack pending a real fix in appstream-appdata-java
-    if (component.getDeveloperName() != null) {
-      if (component.getDeveloperName().contains("GNOME")) {
-        app.setDeveloperName("The GNOME Project");
-      } else if (component.getDeveloperName().contains("Pitivi")) {
-        app.setDeveloperName("The Pitivi Team");
-      } else {
-        app.setDeveloperName(component.getDeveloperName());
-      }
-    }
+    app.setDeveloperName(component.findDefaultDeveloperName());
 
     app.setProjectLicense(component.getProjectLicense());
     app.setDescription(getDescription(component));
