@@ -154,39 +154,53 @@ public class UpdateServiceImpl implements UpdateService {
 
   private void updateRepoInfo(FlatpakRepo repo, AppstreamUpdateInfo appstreamInfo) {
 
-
+    List<AppdataComponent> componentList = null;
 
     LOGGER.info("Updating repo info for " + repo.getName());
 
     try {
 
-      List<AppdataComponent> componentList = appstreamInfo.getAppData();
-
-      for (AppdataComponent component : componentList) {
-
-        if(!this.componentContainsRequiredAppdataInfo(component)){
-          LOGGER.info("Component " + component.getFlatpakId() + " does not provide some required appdata info. Ignoring it");
-        }
-        else{
-          if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
-            updateAppInfo(repo, appstreamInfo, component);
-          }
-        }
-      }
-
-      //Once imported delete the appdata folder
-      // exportDataFolder.delete();
-
-      repo.setCurrentOstreeCommit(appstreamInfo.getCommit());
-      apiService.updateFlatpakRepo(repo);
+      componentList = appstreamInfo.getAppData();
 
     } catch (JAXBException e) {
       LOGGER.error("Error while parsing appdata for repo " + repo.getName(), e);
     }
 
+    if(componentList != null){
+
+      for (AppdataComponent component : componentList) {
+
+        try {
+
+          if (!this.validateAppdataInformation(component)) {
+
+            LOGGER.warn("Component " + component.getFlatpakId()
+              + " won't be added/updated in the store because it has incomplete or invalid appdata");
+
+          } else {
+
+            if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
+              updateAppInfo(repo, appstreamInfo, component);
+            }
+
+          }
+        } catch (Exception e) {
+          LOGGER.error("Error updating info for app " + component.getFlatpakId(), e);
+        }
+      }
+    }
+
+    //Once imported delete the appdata folder
+    // exportDataFolder.delete();
+
+    repo.setCurrentOstreeCommit(appstreamInfo.getCommit());
+    apiService.updateFlatpakRepo(repo);
+
+
   }
 
-  private void updateAppInfo(FlatpakRepo repo, AppstreamUpdateInfo appstreamInfo, AppdataComponent component) {
+  private void updateAppInfo(FlatpakRepo repo, AppstreamUpdateInfo appstreamInfo,
+    AppdataComponent component) {
 
     boolean appDataIsIncomplete = false;
     boolean isNewApp;
@@ -195,8 +209,7 @@ public class UpdateServiceImpl implements UpdateService {
     if (app == null) {
       app = new App();
       isNewApp = true;
-    }
-    else{
+    } else {
       isNewApp = false;
     }
 
@@ -211,14 +224,12 @@ public class UpdateServiceImpl implements UpdateService {
     app.setTranslateUrl(component.findTranslateUrl().orElse(""));
 
     //FIXME: this is a temporally hack pending a real fix in appstream-appdata-java
-    if(component.getDeveloperName() != null){
-      if(component.getDeveloperName().contains("GNOME")){
+    if (component.getDeveloperName() != null) {
+      if (component.getDeveloperName().contains("GNOME")) {
         app.setDeveloperName("The GNOME Project");
-      }
-      else if(component.getDeveloperName().contains("Pitivi")){
+      } else if (component.getDeveloperName().contains("Pitivi")) {
         app.setDeveloperName("The Pitivi Team");
-      }
-      else{
+      } else {
         app.setDeveloperName(component.getDeveloperName());
       }
     }
@@ -248,33 +259,45 @@ public class UpdateServiceImpl implements UpdateService {
 
   /**
    * Check if the component contains the required appdata:
-   *  - For all components: FlatpakId, Name, Summary
-   *  - For apps require also: Description, Icon
-   * @param component
-   * @return true if the component has the required info for its type
+   * - For all components: FlatpakId, Name, Summary
+   * - For apps require also: Description, Icon
+   *
+   * Check data size limits:
+   * - description.length < App.APP_DESCRIPTION_LENGTH
+   *
+   * @return true if the component has the required info for its type and respects the size limits
    */
-  private boolean componentContainsRequiredAppdataInfo(AppdataComponent component){
+  private boolean validateAppdataInformation(AppdataComponent component) {
 
-    boolean appDataIsComplete = true;
+    boolean appDataIsValid = true;
 
-    appDataIsComplete = appDataIsComplete && component.getFlatpakId() != null && !"".equalsIgnoreCase(component.getFlatpakId());
-    appDataIsComplete = appDataIsComplete && component.findDefaultName() != null && !"".equalsIgnoreCase(component.findDefaultName());
-    appDataIsComplete = appDataIsComplete && component.findDefaultSummary() != null && !"".equalsIgnoreCase(component.findDefaultSummary());
+    appDataIsValid = appDataIsValid && component.getFlatpakId() != null && !""
+      .equalsIgnoreCase(component.getFlatpakId());
+
+    appDataIsValid = appDataIsValid && component.findDefaultName() != null && !""
+      .equalsIgnoreCase(component.findDefaultName());
+
+    appDataIsValid = appDataIsValid && component.findDefaultSummary() != null && !""
+      .equalsIgnoreCase(component.findDefaultSummary());
 
     if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
 
-      //appDataIsComplete = appDataIsComplete && component.findDefaultDescription() != null && !"".equalsIgnoreCase(component.findDefaultDescription());
+      //appDataIsValid = appDataIsValid && component.findDefaultDescription() != null && !"".equalsIgnoreCase(component.findDefaultDescription());
+      if(component.findDefaultDescription() != null){
+        appDataIsValid = appDataIsValid && component.findDefaultDescription().length() < App.APP_DESCRIPTION_LENGTH;
+      }
 
       String hiDpiIconUrl = component.findIconUrl(ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_HIDPI);
       String defaultIconUrl = component.findIconUrl(ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_DEFAULT);
-      appDataIsComplete = appDataIsComplete && (!"".equalsIgnoreCase(hiDpiIconUrl) || !"".equalsIgnoreCase(defaultIconUrl));
+      appDataIsValid = appDataIsValid && (!"".equalsIgnoreCase(hiDpiIconUrl) || !""
+        .equalsIgnoreCase(defaultIconUrl));
     }
 
-    if(!appDataIsComplete){
+    if (!appDataIsValid) {
       LOGGER.info(component.getFlatpakId());
     }
 
-    return appDataIsComplete;
+    return appDataIsValid;
   }
 
   private void generateFlatpakrefFile(App app) {
@@ -321,7 +344,7 @@ public class UpdateServiceImpl implements UpdateService {
         releaseVersion = releaseInfo.get().getVersion();
       }
 
-      if(releaseInfo.get().getDescription() != null){
+      if (releaseInfo.get().getDescription() != null && releaseInfo.get().getDescription().length() < App.APP_RELEASE_DESCRIPTION_LENGTH) {
         releaseDescription = releaseInfo.get().getDescription();
       }
 
@@ -346,8 +369,6 @@ public class UpdateServiceImpl implements UpdateService {
   }
 
 
-
-
   private void importRatings(App app, AppdataComponent component) {
 
     //TODO: set rating  & Rating count
@@ -367,14 +388,17 @@ public class UpdateServiceImpl implements UpdateService {
       app.getScreenshots().clear();
       apiService.deleteScrenshotsByApp(app);
 
-
-      for (org.freedesktop.appstream.ScreenshotInfo appStreamScreenshotInfo : component.getScreenshots()) {
+      for (org.freedesktop.appstream.ScreenshotInfo appStreamScreenshotInfo : component
+        .getScreenshots()) {
 
         Screenshot screenshot = new Screenshot();
 
-        screenshot.setThumbUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_THUMBNAIL).orElse(""));
-        screenshot.setImgMobileUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_MOBILE).orElse(""));
-        screenshot.setImgDesktopUrl(appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_DESKTOP).orElse(""));
+        screenshot.setThumbUrl(
+          appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_THUMBNAIL).orElse(""));
+        screenshot.setImgMobileUrl(
+          appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_MOBILE).orElse(""));
+        screenshot.setImgDesktopUrl(
+          appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_DESKTOP).orElse(""));
 
         screenshot.setApp(app);
         app.addScreenshot(screenshot);
@@ -384,8 +408,6 @@ public class UpdateServiceImpl implements UpdateService {
     }
 
   }
-
-
 
 
   private void importCategories(App app, AppdataComponent component) {

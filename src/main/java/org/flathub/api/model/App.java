@@ -3,13 +3,26 @@ package org.flathub.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.time.OffsetDateTime;
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
 /**
  * Created by jorge on 04/05/17.
@@ -19,8 +32,9 @@ import java.util.Set;
 public class App {
 
 
+  public static final int APP_DESCRIPTION_LENGTH = 4096;
+  public static final int APP_RELEASE_DESCRIPTION_LENGTH = 4096;
   private final String FLATPAKREF_BASE_PATH = "/repo/appstream";
-
   private int appId;
   private String flatpakAppId;
   private String name;
@@ -44,8 +58,6 @@ public class App {
   private String iconMobileUrl;
   private Set<Category> categories = new HashSet<>();
   private List<Screenshot> screenshots = new ArrayList<>();
-
-
 
   @JsonIgnore
   @Id
@@ -95,7 +107,7 @@ public class App {
   }
 
   @Basic
-  @Column(name = "description", length = 4096)
+  @Column(name = "description", length = APP_DESCRIPTION_LENGTH)
   public String getDescription() {
     return description;
   }
@@ -154,7 +166,7 @@ public class App {
   }
 
   @Basic
-  @Column(name = "current_release_description", length = 4096)
+  @Column(name = "current_release_description", length = APP_RELEASE_DESCRIPTION_LENGTH)
   public String getCurrentReleaseDescription() {
     return currentReleaseDescription;
   }
@@ -301,7 +313,7 @@ public class App {
 
   public void addCategory(Category category) {
 
-    if(!this.categories.contains(category)) {
+    if (!this.categories.contains(category)) {
       categories.add(category);
     }
 
