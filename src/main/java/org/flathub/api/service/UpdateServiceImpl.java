@@ -9,7 +9,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.xml.bind.JAXBException;
 import org.flathub.api.model.App;
@@ -154,6 +157,9 @@ public class UpdateServiceImpl implements UpdateService {
 
   private void updateRepoInfo(FlatpakRepo repo, AppstreamUpdateInfo appstreamInfo) {
 
+    Map<String, AppdataComponent> incompleteComponentsMap = new HashMap<>();
+    AppdataComponent previousIncompleteComponentWithSameFlatpakId;
+
     List<AppdataComponent> componentList = null;
 
     LOGGER.info("Updating repo info for " + repo.getName());
@@ -172,22 +178,37 @@ public class UpdateServiceImpl implements UpdateService {
 
         try {
 
-          if (!this.validateAppdataInformation(component)) {
+          if(component.getFlatpakId() != null && APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())){
 
-            LOGGER.warn("Component " + component.getFlatpakId()
-              + " won't be added/updated in the store because it has incomplete or invalid appdata");
-
-          } else {
-
-            if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
-              updateAppInfo(repo, appstreamInfo, component);
+            previousIncompleteComponentWithSameFlatpakId = incompleteComponentsMap.get(component.getFlatpakId());
+            if(previousIncompleteComponentWithSameFlatpakId != null) {
+              component.merge(previousIncompleteComponentWithSameFlatpakId);
+              incompleteComponentsMap.remove(component.getFlatpakId());
             }
 
+            if (this.validateAppdataInformation(component)){
+              updateAppInfo(repo, appstreamInfo, component);
+            }
+            else{
+              incompleteComponentsMap.put(component.getFlatpakId(), component);
+              LOGGER.debug("Adding " + component.getFlatpakId()
+                + " to the incomplete components list because it has incomplete or invalid appdata");
+            }
           }
+
         } catch (Exception e) {
           LOGGER.error("Error updating info for app " + component.getFlatpakId(), e);
         }
       }
+
+
+      Iterator it = incompleteComponentsMap.entrySet().iterator();
+      while (it.hasNext()) {
+        Map.Entry pair = (Map.Entry)it.next();
+        LOGGER.warn(pair.getKey() + " has incomplete appdata and won't be added/updated in the webstore");
+        it.remove(); // avoids a ConcurrentModificationException
+      }
+
     }
 
     //Once imported delete the appdata folder
