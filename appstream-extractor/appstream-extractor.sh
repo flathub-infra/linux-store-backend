@@ -11,7 +11,7 @@ APPSTREAM_EXTRACTOR_DEST_FOLDER=$APPSTREAM_EXTRACTOR_HOME/export-data
 
 FLATPAK_OSTREE_REPO_PATH=/var/lib/flatpak/repo/
 FLATPAK_REMOTE_NAME=flathub
-FLATPAK_REF_APPSTREAM_X86_64=flathub/appstream/x86_64 
+FLATPAK_REF_APPSTREAM_X86_64=flathub/appstream2/x86_64 
 
 function check-required-programs {
 	command -v flatpak >/dev/null 2>&1 || { echo >&2 "I require flatpak but it's not installed.  Aborting."; exit 1; }
