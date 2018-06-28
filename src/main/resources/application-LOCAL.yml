@@ -1,0 +1,38 @@
+
+spring:
+    datasource:
+        url: jdbc:postgresql://postgresdb:5432/linuxstore
+        username: linuxstore
+        # Passwords are stored in a external configuration file
+        # More information at README.md
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        ## This is important
+        # Hibernate ddl auto (create, create-drop, validate, update)
+        hibernate.ddl-auto: validate
+        show-sql: true            
+#    mail:
+#        host: smtp.gmail.com
+#        port: 587
+#        username:
+#        password:
+#        smtp.auth: true
+#        smtp.starttls.enable: true
+        
+
+hibernate:
+    showSql: true
+    dialect: org.hibernate.dialect.PostgreSQL94Dialect
+
+flathub:
+    appstream-extractor-info: /var/lib/appstream-extractor/appstream-extractor.info
+    update-service:
+      icons:
+        import-icons: true
+        dest-path: /opt/linux-store/www/repo/appstream/x86_64/icons/
+        desktop-import-path: /opt/linux-store/www/repo/appstream/x86_64/icons/128x128/
+        mobile-import-path: /opt/linux-store/www/repo/appstream/x86_64/icons/64x64/
+      flatpakref:
+        generate-flatpakref: true
+        dest-path: /opt/linux-store/www/repo/appstream/
+
