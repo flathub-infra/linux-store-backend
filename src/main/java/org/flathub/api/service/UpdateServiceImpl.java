@@ -172,28 +172,32 @@ public class UpdateServiceImpl implements UpdateService {
       LOGGER.error("Error while parsing appdata for repo " + repo.getName(), e);
     }
 
-    if(componentList != null){
+    if (componentList != null) {
 
       for (AppdataComponent component : componentList) {
 
         try {
 
-          if(component.getFlatpakId() != null && APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())){
+          if (component.getFlatpakId() != null && APPSTREAM_TYPE_DESKTOP
+            .equalsIgnoreCase(component.getType())) {
 
-            previousIncompleteComponentWithSameFlatpakId = incompleteComponentsMap.get(component.getFlatpakId());
-            if(previousIncompleteComponentWithSameFlatpakId != null) {
-              component.merge(previousIncompleteComponentWithSameFlatpakId);
-              incompleteComponentsMap.remove(component.getFlatpakId());
-            }
 
-            if (this.validateAppdataInformation(component)){
-              updateAppInfo(repo, appstreamInfo, component);
-            }
-            else{
-              incompleteComponentsMap.put(component.getFlatpakId(), component);
-              LOGGER.debug("Adding " + component.getFlatpakId()
-                + " to the incomplete components list because it has incomplete or invalid appdata");
-            }
+
+              previousIncompleteComponentWithSameFlatpakId = incompleteComponentsMap
+                .get(component.getFlatpakId());
+              if (previousIncompleteComponentWithSameFlatpakId != null) {
+                component.merge(previousIncompleteComponentWithSameFlatpakId);
+                incompleteComponentsMap.remove(component.getFlatpakId());
+              }
+
+              if (this.validateAppdataInformation(component)) {
+                updateAppInfo(repo, appstreamInfo, component);
+              } else {
+                incompleteComponentsMap.put(component.getFlatpakId(), component);
+                LOGGER.debug("Adding " + component.getFlatpakId()
+                  + " to the incomplete components list because it has incomplete or invalid appdata");
+              }
+
           }
 
         } catch (Exception e) {
@@ -201,11 +205,11 @@ public class UpdateServiceImpl implements UpdateService {
         }
       }
 
-
       Iterator it = incompleteComponentsMap.entrySet().iterator();
       while (it.hasNext()) {
-        Map.Entry pair = (Map.Entry)it.next();
-        LOGGER.warn(pair.getKey() + " has incomplete appdata and won't be added/updated in the webstore");
+        Map.Entry pair = (Map.Entry) it.next();
+        LOGGER.warn(
+          pair.getKey() + " has incomplete appdata and won't be added/updated in the webstore");
         it.remove(); // avoids a ConcurrentModificationException
       }
 
@@ -294,8 +298,9 @@ public class UpdateServiceImpl implements UpdateService {
     if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
 
       //appDataIsValid = appDataIsValid && component.findDefaultDescription() != null && !"".equalsIgnoreCase(component.findDefaultDescription());
-      if(component.findDefaultDescription() != null){
-        appDataIsValid = appDataIsValid && component.findDefaultDescription().length() < App.APP_DESCRIPTION_LENGTH;
+      if (component.findDefaultDescription() != null) {
+        appDataIsValid = appDataIsValid
+          && component.findDefaultDescription().length() < App.APP_DESCRIPTION_LENGTH;
       }
 
       String hiDpiIconUrl = component.findIconUrl(ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_HIDPI);
@@ -333,7 +338,7 @@ public class UpdateServiceImpl implements UpdateService {
 
   private void setReleaseInfo(App app, AppdataComponent component, boolean isNewApp) {
 
-    Optional<ReleaseInfo> releaseInfo = component.findReleaseInfoByMostRecent();
+    Optional<ReleaseInfo> releaseInfo = component.findReleaseInfoByMostRecentAndLangIsDefault();
     OffsetDateTime releaseDate;
     String releaseVersion = "";
     String releaseDescription = "";
@@ -355,7 +360,8 @@ public class UpdateServiceImpl implements UpdateService {
         releaseVersion = releaseInfo.get().getVersion();
       }
 
-      if (releaseInfo.get().getDescription() != null && releaseInfo.get().getDescription().length() < App.APP_RELEASE_DESCRIPTION_LENGTH) {
+      if (releaseInfo.get().getDescription() != null
+        && releaseInfo.get().getDescription().length() < App.APP_RELEASE_DESCRIPTION_LENGTH) {
         releaseDescription = releaseInfo.get().getDescription();
       }
 
@@ -392,24 +398,24 @@ public class UpdateServiceImpl implements UpdateService {
 
     LOGGER.info("Screenshots for " + app.getFlatpakAppId());
 
-    if (component.getScreenshots() != null
-      && component.getScreenshots().size() > 0) {
+    if (component.getScreenshotsByLangDefault() != null
+      && component.getScreenshotsByLangDefault().size() > 0) {
 
       //Remove existing screenshots in the database
       app.getScreenshots().clear();
       apiService.deleteScrenshotsByApp(app);
 
       for (org.freedesktop.appstream.ScreenshotInfo appStreamScreenshotInfo : component
-        .getScreenshots()) {
+        .getScreenshotsByLangDefault()) {
 
         Screenshot screenshot = new Screenshot();
 
         screenshot.setThumbUrl(
-          appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_THUMBNAIL).orElse(""));
+          appStreamScreenshotInfo.findThumbnailUrlByHeightAndLangDefault(SCREENSHOT_HEIGHT_THUMBNAIL).orElse(""));
         screenshot.setImgMobileUrl(
-          appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_MOBILE).orElse(""));
+          appStreamScreenshotInfo.findThumbnailUrlByHeightAndLangDefault(SCREENSHOT_HEIGHT_MOBILE).orElse(""));
         screenshot.setImgDesktopUrl(
-          appStreamScreenshotInfo.findThumbnailUrlByHeight(SCREENSHOT_HEIGHT_DESKTOP).orElse(""));
+          appStreamScreenshotInfo.findThumbnailUrlByHeightAndLangDefault(SCREENSHOT_HEIGHT_DESKTOP).orElse(""));
 
         screenshot.setApp(app);
         app.addScreenshot(screenshot);
