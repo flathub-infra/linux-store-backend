@@ -61,6 +61,9 @@ function extract-files-from-ostree {
 	mkdir $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER
 	/bin/tar -xf $APPSTREAM_EXTRACT_FILE -C $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER
 
+	echo "Cleaning up old exported files/folders"
+	find $APPSTREAM_EXTRACTOR_DEST_FOLDER/appstream-$FLATPAK_REMOTE_NAME-$ARCH* -mtime +1 -exec rm -fr {} \;
+
 }
 
 
