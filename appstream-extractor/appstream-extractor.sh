@@ -18,9 +18,23 @@ function check-required-programs {
 }
 
 function check-required-folders {
+
 	if [ ! -d "$APPSTREAM_EXTRACTOR_HOME" ]; then
 		
 		echo "This script requires to create this folder $APPSTREAM_EXTRACTOR_HOME"
+		echo "Do you want to continue?"
+		select yn in "Yes" "No"; do
+			case $yn in
+			Yes ) create-required-folders;
+				break;;
+			No ) exit;;
+			esac
+		done
+	fi
+
+	if [ ! -d "$APPSTREAM_EXTRACTOR_DEST_FOLDER" ]; then
+		
+		echo "This script requires to create this folder $APPSTREAM_EXTRACTOR_DEST_FOLDER"
 		echo "Do you want to continue?"
 		select yn in "Yes" "No"; do
 			case $yn in
@@ -61,8 +75,8 @@ function extract-files-from-ostree {
 	mkdir $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER
 	/bin/tar -xf $APPSTREAM_EXTRACT_FILE -C $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER
 
-	echo "Cleaning up old exported files/folders"
-	find $APPSTREAM_EXTRACTOR_DEST_FOLDER/appstream-$FLATPAK_REMOTE_NAME-$ARCH* -mtime +1 -exec rm -fr {} \;
+	echo "Cleaning up unused files in $APPSTREAM_EXTRACTOR_DEST_FOLDER"
+	find $APPSTREAM_EXTRACTOR_DEST_FOLDER/appstream-$FLATPAK_REMOTE_NAME-$ARCH* -mtime +1 -exec rm -fr {} \; 2> /dev/null
 
 }
 
@@ -74,6 +88,8 @@ function extract-appstream-by-arch {
 
 	FLATPAK_APPSTREAM_REF=flathub/appstream2/$ARCH
 	REMOTE_INFO_DESCRIPTOR=$APPSTREAM_EXTRACTOR_HOME/$FLATPAK_REMOTE_NAME-$ARCH.info
+
+	echo "Getting info for remote $FLATPAK_REMOTE_NAME and arch $ARCH ..."
 
 	# Update appstream info from repo
 	/usr/bin/timeout 300s /usr/bin/flatpak update --appstream --arch=$ARCH
@@ -98,6 +114,8 @@ function extract-appstream-by-arch {
 			extract-files-from-ostree
 		fi
 	fi
+
+	echo
 
 }
 
