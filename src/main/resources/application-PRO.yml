@@ -10,7 +10,7 @@ spring:
         ## This is important
         # Hibernate ddl auto (create, create-drop, validate, update)
         hibernate.ddl-auto: validate
-        show-sql: true            
+        show-sql: false            
 #    mail:
 #        host: smtp.gmail.com
 #        port: 587
