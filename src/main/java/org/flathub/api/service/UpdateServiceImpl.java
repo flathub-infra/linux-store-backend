@@ -85,26 +85,35 @@ public class UpdateServiceImpl implements UpdateService {
   @Override
   public void updateFlathubInfo(boolean forceUpdate) {
 
-    AppstreamUpdateInfo updateInfo;
+    Optional<AppstreamUpdateInfo> updateInfo;
 
     try {
 
       updateInfo = getAppStreamUpdateInfo();
 
-      LOGGER.info("Searching updates for " + updateInfo.getRepoName() + " from appstream...");
+      if(updateInfo.isPresent()){
 
-      FlatpakRepo repo = apiService.findRepoByName(updateInfo.getRepoName());
-      if (repo == null) {
-        addFlathubRepo();
-        repo = apiService.findRepoByName(updateInfo.getRepoName());
+        LOGGER.info("Searching updates for " + updateInfo.get().getRepoName() + " from appstream...");
+
+        FlatpakRepo repo = apiService.findRepoByName(updateInfo.get().getRepoName());
+        if (repo == null) {
+          addFlathubRepo();
+          repo = apiService.findRepoByName(updateInfo.get().getRepoName());
+        }
+
+        if (forceUpdate || (updateInfo.get().isUpdatesAvailable() && !updateInfo.get().getCommit()
+          .equalsIgnoreCase(repo.getCurrentOstreeCommit()))) {
+          updateRepoInfo(repo, updateInfo.get());
+        } else {
+          LOGGER.info(repo.getName() + " is already up to date");
+        }
+
+      }
+      else{
+        LOGGER.error("Couldn't read any appstream information. The script appstream-extractor might not be properly running");
       }
 
-      if (forceUpdate || (updateInfo.isUpdatesAvailable() && !updateInfo.getCommit()
-        .equalsIgnoreCase(repo.getCurrentOstreeCommit()))) {
-        updateRepoInfo(repo, updateInfo);
-      } else {
-        LOGGER.info(repo.getName() + " is already up to date");
-      }
+
 
     } catch (IOException e) {
       LOGGER.error("Error updating appstream info for repo", e);
@@ -113,18 +122,18 @@ public class UpdateServiceImpl implements UpdateService {
   }
 
 
-  private AppstreamUpdateInfo getAppStreamUpdateInfo() throws IOException {
+  private Optional<AppstreamUpdateInfo> getAppStreamUpdateInfo() throws IOException {
 
-    File extractorInfo = new File(flathubAppStreamExtractorInfoFile);
-    AppstreamUpdateInfo info = new AppstreamUpdateInfo();
-    info.setUpdatesAvailable(false);
+    File extractorInfoFile = new File(flathubAppStreamExtractorInfoFile);
 
-    if (extractorInfo.exists()) {
+    if (extractorInfoFile.exists()) {
+
+      AppstreamUpdateInfo info = new AppstreamUpdateInfo();
 
       String line;
 
       //Use try-with-resource to get auto-closeable reader instance
-      try (BufferedReader bufferedReader = new BufferedReader(new FileReader(extractorInfo))) {
+      try (BufferedReader bufferedReader = new BufferedReader(new FileReader(extractorInfoFile))) {
 
         // use the readLine method of the BufferedReader to read one line at a time.
         // the readLine method returns null when there is nothing else to read.
@@ -143,15 +152,21 @@ public class UpdateServiceImpl implements UpdateService {
         }
 
         File exportDataFolder = new File(info.getExportDataPath());
+        
         if (exportDataFolder.exists() && exportDataFolder.isDirectory()) {
           info.setUpdatesAvailable(true);
         }
+        else{
+          info.setUpdatesAvailable(false);
+        }
+
+        return Optional.ofNullable(info);
 
       }
 
     }
 
-    return info;
+    return Optional.empty();
   }
 
 
@@ -178,8 +193,9 @@ public class UpdateServiceImpl implements UpdateService {
 
         try {
 
-          if (component.getFlatpakId() != null && APPSTREAM_TYPE_DESKTOP
-            .equalsIgnoreCase(component.getType())) {
+          if (component.getFlatpakId() != null &&
+            APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType()) &&
+            "org.audacityteam.Audacity".equalsIgnoreCase(component.getFlatpakId())) {
 
 
 
