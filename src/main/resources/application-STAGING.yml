@@ -25,7 +25,7 @@ hibernate:
     dialect: org.hibernate.dialect.PostgreSQL94Dialect
 
 flathub:
-    appstream-extractor-info: /var/lib/appstream-extractor/appstream-extractor.info
+    appstream-extractor-info: /var/lib/appstream-extractor/flathub-x86_64.info
     update-service:
       icons:
         import-icons: true

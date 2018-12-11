@@ -25,7 +25,7 @@ hibernate:
     dialect: org.hibernate.dialect.org.hibernate.dialect.HSQLDialect
 
 flathub:
-    appstream-extractor-info: /var/lib/appstream-extractor/appstream-extractor.info
+    appstream-extractor-info: /var/lib/appstream-extractor/flathub-x86_64.info
 #    flatpakref:
 #        server-path: /var/www/main-store/apps/
 #        url:  http://localhost:80/main-store/apps/
