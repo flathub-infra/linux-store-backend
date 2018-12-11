@@ -33,7 +33,7 @@ public class ScheduledTasks {
     }
   }
 
-  @Scheduled(cron = "0 */10 * * * *")
+  @Scheduled(cron = "0 */30 * * * *")
   public void updateFlathubInfo() {
 
     try {
