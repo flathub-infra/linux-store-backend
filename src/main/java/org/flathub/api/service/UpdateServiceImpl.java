@@ -69,6 +69,9 @@ public class UpdateServiceImpl implements UpdateService {
   @Value("${flathub.appstream-extractor-info}")
   private String flathubAppStreamExtractorInfoFile;
 
+  @Value("${flathub.appstream-extractor-info-legacy}")
+  private String flathubAppStreamExtractorInfoLegacyFile;
+
   @Value("${flathub.update-service.icons.import-icons}")
   private boolean copyAppstreamIconsToServer;
 
@@ -110,7 +113,7 @@ public class UpdateServiceImpl implements UpdateService {
 
       }
       else{
-        LOGGER.error("Couldn't read any appstream information. The script appstream-extractor might not be properly running");
+        LOGGER.error("Couldn't read any appstream information file. The script appstream-extractor might not be properly running");
       }
 
 
@@ -125,6 +128,10 @@ public class UpdateServiceImpl implements UpdateService {
   private Optional<AppstreamUpdateInfo> getAppStreamUpdateInfo() throws IOException {
 
     File extractorInfoFile = new File(flathubAppStreamExtractorInfoFile);
+
+    if (!extractorInfoFile.exists()) {
+      extractorInfoFile = new File(flathubAppStreamExtractorInfoLegacyFile);
+    }
 
     if (extractorInfoFile.exists()) {
 

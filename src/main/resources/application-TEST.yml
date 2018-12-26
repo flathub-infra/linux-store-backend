@@ -26,6 +26,7 @@ hibernate:
 
 flathub:
     appstream-extractor-info: /var/lib/appstream-extractor/flathub-x86_64.info
+    appstream-extractor-info-legacy: /var/lib/appstream-extractor/appstream-extractor.info
 #    flatpakref:
 #        server-path: /var/www/main-store/apps/
 #        url:  http://localhost:80/main-store/apps/
