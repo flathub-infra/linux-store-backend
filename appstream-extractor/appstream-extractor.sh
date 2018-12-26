@@ -78,7 +78,7 @@ function extract-files-from-ostree {
 	/bin/tar -xf $APPSTREAM_EXTRACT_FILE -C $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER
 
 	# Create file with last ostree commit per app and other info
-	flatpak remote-ls -d $FLATPAK_REMOTE_NAME  --arch $ARCH > $FLATPAK_REMOTE_INFO_FILE
+	flatpak remote-ls --system -d $FLATPAK_REMOTE_NAME  --arch $ARCH > $FLATPAK_REMOTE_INFO_FILE
 
 	echo "Cleaning up unused files in $APPSTREAM_EXTRACTOR_DEST_FOLDER"
 	find $APPSTREAM_EXTRACTOR_DEST_FOLDER/appstream-$FLATPAK_REMOTE_NAME-$ARCH* -mtime +1 -exec rm -fr {} \; 2> /dev/null
