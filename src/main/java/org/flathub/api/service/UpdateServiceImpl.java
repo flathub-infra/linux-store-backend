@@ -1,24 +1,20 @@
 package org.flathub.api.service;
 
 import com.google.common.io.Files;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.xml.bind.JAXBException;
-import org.flathub.api.model.App;
-import org.flathub.api.model.Category;
-import org.flathub.api.model.FlatpakRepo;
-import org.flathub.api.model.Screenshot;
+
+import org.flathub.api.model.*;
 import org.flathub.api.util.FlatpakRefFileCreator;
 import org.freedesktop.appstream.AppdataComponent;
 import org.freedesktop.appstream.AppdataParser;
@@ -35,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by jorge on 20/05/17.
@@ -66,6 +64,9 @@ public class UpdateServiceImpl implements UpdateService {
   @Autowired
   private ApiService apiService;
 
+  @Autowired
+  private LocalFlatpakInstallationService localFlatpakInstallationService;
+
   @Value("${flathub.appstream-extractor-info}")
   private String flathubAppStreamExtractorInfoFile;
 
@@ -94,7 +95,7 @@ public class UpdateServiceImpl implements UpdateService {
 
       updateInfo = getAppStreamUpdateInfo();
 
-      if(updateInfo.isPresent()){
+      if (updateInfo.isPresent()) {
 
         LOGGER.info("Searching updates for " + updateInfo.get().getRepoName() + " from appstream...");
 
@@ -111,11 +112,9 @@ public class UpdateServiceImpl implements UpdateService {
           LOGGER.info(repo.getName() + " is already up to date");
         }
 
-      }
-      else{
+      } else {
         LOGGER.error("Couldn't read any appstream information file. The script appstream-extractor might not be properly running");
       }
-
 
 
     } catch (IOException e) {
@@ -159,15 +158,14 @@ public class UpdateServiceImpl implements UpdateService {
         }
 
         File exportDataFolder = new File(info.getExportDataPath());
-        
+
         if (exportDataFolder.exists() && exportDataFolder.isDirectory()) {
           info.setUpdatesAvailable(true);
-        }
-        else{
+        } else {
           info.setUpdatesAvailable(false);
         }
 
-        return Optional.ofNullable(info);
+        return Optional.of(info);
 
       }
 
@@ -201,25 +199,24 @@ public class UpdateServiceImpl implements UpdateService {
         try {
 
           if (component.getFlatpakId() != null &&
-            APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType()) &&
-            "org.audacityteam.Audacity".equalsIgnoreCase(component.getFlatpakId())) {
+            APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
 
+            previousIncompleteComponentWithSameFlatpakId = incompleteComponentsMap
+              .get(component.getFlatpakId());
+            if (previousIncompleteComponentWithSameFlatpakId != null) {
+              component.merge(previousIncompleteComponentWithSameFlatpakId);
+              incompleteComponentsMap.remove(component.getFlatpakId());
+            }
 
+            if (this.validateAppdataInformation(component)) {
+              updateAppInfo(repo, appstreamInfo, component);
+            } else {
+              incompleteComponentsMap.put(component.getFlatpakId(), component);
+              LOGGER.debug("Adding " + component.getFlatpakId()
+                + " to the incomplete components list because it has incomplete or invalid appdata");
+            }
 
-              previousIncompleteComponentWithSameFlatpakId = incompleteComponentsMap
-                .get(component.getFlatpakId());
-              if (previousIncompleteComponentWithSameFlatpakId != null) {
-                component.merge(previousIncompleteComponentWithSameFlatpakId);
-                incompleteComponentsMap.remove(component.getFlatpakId());
-              }
-
-              if (this.validateAppdataInformation(component)) {
-                updateAppInfo(repo, appstreamInfo, component);
-              } else {
-                incompleteComponentsMap.put(component.getFlatpakId(), component);
-                LOGGER.debug("Adding " + component.getFlatpakId()
-                  + " to the incomplete components list because it has incomplete or invalid appdata");
-              }
+            updateAppReleaseInfo(repo, component.getFlatpakId());
 
           }
 
@@ -248,10 +245,11 @@ public class UpdateServiceImpl implements UpdateService {
   }
 
   private void updateAppInfo(FlatpakRepo repo, AppstreamUpdateInfo appstreamInfo,
-    AppdataComponent component) {
+                             AppdataComponent component) {
 
     boolean appDataIsIncomplete = false;
     boolean isNewApp;
+
     App app = apiService.findAppByFlatpakAppId(component.getFlatpakId());
 
     if (app == null) {
@@ -295,11 +293,186 @@ public class UpdateServiceImpl implements UpdateService {
 
   }
 
+  private void updateAppReleaseInfo(FlatpakRepo repo, String flatpakId) {
+
+    App app = apiService.findAppByFlatpakAppId(flatpakId);
+
+    if (app != null) {
+
+      updateAppReleaseInfoByRepoAppAndArch(repo, app, Arch.X86_64);
+      updateAppReleaseInfoByRepoAppAndArch(repo, app, Arch.I386);
+      updateAppReleaseInfoByRepoAppAndArch(repo, app, Arch.AARCH64);
+      updateAppReleaseInfoByRepoAppAndArch(repo, app, Arch.ARM);
+
+    } else {
+      LOGGER.warn("Cannot update app release info for an app that is not in the database:" + flatpakId);
+    }
+
+  }
+
+  private void updateAppReleaseInfoByRepoAppAndArch(FlatpakRepo repo, App app, Arch arch) {
+
+    Optional<FlatpakRefRemoteInfo> remoteInfo = localFlatpakInstallationService.getQuickBasicRemoteInfoByRemoteAndArchAndId(repo.getName(),
+      arch, app.getFlatpakAppId());
+
+    if (remoteInfo.isPresent()) {
+
+
+      AppRelease latestAppRelease = apiService.findLastAppReleaseByAppAndArch(app, arch);
+
+      if (isSameRelease(latestAppRelease, remoteInfo.get())) {
+        LOGGER.info(remoteInfo.get().getId() + " does not have a new release for arch " + arch);
+      }
+      else {
+
+        Optional<FlatpakRefRemoteInfo> completeRemoteInfo = localFlatpakInstallationService.getRemoteInfoByRemoteAndArchAndId(
+          repo.getName(), arch, app.getFlatpakAppId(), true);
+
+        if (completeRemoteInfo.isPresent()) {
+
+          updateAppReleaseInfo(repo, app, arch,
+            completeRemoteInfo.get(),
+            app.getCurrentReleaseVersion(),
+            appdataReleaseVersionUpdatedSinceLastRelease(app, latestAppRelease),
+            null);
+
+          if(latestAppRelease != null && latestAppRelease.getOstreeCommitHash().equalsIgnoreCase(completeRemoteInfo.get().getParent()) ){
+            latestAppRelease.setOstreeCommitDateNext(OffsetDateTime.of(completeRemoteInfo.get().getDate(), OffsetDateTime.now().getOffset()));
+            apiService.updateAppRelease(latestAppRelease);
+          }
+          else{
+            importAppReleaseInfoFromOstreeHistory(repo, app, arch, completeRemoteInfo.get());
+          }
+
+        }
+
+
+      }
+
+    }
+
+  }
+
+  private boolean appdataReleaseVersionUpdatedSinceLastRelease(App app, AppRelease latestAppReleaseStored) {
+
+    checkNotNull(app);
+
+    return latestAppReleaseStored == null ||
+      latestAppReleaseStored.getAppdataReleaseVersion() == null ||
+      app.getCurrentReleaseVersion() == null ||
+      !latestAppReleaseStored.getAppdataReleaseVersion().equalsIgnoreCase(app.getCurrentReleaseVersion());
+
+  }
+
+
+  private boolean isSameRelease(AppRelease latestAppReleaseStored, FlatpakRefRemoteInfo remoteInfo) {
+
+    return latestAppReleaseStored != null &&
+      latestAppReleaseStored.getOstreeCommitShortHash() != null &&
+      remoteInfo.getShortCommit() != null &&
+      latestAppReleaseStored.getOstreeCommitShortHash().equalsIgnoreCase(remoteInfo.getShortCommit());
+  }
+
+
+  private void updateAppReleaseInfo(FlatpakRepo repo,
+                                    App app,
+                                    Arch arch,
+                                    FlatpakRefRemoteInfo remoteInfo,
+                                    String currentAppReleaseVersion,
+                                    boolean currentAppReleaseVersionUpdatedInThisRelease,
+                                    OffsetDateTime ostreeCommitDateNext) {
+
+    AppRelease appRelease = apiService.findOneAppReleaseByAppAndArchAndOstreeCommitHash(app, arch,remoteInfo.getCommit());
+
+    if(appRelease == null){
+      appRelease = new AppRelease();
+      appRelease.setApp(app);
+      appRelease.setArch(arch);
+    }
+
+    if(currentAppReleaseVersion != null){
+      appRelease.setAppdataReleaseVersion(currentAppReleaseVersion);
+    }
+
+    appRelease.setAppdataReleaseVersionUpdated(currentAppReleaseVersionUpdatedInThisRelease);
+
+    if(remoteInfo.getDownloadSize() != null){
+      appRelease.setDownloadSize(remoteInfo.getDownloadSize());
+    }
+
+    if(remoteInfo.getInstalledSize() != null){
+      appRelease.setInstalledSize(remoteInfo.getInstalledSize());
+    }
+
+    if(remoteInfo.getCommit() != null){
+      appRelease.setOstreeCommitHash(remoteInfo.getCommit());
+    }
+
+    if(remoteInfo.getParent() != null){
+      appRelease.setOstreeCommitHashParent(remoteInfo.getParent());
+    }
+
+    if(remoteInfo.getDate() != null){
+      appRelease.setOstreeCommitDate(OffsetDateTime.of(remoteInfo.getDate(), OffsetDateTime.now().getOffset()));
+    }
+
+    if(ostreeCommitDateNext != null){
+      appRelease.setOstreeCommitDateNext(ostreeCommitDateNext);
+    }
+
+    if(remoteInfo.getSubject() != null){
+      appRelease.setOstreeCommitSubject(remoteInfo.getSubject());
+    }
+
+    if(remoteInfo.getRuntime() != null){
+      appRelease.setRuntime(remoteInfo.getRuntime());
+    }
+
+    if(remoteInfo.getSdk() != null){
+      appRelease.setSdk(remoteInfo.getSdk());
+    }
+
+    appRelease.setEndOfLife(remoteInfo.isEndOfLife());
+
+    if(remoteInfo.getEndOfLife() != null){
+      appRelease.setEndOfLifeInfo(remoteInfo.getEndOfLife());
+    }
+
+    if(remoteInfo.getEndOfLifeRebase() != null){
+      appRelease.setEndOfLifeRebase(remoteInfo.getEndOfLifeRebase());
+    }
+
+    if(remoteInfo.getMetadata() != null){
+      appRelease.setMetadata(remoteInfo.getMetadata());
+    }
+
+    apiService.updateAppRelease(appRelease);
+
+  }
+
+  private void importAppReleaseInfoFromOstreeHistory(FlatpakRepo repo, App app, Arch arch, FlatpakRefRemoteInfo currentRemoteInfo) {
+
+    OffsetDateTime nextOstreeCommitDate = OffsetDateTime.of(currentRemoteInfo.getDate(), OffsetDateTime.now().getOffset());
+
+
+    LOGGER.info("Importing app release info from ostree history for app " + app.getFlatpakAppId() + " and arch " + arch.toString());
+
+    for (int i = 0; i < currentRemoteInfo.getHistory().size(); i++) {
+
+      updateAppReleaseInfo(repo, app, arch, currentRemoteInfo.getHistory().get(i),
+        null, false, nextOstreeCommitDate);
+
+      nextOstreeCommitDate = OffsetDateTime.of(currentRemoteInfo.getHistory().get(i).getDate(), OffsetDateTime.now().getOffset());
+    }
+
+  }
+  
+
   /**
    * Check if the component contains the required appdata:
    * - For all components: FlatpakId, Name, Summary
    * - For apps require also: Description, Icon
-   *
+   * <p>
    * Check data size limits:
    * - description.length < App.APP_DESCRIPTION_LENGTH
    *
@@ -309,7 +482,7 @@ public class UpdateServiceImpl implements UpdateService {
 
     boolean appDataIsValid = true;
 
-    appDataIsValid = appDataIsValid && component.getFlatpakId() != null && !""
+    appDataIsValid = component.getFlatpakId() != null && !""
       .equalsIgnoreCase(component.getFlatpakId());
 
     appDataIsValid = appDataIsValid && component.findDefaultName() != null && !""
@@ -472,7 +645,7 @@ public class UpdateServiceImpl implements UpdateService {
 
 
   private void importIcons(App app, AppstreamUpdateInfo appstreamInfo, AppdataComponent component,
-    boolean copyAppstreamIconsToServer) {
+                           boolean copyAppstreamIconsToServer) {
 
     String hiDpiIconUrl = component.findIconUrl(ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_HIDPI);
     String defaultIconUrl = component.findIconUrl(ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_DEFAULT);
@@ -502,7 +675,7 @@ public class UpdateServiceImpl implements UpdateService {
 
 
   private void copyAppstreamIconToServer(App app, AppstreamUpdateInfo appstreamInfo,
-    AppdataComponent component, short height) {
+                                         AppdataComponent component, short height) {
 
     Icon icon = component.findIconByHeight(height);
 
@@ -549,7 +722,7 @@ public class UpdateServiceImpl implements UpdateService {
   }
 
   private void importIcons2(App app, AppstreamUpdateInfo appstreamInfo, AppdataComponent component,
-    boolean copyAppstreamIconsToServer) {
+                            boolean copyAppstreamIconsToServer) {
 
     Icon icon = component.findIconByHeight(ICON_HEIGHT_HIDPI);
     if (icon == null) {
@@ -657,6 +830,7 @@ public class UpdateServiceImpl implements UpdateService {
   }
 
 
+  @SuppressWarnings("UnstableApiUsage")
   private String extractContainerAppDataTarGz(String appStreamTarGzFile) throws IOException {
 
     File archive = new File(appStreamTarGzFile);
