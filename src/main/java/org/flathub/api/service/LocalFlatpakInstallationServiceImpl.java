@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 
@@ -126,10 +124,35 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
 
       return Optional.empty();
     } catch (Exception e) {
-      LOGGER.debug("There was an error getting quick basic remote info for id " + id + "for arch " + arch + " and remote " + remote, e);
+      LOGGER.debug("There was an error getting quick basic remote info for id " + id + " and arch " + arch + " and remote " + remote, e);
       return Optional.empty();
     }
   }
+
+  @Override
+  public Optional<FlatpakRefRemoteInfo> getRemoteInfoByRemoteAndArchAndId(String remote, Arch arch, String id, boolean retryIfFailed) {
+
+
+    Optional<FlatpakRefRemoteInfo> completeRemoteInfo;
+
+    completeRemoteInfo = this.getRemoteInfoByRemoteAndArchAndId(remote, arch, id);
+
+    if (!completeRemoteInfo.isPresent() && retryIfFailed) {
+
+      try {
+        LOGGER.info("Waiting 5 secs to try get the remote-info again ...");
+        Thread.sleep(5000);
+
+        completeRemoteInfo = this.getRemoteInfoByRemoteAndArchAndId(remote, arch, id);
+
+      } catch (InterruptedException e) {
+        LOGGER.error("There was an error while waiting to execute remote-info", e);
+      }
+    }
+
+    return completeRemoteInfo;
+  }
+
 
 
   @Override
@@ -138,11 +161,12 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
     String command = flatpakCommand + " --system remote-info --log --arch " + arch.toString() + " " + remote + " " + id;
     String result;
 
-    LOGGER.debug("Getting remote info for id " + id + "for arch " + arch + " and remote " + remote);
+    LOGGER.debug("Getting remote info for id " + id + " and arch " + arch + " and remote " + remote);
 
     try{
 
       Optional<FlatpakRefRemoteInfo> quickInfo = getQuickBasicRemoteInfoByRemoteAndArchAndId(remote, arch, id);
+
       Optional<FlatpakRefRemoteInfo> completeInfo;
 
       if(quickInfo.isPresent()){
@@ -150,24 +174,53 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
         result = execToString(command);
         completeInfo = parseRemoteInfoString(result);
 
-        // Set end of life info from quickinfo while it's not available in flatpak remote-info
-        if(completeInfo.isPresent() && quickInfo.get().getRef().equalsIgnoreCase(completeInfo.get().getRef())){
-          completeInfo.get().setEndOfLife(quickInfo.get().isEndOfLife());
-          completeInfo.get().setEndOfLife(quickInfo.get().getEndOfLife());
-          completeInfo.get().setEndOfLifeRebase(quickInfo.get().getEndOfLifeRebase());
+        if(completeInfo.isPresent()){
+
+          //Wait 300 ms to try to avoid server-side errors
+          Thread.sleep(300);
+
+          Optional<String> metadata = getRemoteMetatataByRemoteAndArchAndId(remote, arch, id);
+          if(metadata.isPresent()){
+            completeInfo.get().setMetadata(metadata.get());
+          }
+
+          // Set end of life info from quickinfo while it's not available in flatpak remote-info
+          if(quickInfo.get().getRef().equalsIgnoreCase(completeInfo.get().getRef())){
+            completeInfo.get().setEndOfLife(quickInfo.get().isEndOfLife());
+            completeInfo.get().setEndOfLife(quickInfo.get().getEndOfLife());
+            completeInfo.get().setEndOfLifeRebase(quickInfo.get().getEndOfLifeRebase());
+          }
+
+          return completeInfo;
         }
-
-        return completeInfo;
-
-      }
-      else{
-        return quickInfo;
       }
 
+      return Optional.empty();
 
     }
     catch (Exception e){
       LOGGER.debug("There was an error getting remote info for id " + id + "for arch " + arch + " and remote " + remote, e);
+      return Optional.empty();
+    }
+
+  }
+
+
+
+  @Override
+  public Optional<String> getRemoteMetatataByRemoteAndArchAndId(String remote, Arch arch, String id) {
+
+    String command = flatpakCommand + " --system remote-info --show-metadata --arch " + arch.toString() + " " + remote + " " + id;
+    String result;
+
+    LOGGER.debug("Getting remote metadata for id " + id + "for arch " + arch + " and remote " + remote);
+
+    try{
+      result = execToString(command);
+      return Optional.ofNullable(result);
+    }
+    catch (Exception e){
+      LOGGER.debug("There was an error getting remote metadata for id " + id + " and arch " + arch + " and remote " + remote, e);
       return Optional.empty();
     }
 
@@ -264,12 +317,15 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
   private Optional<FlatpakRefRemoteInfo> parseRemoteInfoString(String remoteInfoString){
 
     String[] lines = remoteInfoString.split("[\\r\\n]+");
+    String line;
 
     FlatpakRefRemoteInfo remoteInfo = new FlatpakRefRemoteInfo();
 
-    for(String line : lines){
+    int lineCount = 0;
 
-      line = line.trim();
+    while(lineCount<lines.length){
+
+      line = lines[lineCount].trim();
 
       if(line.startsWith(REMOTE_INFO_REF)){
         remoteInfo.setRef(line.replace(REMOTE_INFO_REF, "").trim());
@@ -322,11 +378,63 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
         remoteInfo.setSdk(line.replace(REMOTE_INFO_SDK, "").trim());
       }
       else if(line.startsWith(REMOTE_INFO_HISTORY)){
+        remoteInfo.setHistory(parseOstreeHistory(remoteInfo, Arrays.copyOfRange(lines, lineCount, lines.length)));
         break;
       }
+
+      lineCount++;
     }
 
     return Optional.of(remoteInfo);
   }
+
+  private ArrayList<FlatpakRefRemoteInfo> parseOstreeHistory(FlatpakRefRemoteInfo currentRemoteInfo, String[] history) {
+
+    ArrayList<FlatpakRefRemoteInfo> list = new ArrayList<>();
+    Optional<FlatpakRefRemoteInfo> currentParsedRemoteInfo = Optional.empty();
+    String currentParsedRemoteInfoString;
+    String line;
+
+    int lineCount = 0;
+    while(lineCount<history.length) {
+
+      line = history[lineCount].trim();
+
+      if(line.startsWith(REMOTE_INFO_SUBJECT) && (lineCount + 2 < history.length)){
+
+        currentParsedRemoteInfoString = line + "\n" + history[lineCount + 1].trim() + "\n" + history[lineCount + 2].trim();
+        currentParsedRemoteInfo = parseRemoteInfoString(currentParsedRemoteInfoString);
+
+        if(currentParsedRemoteInfo.isPresent()){
+          currentParsedRemoteInfo.get().setRef(currentRemoteInfo.getRef());
+          currentParsedRemoteInfo.get().setId(currentRemoteInfo.getId());
+          currentParsedRemoteInfo.get().setArch(currentRemoteInfo.getArch());
+          currentParsedRemoteInfo.get().setBranch(currentRemoteInfo.getBranch());
+          currentParsedRemoteInfo.get().setCollection(currentRemoteInfo.getCollection());
+          currentParsedRemoteInfo.get().setEndOfLife(false);
+          list.add(currentParsedRemoteInfo.get());
+        }
+        lineCount = lineCount + 3;
+      }
+      else {
+        lineCount++;
+      }
+
+    }
+
+    //Set parent info for child nodes
+    for(int i = 0;i<list.size() -1; i++) {
+      list.get(i).setParent(list.get(i+1).getCommit());
+    }
+
+    //Set history for child nodes
+    for(int i = 0;i<list.size() -1; i++) {
+      list.get(i).setHistory(new ArrayList<>(list.subList(i+1, list.size())));
+    }
+
+    return list;
+  }
+
+
 
 }

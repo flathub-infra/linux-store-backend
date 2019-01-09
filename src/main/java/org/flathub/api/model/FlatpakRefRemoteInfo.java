@@ -1,6 +1,7 @@
 package org.flathub.api.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class FlatpakRefRemoteInfo {
   private String ref;
@@ -20,6 +21,8 @@ public class FlatpakRefRemoteInfo {
   private boolean isEndOfLife;
   private String endOfLife;
   private String endOfLifeRebase;
+  private String metadata;
+  private ArrayList<FlatpakRefRemoteInfo> history;
 
   public String getRef() {
     return ref;
@@ -83,7 +86,7 @@ public class FlatpakRefRemoteInfo {
 
   public void setCommit(String commit) {
     this.commit = commit;
-    if(commit.length() > 12){
+    if(commit != null && commit.length() > 12){
       this.shortCommit = commit.substring(0,12);
     }
   }
@@ -158,5 +161,21 @@ public class FlatpakRefRemoteInfo {
 
   public void setEndOfLifeRebase(String endOfLifeRebase) {
     this.endOfLifeRebase = endOfLifeRebase;
+  }
+
+  public String getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(String metadata) {
+    this.metadata = metadata;
+  }
+
+  public ArrayList<FlatpakRefRemoteInfo> getHistory() {
+    return history;
+  }
+
+  public void setHistory(ArrayList<FlatpakRefRemoteInfo> history) {
+    this.history = history;
   }
 }

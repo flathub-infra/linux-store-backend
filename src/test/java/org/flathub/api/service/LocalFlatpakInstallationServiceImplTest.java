@@ -123,6 +123,27 @@ public class LocalFlatpakInstallationServiceImplTest {
   }
 
 
+
+
+
+  @Test
+  public void when_getRemoteMetatataByRemoteAndArchAndId_Expect_CorrectMetadataObtained() {
+
+    //Given
+
+    //When
+
+    Optional<String> metadata  = service.getRemoteMetatataByRemoteAndArchAndId("flathub", Arch.X86_64, "org.gnome.gedit");
+
+
+    //Then
+    assertThat(metadata.isPresent());
+
+
+
+  }
+
+
   @Test
   public void when_getQuickBasicRemoteInfoOfAllEoldRefs_Expect_CorrectEoldInfo() {
 

@@ -12,6 +12,9 @@ public interface LocalFlatpakInstallationService {
 
   List<FlatpakRefRemoteInfo> getAllQuickBasicRemoteInfoByRemote(String remote);
 
-  Optional<FlatpakRefRemoteInfo> getRemoteInfoByRemoteAndArchAndId(String remote, Arch arch, String id) throws Exception;
+  Optional<FlatpakRefRemoteInfo> getRemoteInfoByRemoteAndArchAndId(String remote, Arch arch, String id, boolean retryIfFailed);
 
+  Optional<FlatpakRefRemoteInfo> getRemoteInfoByRemoteAndArchAndId(String remote, Arch arch, String id);
+
+  Optional<String> getRemoteMetatataByRemoteAndArchAndId(String remote, Arch arch, String id);
 }
