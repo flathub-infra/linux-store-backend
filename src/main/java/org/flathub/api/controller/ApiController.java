@@ -1,16 +1,16 @@
 package org.flathub.api.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.rometools.rome.io.FeedException;
 import org.flathub.api.dto.AppDto;
 import org.flathub.api.dto.AppFullDto;
 import org.flathub.api.dto.AppMapper;
-import org.flathub.api.model.App;
 import org.flathub.api.service.ApiService;
 import org.flathub.api.service.UpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Created by jorge on 24/03/17.
@@ -45,13 +45,23 @@ public class ApiController {
     return mapper.appsToAppDtos(apiService.findAllAppsByCollectionName(collectionName));
   }
 
-
-  @RequestMapping(value = "/apps/{flatpakAppId:.+}", method = RequestMethod.GET)
-  public AppFullDto findAppFlatpakAppId(@PathVariable String flatpakAppId) {
-    return mapper.appToAppFullDto(apiService.findAppByFlatpakAppId(flatpakAppId));
+  @RequestMapping(value = "/apps/collection/{collectionName}/feed", method = RequestMethod.GET)
+  @ResponseBody public String getRssFeedByCollection(HttpServletResponse response, @PathVariable String collectionName) {
+    try {
+      response.setContentType("application/xml");
+      return apiService.getRssFeedByCollectionName(collectionName);
+    } catch (FeedException e) {
+      e.printStackTrace();
+      return "";
+    }
   }
 
 
+  @RequestMapping(value = "/apps/{flatpakAppId:.+}", method = RequestMethod.GET)
+  public AppFullDto findAppFlatpakAppId(@PathVariable String flatpakAppId) {
+
+    return mapper.appToAppFullDto(apiService.findAppByFlatpakAppId(flatpakAppId));
+  }
 
 
 }

@@ -2,6 +2,8 @@ package org.flathub.api.service;
 
 import java.util.List;
 
+import com.rometools.rome.feed.rss.Channel;
+import com.rometools.rome.io.FeedException;
 import org.flathub.api.model.*;
 
 /**
@@ -49,5 +51,6 @@ public interface ApiService {
 
   void deleteScrenshotsByApp(App app);
 
-
+  /** RSS Feeds */
+  String getRssFeedByCollectionName(String collectionName) throws FeedException;
 }
