@@ -2,14 +2,8 @@ package org.flathub.api.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.flathub.api.model.App;
-import org.flathub.api.model.AppRepository;
-import org.flathub.api.model.Category;
-import org.flathub.api.model.CategoryRepository;
-import org.flathub.api.model.FlatpakRepo;
-import org.flathub.api.model.FlatpakRepoRepository;
-import org.flathub.api.model.Screenshot;
-import org.flathub.api.model.ScreenshotRepository;
+
+import org.flathub.api.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -34,6 +28,9 @@ public class ApiServiceImpl implements ApiService {
 
   @Autowired
   private FlatpakRepoRepository repoRepository;
+
+  @Autowired
+  private AppReleaseRepository appReleaseRepository;
 
 
   @Override
@@ -68,6 +65,12 @@ public class ApiServiceImpl implements ApiService {
   }
 
   @Override
+  public List<AppRelease> findAppReleaseByAppAndArch(App app, Arch arch) {
+
+    return appReleaseRepository.findByAppAndArch(app, arch);
+  }
+
+  @Override
   public void updateCategory(Category category) {
     categoryRepository.save(category);
   }
@@ -97,6 +100,21 @@ public class ApiServiceImpl implements ApiService {
   @Override
   public void deleteScrenshotsByApp(App app) {
     screenshotRepository.deleteScrenshotsByApp(app);
+  }
+
+  @Override
+  public void updateAppRelease(AppRelease appRelease) {
+    appReleaseRepository.save(appRelease);
+  }
+
+  @Override
+  public AppRelease findLastAppReleaseByAppAndArch(App app, Arch arch) {
+    return appReleaseRepository.findFirstByAppAndArchOrderByOstreeCommitDateDesc(app,arch);
+  }
+
+  @Override
+  public AppRelease findOneAppReleaseByAppAndArchAndOstreeCommitHash(App app, Arch arch, String commit) {
+    return appReleaseRepository.findOneAppReleaseByAppAndArchAndOstreeCommitHash(app,arch,commit);
   }
 
   @Override

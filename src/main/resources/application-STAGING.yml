@@ -36,3 +36,6 @@ flathub:
       flatpakref:
         generate-flatpakref: true
         dest-path: /opt/linux-store/www/repo/appstream/
+
+flatpak:
+    flatpak-command: /usr/bin/flatpak

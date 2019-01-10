@@ -33,3 +33,6 @@ flathub:
 #    icons:
 #        server-path:  /var/www/main-store/icons/
 #        url:  http://localhost:80/main-store/icons/
+
+flatpak:
+  flatpak-command: flatpak-spawn --host /usr/bin/flatpak

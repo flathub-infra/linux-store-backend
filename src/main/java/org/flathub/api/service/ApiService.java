@@ -1,10 +1,8 @@
 package org.flathub.api.service;
 
 import java.util.List;
-import org.flathub.api.model.App;
-import org.flathub.api.model.Category;
-import org.flathub.api.model.FlatpakRepo;
-import org.flathub.api.model.Screenshot;
+
+import org.flathub.api.model.*;
 
 /**
  * Created by jorge on 24/03/17.
@@ -12,9 +10,13 @@ import org.flathub.api.model.Screenshot;
 public interface ApiService {
 
 
+  /** Categories */
   void updateCategory(Category category);
+
   Category findCategoryByName(String categoryName);
 
+
+  /** Apps */
   void updateApp(App app);
 
   List<App> findAllApps();
@@ -25,10 +27,24 @@ public interface ApiService {
 
   App findAppByFlatpakAppId(String flatpakAppId);
 
-  FlatpakRepo findRepoByName(String name);
 
+  /** App Releases */
+  void updateAppRelease(AppRelease appRelease);
+
+  List<AppRelease> findAppReleaseByAppAndArch(App app, Arch arch);
+
+  AppRelease findLastAppReleaseByAppAndArch(App app, Arch x8664);
+
+  AppRelease findOneAppReleaseByAppAndArchAndOstreeCommitHash(App app, Arch arch, String commit);
+
+
+  /** Repos */
   void updateFlatpakRepo(FlatpakRepo repo);
 
+  FlatpakRepo findRepoByName(String name);
+
+
+  /** Screenshots */
   void updateScreenshot(Screenshot screenshot);
 
   void deleteScrenshotsByApp(App app);
