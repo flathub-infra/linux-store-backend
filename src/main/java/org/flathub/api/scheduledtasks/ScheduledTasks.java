@@ -22,16 +22,16 @@ public class ScheduledTasks {
   private UpdateService updateService;
 
   // Run at application start
-  @EventListener(ContextRefreshedEvent.class)
-  public void contextRefreshedEvent() {
-
-    try {
-      updateService.updateFlathubInfo(true);
-    }
-    catch (Exception e){
-      logger.error("Error updating repo info", e);
-    }
-  }
+//  @EventListener(ContextRefreshedEvent.class)
+//  public void contextRefreshedEvent() {
+//
+//    try {
+//      updateService.updateFlathubInfo(true);
+//    }
+//    catch (Exception e){
+//      logger.error("Error updating repo info", e);
+//    }
+//  }
 
   @Scheduled(cron = "0 */10 * * * *")
   public void updateFlathubInfo() {
