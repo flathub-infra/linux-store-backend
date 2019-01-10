@@ -146,13 +146,16 @@ public class ApiServiceImpl implements ApiService {
     categoryLinux.setName("Linux");
     categories.add(categoryLinux);
 
+    List<SyndEntry> entries = new ArrayList<>();
+
+
     if (COLLECTION_NAME_NEW.equalsIgnoreCase(collectionName)) {
 
       List<App> apps = appRepository.findRecentlyAdded();
 
       SyndEntry entry;
       String descriptionContents;
-      List<SyndEntry> entries = new ArrayList<>();
+
 
       for(App app: apps){
 
@@ -182,9 +185,10 @@ public class ApiServiceImpl implements ApiService {
         entries.add(entry);
       }
 
-      feed.setEntries(entries);
-
     }
+
+    feed.setEntries(entries);
+
     return  new SyndFeedOutput().outputString(feed);
   }
 
