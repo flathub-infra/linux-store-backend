@@ -30,6 +30,14 @@ public interface AppRepository extends JpaRepository<App, Integer> {
     nativeQuery = true)
   List<App> findRecentlyAddedOrUpdated();
 
+  @Query(value="select * "
+    + "from public.app "
+    + "where "
+    + "(in_store_since_date > current_date - interval '7' day  and in_store_since_date < current_date + interval '1' day) "
+    + "order by coalesce(in_store_since_date, '1900-01-01 00:00:00') desc",
+    nativeQuery = true)
+  List<App> findRecentlyAdded();
+
   App findOneByFlatpakAppId(String flatpakAppId);
 
 

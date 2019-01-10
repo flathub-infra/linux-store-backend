@@ -1,13 +1,17 @@
 package org.flathub.api.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.rometools.rome.feed.synd.*;
+import com.rometools.rome.io.FeedException;
+import com.rometools.rome.io.SyndFeedOutput;
 import org.flathub.api.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by jorge on 24/03/17.
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class ApiServiceImpl implements ApiService {
 
   private static final String COLLECTION_NAME_RECENTLY_UPDATED = "recently-updated";
+  private static final String COLLECTION_NAME_NEW = "new";
 
   @Autowired
   private AppRepository appRepository;
@@ -121,4 +126,66 @@ public class ApiServiceImpl implements ApiService {
   public FlatpakRepo findRepoByName(String name) {
     return repoRepository.findOneByName(name);
   }
+
+
+  @Override
+  public String getRssFeedByCollectionName(String collectionName) throws FeedException {
+
+    SyndFeed feed = new SyndFeedImpl();
+    feed.setFeedType("atom_1.0");
+    feed.setTitle("Flathub - New apps");
+    feed.setLink("https://flathub.org");
+    feed.setDescription("New applications published in Flathub");
+
+    SyndImage image = new SyndImageImpl();
+    image.setUrl("https://flathub.org/assets/themes/flathub/flathub-logo.png");
+    feed.setIcon(image);
+
+    List<SyndCategory> categories = new ArrayList<>();
+    SyndCategory categoryLinux = new SyndCategoryImpl();
+    categoryLinux.setName("Linux");
+    categories.add(categoryLinux);
+
+    if (COLLECTION_NAME_NEW.equalsIgnoreCase(collectionName)) {
+
+      List<App> apps = appRepository.findRecentlyAdded();
+
+      SyndEntry entry;
+      String descriptionContents;
+      List<SyndEntry> entries = new ArrayList<>();
+
+      for(App app: apps){
+
+        entry = new SyndEntryImpl();
+        entry.setTitle(app.getName());
+        entry.setLink("https://flathub.org/apps/details/" + app.getFlatpakAppId());
+
+        SyndContent description = new SyndContentImpl();
+        description.setType("text/html");
+
+        descriptionContents = app.getDescription();
+
+        if(app.getCurrentReleaseVersion() != null){
+          descriptionContents = descriptionContents + "<br><p>Version: " + app.getCurrentReleaseVersion() + "</p>";
+        }
+
+        if(app.getScreenshots() != null && app.getScreenshots().size()>0){
+          descriptionContents = descriptionContents + "<br><img src=\"" + app.getScreenshots().get(0).getImgDesktopUrl() + "\">";
+        }
+
+        description.setValue(descriptionContents);
+        entry.setDescription(description);
+
+        entry.setCategories(categories);
+        entry.setUpdatedDate(Date.from(app.getInStoreSinceDate().toInstant()));
+
+        entries.add(entry);
+      }
+
+      feed.setEntries(entries);
+
+    }
+    return  new SyndFeedOutput().outputString(feed);
+  }
+
 }
