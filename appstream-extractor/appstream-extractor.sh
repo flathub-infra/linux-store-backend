@@ -137,4 +137,7 @@ extract-appstream-by-arch flathub i386
 extract-appstream-by-arch flathub arm
 extract-appstream-by-arch flathub aarch64
 
+# Clean old appstream data
+ostree --repo=/var/lib/flatpak/repo prune --refs-only --depth=0
+
 
