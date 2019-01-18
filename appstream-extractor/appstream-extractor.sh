@@ -131,6 +131,9 @@ function extract-appstream-by-arch {
 check-required-programs
 check-required-folders
 
+# Configure remote
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
 # Extract appstream info
 extract-appstream-by-arch flathub x86_64
 extract-appstream-by-arch flathub i386
