@@ -6,7 +6,7 @@
 
 APPSTREAM_EXTRACTOR_HOME=/var/lib/appstream-extractor
 APPSTREAM_EXTRACTOR_DEST_FOLDER=$APPSTREAM_EXTRACTOR_HOME/export-data
-FLATPAK_OSTREE_REPO_PATH=/var/lib/flatpak/repo/
+FLATPAK_OSTREE_REPO_PATH=$HOME/.local/share/flatpak/repo/
 
 
 function check-required-programs {
@@ -78,7 +78,7 @@ function extract-files-from-ostree {
 	/bin/tar -xf $APPSTREAM_EXTRACT_FILE -C $APPSTREAM_EXTRACT_FILE_UNZIP_FOLDER
 
 	# Create file with last ostree commit per app and other info
-	flatpak remote-ls --system -d $FLATPAK_REMOTE_NAME  --arch $ARCH > $FLATPAK_REMOTE_INFO_FILE
+	flatpak remote-ls --user -d $FLATPAK_REMOTE_NAME  --arch $ARCH > $FLATPAK_REMOTE_INFO_FILE
 
 	echo "Cleaning up unused files in $APPSTREAM_EXTRACTOR_DEST_FOLDER"
 	find $APPSTREAM_EXTRACTOR_DEST_FOLDER/appstream-$FLATPAK_REMOTE_NAME-$ARCH* -mtime +1 -exec rm -fr {} \; 2> /dev/null
@@ -97,7 +97,7 @@ function extract-appstream-by-arch {
 	echo "Getting info for remote $FLATPAK_REMOTE_NAME and arch $ARCH ..."
 
 	# Update appstream info from repo
-	/usr/bin/timeout 300s /usr/bin/flatpak update --appstream --arch=$ARCH
+	/usr/bin/timeout 300s /usr/bin/flatpak --user update --appstream --arch=$ARCH
 
 	# Get current commit from appstream ostree log
 	COMMIT_TEMP=`/usr/bin/ostree --repo=$FLATPAK_OSTREE_REPO_PATH show $FLATPAK_APPSTREAM_REF | grep "commit"`
@@ -131,6 +131,9 @@ function extract-appstream-by-arch {
 check-required-programs
 check-required-folders
 
+# Configure remote
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
 # Extract appstream info
 extract-appstream-by-arch flathub x86_64
 extract-appstream-by-arch flathub i386
@@ -138,6 +141,6 @@ extract-appstream-by-arch flathub arm
 extract-appstream-by-arch flathub aarch64
 
 # Clean old appstream data
-ostree --repo=/var/lib/flatpak/repo prune --refs-only --depth=0
+ostree --repo=$HOME/.local/share/flatpak/repo/ prune --refs-only --depth=0
 
 
