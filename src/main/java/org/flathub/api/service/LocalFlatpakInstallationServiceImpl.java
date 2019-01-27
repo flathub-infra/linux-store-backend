@@ -124,7 +124,7 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
 
       return Optional.empty();
     } catch (Exception e) {
-      LOGGER.debug("There was an error getting quick basic remote info for id " + id + " and arch " + arch + " and remote " + remote, e);
+      LOGGER.error("There was an error getting quick basic remote info for id " + id + " and arch " + arch + " and remote " + remote, e);
       return Optional.empty();
     }
   }
@@ -140,7 +140,7 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
     if (!completeRemoteInfo.isPresent() && retryIfFailed) {
 
       try {
-        LOGGER.info("Waiting 5 secs to try get the remote-info again ...");
+        LOGGER.warn("Waiting 5 secs to try get the remote-info again for " + id + " ...");
         Thread.sleep(5000);
 
         completeRemoteInfo = this.getRemoteInfoByRemoteAndArchAndId(remote, arch, id);
@@ -199,7 +199,7 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
 
     }
     catch (Exception e){
-      LOGGER.debug("There was an error getting remote info for id " + id + "for arch " + arch + " and remote " + remote, e);
+      LOGGER.error("There was an error getting remote info for id " + id + "for arch " + arch + " and remote " + remote, e);
       return Optional.empty();
     }
 
@@ -220,7 +220,7 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
       return Optional.ofNullable(result);
     }
     catch (Exception e){
-      LOGGER.debug("There was an error getting remote metadata for id " + id + " and arch " + arch + " and remote " + remote, e);
+      LOGGER.error("There was an error getting remote metadata for id " + id + " and arch " + arch + " and remote " + remote, e);
       return Optional.empty();
     }
 
@@ -391,7 +391,7 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
   private ArrayList<FlatpakRefRemoteInfo> parseOstreeHistory(FlatpakRefRemoteInfo currentRemoteInfo, String[] history) {
 
     ArrayList<FlatpakRefRemoteInfo> list = new ArrayList<>();
-    Optional<FlatpakRefRemoteInfo> currentParsedRemoteInfo = Optional.empty();
+    Optional<FlatpakRefRemoteInfo> currentParsedRemoteInfo;
     String currentParsedRemoteInfoString;
     String line;
 
