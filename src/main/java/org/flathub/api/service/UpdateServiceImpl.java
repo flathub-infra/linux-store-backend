@@ -15,10 +15,13 @@ import java.util.Optional;
 import javax.xml.bind.JAXBException;
 
 import org.flathub.api.model.*;
+import org.flathub.api.util.AppdataValidationResult;
+import org.flathub.api.util.AppdataValidator;
 import org.flathub.api.util.FlatpakRefFileCreator;
 import org.freedesktop.appstream.AppdataComponent;
 import org.freedesktop.appstream.AppdataParser;
 import org.freedesktop.appstream.ReleaseInfo;
+import org.freedesktop.appstream.appdata.Component;
 import org.freedesktop.appstream.appdata.Icon;
 import org.rauschig.jarchivelib.ArchiveFormat;
 import org.rauschig.jarchivelib.Archiver;
@@ -181,8 +184,10 @@ public class UpdateServiceImpl implements UpdateService {
     AppdataComponent previousIncompleteComponentWithSameFlatpakId;
 
     List<AppdataComponent> componentList = null;
+    AppdataValidationResult validationResult;
+    int count = 0;
 
-    LOGGER.info("Updating repo info for " + repo.getName());
+    LOGGER.info("Updating repo info for " + repo.getName() + "...");
 
     try {
 
@@ -198,8 +203,13 @@ public class UpdateServiceImpl implements UpdateService {
 
         try {
 
+          if(count % 50 == 0){
+            LOGGER.info("Processing component " + count + " of " + componentList.size());
+          }
+          count++;
+
           if (component.getFlatpakId() != null &&
-            APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
+             APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
 
             previousIncompleteComponentWithSameFlatpakId = incompleteComponentsMap
               .get(component.getFlatpakId());
@@ -208,7 +218,10 @@ public class UpdateServiceImpl implements UpdateService {
               incompleteComponentsMap.remove(component.getFlatpakId());
             }
 
-            if (this.validateAppdataInformation(component)) {
+            validationResult = AppdataValidator.validateAppdataInformation(component,
+                ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_DEFAULT, ICON_HEIGHT_HIDPI);
+
+            if(validationResult.isValid()){
               updateAppInfo(repo, appstreamInfo, component);
             } else {
               incompleteComponentsMap.put(component.getFlatpakId(), component);
@@ -225,11 +238,22 @@ public class UpdateServiceImpl implements UpdateService {
         }
       }
 
+      Component incompleteComponent;
+
       Iterator it = incompleteComponentsMap.entrySet().iterator();
       while (it.hasNext()) {
+
         Map.Entry pair = (Map.Entry) it.next();
-        LOGGER.warn(
-          pair.getKey() + " has incomplete appdata and won't be added/updated in the webstore");
+
+        LOGGER.warn(pair.getKey() + " has incomplete appdata and won't be added/updated in the webstore. Issues found:");
+
+        validationResult = AppdataValidator.validateAppdataInformation((AppdataComponent) pair.getValue(),
+          ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_DEFAULT, ICON_HEIGHT_HIDPI);
+
+        for(String issue : validationResult.getIssues()){
+          LOGGER.warn("  - " + issue);
+        }
+
         it.remove(); // avoids a ConcurrentModificationException
       }
 
@@ -241,6 +265,7 @@ public class UpdateServiceImpl implements UpdateService {
     repo.setCurrentOstreeCommit(appstreamInfo.getCommit());
     apiService.updateFlatpakRepo(repo);
 
+    LOGGER.info("Finish updating repo info for " + repo.getName());
 
   }
 
@@ -321,7 +346,7 @@ public class UpdateServiceImpl implements UpdateService {
       AppRelease latestAppRelease = apiService.findLastAppReleaseByAppAndArch(app, arch);
 
       if (isSameRelease(latestAppRelease, remoteInfo.get())) {
-        LOGGER.info(remoteInfo.get().getId() + " does not have a new release for arch " + arch);
+        LOGGER.debug(remoteInfo.get().getId() + " does not have a new release for arch " + arch);
       }
       else {
 
@@ -455,7 +480,7 @@ public class UpdateServiceImpl implements UpdateService {
     OffsetDateTime nextOstreeCommitDate = OffsetDateTime.of(currentRemoteInfo.getDate(), OffsetDateTime.now().getOffset());
 
 
-    LOGGER.info("Importing app release info from ostree history for app " + app.getFlatpakAppId() + " and arch " + arch.toString());
+    LOGGER.debug("Importing app release info from ostree history for app " + app.getFlatpakAppId() + " and arch " + arch.toString());
 
     for (int i = 0; i < currentRemoteInfo.getHistory().size(); i++) {
 
@@ -467,50 +492,6 @@ public class UpdateServiceImpl implements UpdateService {
 
   }
   
-
-  /**
-   * Check if the component contains the required appdata:
-   * - For all components: FlatpakId, Name, Summary
-   * - For apps require also: Description, Icon
-   * <p>
-   * Check data size limits:
-   * - description.length < App.APP_DESCRIPTION_LENGTH
-   *
-   * @return true if the component has the required info for its type and respects the size limits
-   */
-  private boolean validateAppdataInformation(AppdataComponent component) {
-
-    boolean appDataIsValid = true;
-
-    appDataIsValid = component.getFlatpakId() != null && !""
-      .equalsIgnoreCase(component.getFlatpakId());
-
-    appDataIsValid = appDataIsValid && component.findDefaultName() != null && !""
-      .equalsIgnoreCase(component.findDefaultName());
-
-    appDataIsValid = appDataIsValid && component.findDefaultSummary() != null && !""
-      .equalsIgnoreCase(component.findDefaultSummary());
-
-    if (APPSTREAM_TYPE_DESKTOP.equalsIgnoreCase(component.getType())) {
-
-      //appDataIsValid = appDataIsValid && component.findDefaultDescription() != null && !"".equalsIgnoreCase(component.findDefaultDescription());
-      if (component.findDefaultDescription() != null) {
-        appDataIsValid = appDataIsValid
-          && component.findDefaultDescription().length() < App.APP_DESCRIPTION_LENGTH;
-      }
-
-      String hiDpiIconUrl = component.findIconUrl(ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_HIDPI);
-      String defaultIconUrl = component.findIconUrl(ICON_BASE_RELATIVE_PATH, ICON_HEIGHT_DEFAULT);
-      appDataIsValid = appDataIsValid && (!"".equalsIgnoreCase(hiDpiIconUrl) || !""
-        .equalsIgnoreCase(defaultIconUrl));
-    }
-
-    if (!appDataIsValid) {
-      LOGGER.info(component.getFlatpakId());
-    }
-
-    return appDataIsValid;
-  }
 
   private void generateFlatpakrefFile(App app) {
 
@@ -592,7 +573,7 @@ public class UpdateServiceImpl implements UpdateService {
 
   private void importScreenshots(App app, AppdataComponent component) {
 
-    LOGGER.info("Screenshots for " + app.getFlatpakAppId());
+    LOGGER.debug("Importing screenshots for " + app.getFlatpakAppId());
 
     if (component.getScreenshotsByLangDefault() != null
       && component.getScreenshotsByLangDefault().size() > 0) {
@@ -710,13 +691,13 @@ public class UpdateServiceImpl implements UpdateService {
             java.nio.file.Files.copy(appstreamIconFile.toPath(), destIconPath.toPath());
           }
         } else {
-          LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
+          LOGGER.debug("Icon for " + app.getFlatpakAppId() + " with height " + height + " not available in appstream");
         }
       } catch (IOException e) {
         LOGGER.error("Error copying icon", e);
       }
     } else {
-      LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
+      LOGGER.debug("Icon for " + app.getFlatpakAppId() + " with height " + height + " not available in appstream");
     }
 
   }
@@ -754,13 +735,13 @@ public class UpdateServiceImpl implements UpdateService {
             java.nio.file.Files.copy(iconFile.toPath(), destIconPath.toPath());
           }
         } else {
-          LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
+          LOGGER.warn("Icon for " + app.getFlatpakAppId() + " not available in appstream");
         }
       } catch (IOException e) {
         LOGGER.error("Error copying icon", e);
       }
     } else {
-      LOGGER.info("Icon for " + app.getFlatpakAppId() + " not available");
+      LOGGER.warn("Icon for " + app.getFlatpakAppId() + " not available in appstream");
     }
 
   }
