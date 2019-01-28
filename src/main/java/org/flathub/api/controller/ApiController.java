@@ -57,9 +57,8 @@ public class ApiController {
   }
 
 
-  @RequestMapping(value = "/apps/{flatpakAppId:.+}", method = RequestMethod.GET)
+  @RequestMapping(value = "/apps/{flatpakAppId}", method = RequestMethod.GET)
   public AppFullDto findAppFlatpakAppId(@PathVariable String flatpakAppId) {
-
     return mapper.appToAppFullDto(apiService.findAppByFlatpakAppId(flatpakAppId));
   }
 
