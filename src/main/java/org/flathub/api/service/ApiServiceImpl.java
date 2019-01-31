@@ -1,16 +1,14 @@
 package org.flathub.api.service;
 
-import com.rometools.rome.feed.synd.*;
 import com.rometools.rome.io.FeedException;
-import com.rometools.rome.io.SyndFeedOutput;
 import org.flathub.api.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,8 +17,9 @@ import java.util.List;
 @Service
 public class ApiServiceImpl implements ApiService {
 
-  private static final String COLLECTION_NAME_RECENTLY_UPDATED = "recently-updated";
-  private static final String COLLECTION_NAME_NEW = "new";
+  public static final String COLLECTION_NAME_RECENTLY_UPDATED = "recently-updated";
+  public static final String COLLECTION_NAME_NEW = "new";
+  public static final int COLLECTION_NAME_NEW_DAYSBACK = 30;
 
   @Autowired
   private AppRepository appRepository;
@@ -37,6 +36,8 @@ public class ApiServiceImpl implements ApiService {
   @Autowired
   private AppReleaseRepository appReleaseRepository;
 
+  @Autowired
+  private SyndicationService syndicationService;
 
   @Override
   public List<App> findAllApps() {
@@ -54,14 +55,24 @@ public class ApiServiceImpl implements ApiService {
   public List<App> findAllAppsByCollectionName(String collectionName) {
 
     if (COLLECTION_NAME_RECENTLY_UPDATED.equalsIgnoreCase(collectionName)) {
-     return this.findRecentlyUpdatedApps();
+      return this.findRecentlyUpdatedApps();
+    } else if (COLLECTION_NAME_NEW.equalsIgnoreCase(collectionName)) {
+      Sort.Order order = new Sort.Order(Direction.DESC, "InStoreSinceDate").nullsLast();
+      return appRepository.findAllByInStoreSinceDateAfter(OffsetDateTime.now().minusDays(COLLECTION_NAME_NEW_DAYSBACK), new Sort  (order));
     } else {
       return new ArrayList<>();
     }
   }
 
   private List<App> findRecentlyUpdatedApps(){
-    return appRepository.findRecentlyAddedOrUpdated();
+
+    List<App> apps = appRepository.findRecentlyAddedOrUpdatedUsingAppReleaseX8664();
+
+    if(apps == null && apps.size() == 0){
+      apps = appRepository.findRecentlyAddedOrUpdated();
+    }
+
+    return apps;
   }
 
   @Override
@@ -130,66 +141,7 @@ public class ApiServiceImpl implements ApiService {
 
   @Override
   public String getRssFeedByCollectionName(String collectionName) throws FeedException {
-
-    SyndFeed feed = new SyndFeedImpl();
-    feed.setFeedType("atom_1.0");
-    feed.setTitle("Flathub - New apps");
-    feed.setLink("https://flathub.org");
-    feed.setDescription("New applications published in Flathub");
-
-    SyndImage image = new SyndImageImpl();
-    image.setUrl("https://flathub.org/assets/themes/flathub/flathub-logo.png");
-    feed.setIcon(image);
-
-    List<SyndCategory> categories = new ArrayList<>();
-    SyndCategory categoryLinux = new SyndCategoryImpl();
-    categoryLinux.setName("Linux");
-    categories.add(categoryLinux);
-
-    List<SyndEntry> entries = new ArrayList<>();
-
-
-    if (COLLECTION_NAME_NEW.equalsIgnoreCase(collectionName)) {
-
-      List<App> apps = appRepository.findRecentlyAdded();
-
-      SyndEntry entry;
-      String descriptionContents;
-
-
-      for(App app: apps){
-
-        entry = new SyndEntryImpl();
-        entry.setTitle(app.getName());
-        entry.setLink("https://flathub.org/apps/details/" + app.getFlatpakAppId());
-
-        SyndContent description = new SyndContentImpl();
-        description.setType("text/html");
-
-        descriptionContents = app.getDescription();
-
-        if(app.getCurrentReleaseVersion() != null){
-          descriptionContents = descriptionContents + "<br><p>Version: " + app.getCurrentReleaseVersion() + "</p>";
-        }
-
-        if(app.getScreenshots() != null && app.getScreenshots().size()>0){
-          descriptionContents = descriptionContents + "<br><img src=\"" + app.getScreenshots().get(0).getImgDesktopUrl() + "\">";
-        }
-
-        description.setValue(descriptionContents);
-        entry.setDescription(description);
-
-        entry.setCategories(categories);
-        entry.setUpdatedDate(Date.from(app.getInStoreSinceDate().toInstant()));
-
-        entries.add(entry);
-      }
-
-    }
-
-    feed.setEntries(entries);
-
-    return  new SyndFeedOutput().outputString(feed);
+    return syndicationService.getFeedByCollection(collectionName);
   }
 
 }
