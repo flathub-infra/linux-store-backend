@@ -43,6 +43,7 @@ public class SyndicationServiceImpl implements SyndicationService {
 
     }
     else if(ApiServiceImpl.COLLECTION_NAME_RECENTLY_UPDATED.equalsIgnoreCase(collectionName)) {
+
       apps = appRepository.findRecentlyAddedOrUpdatedUsingAppReleaseX8664();
 
       if(apps == null && apps.size() == 0){

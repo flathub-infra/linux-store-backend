@@ -37,7 +37,7 @@ public interface AppRepository extends JpaRepository<App, Integer> {
    + "from public.app app, public.app_release release "
    + "where app.app_id = release.app_id "
    + "and release.arch = 'X86_64' "
-   + "and release.ostree_commit_date > current_date - interval '7' day "
+   + "and release.ostree_commit_date > current_date - interval '30' day "
    + "and release.ostree_commit_date_next is null "
    + "order by release.ostree_commit_date desc",
     nativeQuery = true)
