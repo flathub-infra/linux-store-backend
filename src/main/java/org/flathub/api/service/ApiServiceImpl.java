@@ -66,13 +66,7 @@ public class ApiServiceImpl implements ApiService {
 
   private List<App> findRecentlyUpdatedApps(){
 
-    List<App> apps = appRepository.findRecentlyAddedOrUpdatedUsingAppReleaseX8664();
-
-    if(apps == null && apps.size() == 0){
-      apps = appRepository.findRecentlyAddedOrUpdated();
-    }
-
-    return apps;
+    return appRepository.findRecentlyAddedOrUpdated();
   }
 
   @Override
