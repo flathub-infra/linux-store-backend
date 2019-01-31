@@ -7,6 +7,7 @@ import org.flathub.api.dto.AppMapper;
 import org.flathub.api.service.ApiService;
 import org.flathub.api.service.UpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -45,17 +46,18 @@ public class ApiController {
     return mapper.appsToAppDtos(apiService.findAllAppsByCollectionName(collectionName));
   }
 
-  @RequestMapping(value = "/apps/collection/{collectionName}/feed", method = RequestMethod.GET)
+
+  @RequestMapping(value = { "/apps/collection/{collectionName}/feed","/apps/collection/{collectionName}/feed.xml"},
+    produces = { MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_XML_VALUE },
+    method = RequestMethod.GET)
   @ResponseBody public String getRssFeedByCollection(HttpServletResponse response, @PathVariable String collectionName) {
     try {
-      response.setContentType("application/xml");
       return apiService.getRssFeedByCollectionName(collectionName);
     } catch (FeedException e) {
       e.printStackTrace();
       return "";
     }
   }
-
 
   @RequestMapping(value = "/apps/{flatpakAppId:.+}", method = RequestMethod.GET)
   public AppFullDto findAppFlatpakAppId(@PathVariable String flatpakAppId) {
