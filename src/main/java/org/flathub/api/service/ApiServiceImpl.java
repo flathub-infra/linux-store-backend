@@ -143,7 +143,7 @@ public class ApiServiceImpl implements ApiService {
 
       return syndicationService.createFeed("Flathub - Updated apps",
         "Applications updated in Flathub in the last 7 days",
-        "https://flathub.org",
+        "https://flathub.org/apps/collection/recently-updated",
         "https://flathub.org/assets/themes/flathub/flathub-logo.png",
         "Linux",
         apps,  FeedPublishBy.AppLastChange);
@@ -153,7 +153,7 @@ public class ApiServiceImpl implements ApiService {
 
       return syndicationService.createFeed("Flathub - New apps",
         "New applications published in Flathub in the last " + ApiServiceImpl.COLLECTION_NAME_NEW_DAYSBACK + " days",
-        "https://flathub.org",
+        "https://flathub.org/apps/collection/new",
         "https://flathub.org/assets/themes/flathub/flathub-logo.png",
         "Linux",
         apps,  FeedPublishBy.AppInStoreSince);
