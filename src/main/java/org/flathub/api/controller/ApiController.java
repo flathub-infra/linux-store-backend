@@ -52,7 +52,7 @@ public class ApiController {
   }
 
   @RequestMapping(value = { "/apps/collection/{collectionName}/feed","/apps/collection/{collectionName}/feed.xml"},
-    produces = { MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_XML_VALUE },
+    produces = { MediaType.APPLICATION_XML_VALUE },
     method = RequestMethod.GET)
   @ResponseBody public String getRssFeedByCollection(HttpServletResponse response, @PathVariable String collectionName) {
     try {

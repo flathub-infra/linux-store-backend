@@ -55,19 +55,20 @@ public class ApiServiceImpl implements ApiService {
   public List<App> findAllAppsByCollectionName(String collectionName) {
 
     if (COLLECTION_NAME_RECENTLY_UPDATED.equalsIgnoreCase(collectionName)) {
-      return this.findRecentlyUpdatedApps();
+
+      //return appRepository.findRecentlyAddedOrUpdated();
+      return appRepository.findRecentlyAddedOrUpdatedUsingAppReleaseX8664();
+
     } else if (COLLECTION_NAME_NEW.equalsIgnoreCase(collectionName)) {
+
       Sort.Order order = new Sort.Order(Direction.DESC, "InStoreSinceDate").nullsLast();
       return appRepository.findAllByInStoreSinceDateAfter(OffsetDateTime.now().minusDays(COLLECTION_NAME_NEW_DAYSBACK), new Sort  (order));
+
     } else {
       return new ArrayList<>();
     }
   }
 
-  private List<App> findRecentlyUpdatedApps(){
-
-    return appRepository.findRecentlyAddedOrUpdated();
-  }
 
   @Override
   public App findAppByFlatpakAppId(String flatpakAppId) {
@@ -135,7 +136,33 @@ public class ApiServiceImpl implements ApiService {
 
   @Override
   public String getRssFeedByCollectionName(String collectionName) throws FeedException {
-    return syndicationService.getFeedByCollection(collectionName);
+
+    List<App> apps = this.findAllAppsByCollectionName(collectionName);
+
+    if (COLLECTION_NAME_RECENTLY_UPDATED.equalsIgnoreCase(collectionName)) {
+
+      return syndicationService.createFeed("Flathub - Updated apps",
+        "Applications updated in Flathub in the last 7 days",
+        "https://flathub.org",
+        "https://flathub.org/assets/themes/flathub/flathub-logo.png",
+        "Linux",
+        apps,  FeedPublishBy.AppLastChange);
+
+
+    } else if (COLLECTION_NAME_NEW.equalsIgnoreCase(collectionName)) {
+
+      return syndicationService.createFeed("Flathub - New apps",
+        "New applications published in Flathub in the last " + ApiServiceImpl.COLLECTION_NAME_NEW_DAYSBACK + " days",
+        "https://flathub.org",
+        "https://flathub.org/assets/themes/flathub/flathub-logo.png",
+        "Linux",
+        apps,  FeedPublishBy.AppInStoreSince);
+
+    }
+
+    return  "";
+
+
   }
 
 }

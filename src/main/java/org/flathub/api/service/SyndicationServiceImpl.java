@@ -6,10 +6,8 @@ import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedOutput;
 import org.flathub.api.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,71 +22,36 @@ public class SyndicationServiceImpl implements SyndicationService {
   @Autowired
   private AppReleaseRepository appReleaseRepository;
 
-  @Override
-  public String getFeedByCollection(String collectionName) throws FeedException {
 
-    List<App> apps;
-
-    if (ApiServiceImpl.COLLECTION_NAME_NEW.equalsIgnoreCase(collectionName)) {
-
-      Sort.Order order = new Sort.Order(Sort.Direction.DESC, "InStoreSinceDate").nullsLast();
-      apps = appRepository.findAllByInStoreSinceDateAfter(OffsetDateTime.now().
-        minusDays(ApiServiceImpl.COLLECTION_NAME_NEW_DAYSBACK), new Sort(order));
-
-      return createFeed("Flathub - New apps",
-        "New applications published in Flathub in the last " + ApiServiceImpl.COLLECTION_NAME_NEW_DAYSBACK + " days",
-        "https://flathub.org",
-        "https://flathub.org/assets/themes/flathub/flathub-logo.png",
-        apps, true);
-
-    }
-    else if(ApiServiceImpl.COLLECTION_NAME_RECENTLY_UPDATED.equalsIgnoreCase(collectionName)) {
-
-      apps = appRepository.findRecentlyAddedOrUpdatedUsingAppReleaseX8664();
-
-      if(apps == null && apps.size() == 0){
-        apps = appRepository.findRecentlyAddedOrUpdated();
-      }
-
-      return createFeed("Flathub - Updated apps",
-        "Applications updated in Flathub in the last " + ApiServiceImpl.COLLECTION_NAME_NEW_DAYSBACK + " days",
-        "https://flathub.org",
-        "https://flathub.org/assets/themes/flathub/flathub-logo.png",
-        apps, true);
-    }
-
-    return "";
-
-  }
-
-
-  public String createFeed(String title, String feedDescription, String link, String iconUrl,
-                           List<App> apps, boolean showReleases) throws FeedException {
+  public String createFeed(String feedTitle, String feedDescription, String feedHomePageUrl, String feedIconUrl,
+                           String feedCategory, List<App> apps, FeedPublishBy publishBy) throws FeedException {
 
     SyndFeed feed = new SyndFeedImpl();
-    feed.setFeedType("atom_1.0");
-    feed.setTitle(title);
-    feed.setLink(link);
+    feed.setFeedType("rss_2.0");
+    feed.setTitle(feedTitle);
+    feed.setLink(feedHomePageUrl);
     feed.setDescription(feedDescription);
 
     SyndImage image = new SyndImageImpl();
-    image.setUrl(iconUrl);
+    image.setUrl(feedIconUrl);
     feed.setIcon(image);
 
     List<SyndCategory> categories = new ArrayList<>();
-    SyndCategory categoryLinux = new SyndCategoryImpl();
-    categoryLinux.setName("Linux");
-    categories.add(categoryLinux);
+    SyndCategory category = new SyndCategoryImpl();
+    category.setName(feedCategory);
+    categories.add(category);
 
     List<SyndEntry> entries = new ArrayList<>();
     SyndEntry entry;
-    AppRelease appRelease = null;
+    AppRelease appRelease;
     String descriptionContents;
 
     for(App app: apps){
 
       entry = new SyndEntryImpl();
       entry.setTitle(app.getName());
+
+      //TODO: do not harcode this url here
       entry.setLink("https://flathub.org/apps/details/" + app.getFlatpakAppId());
 
       SyndContent description = new SyndContentImpl();
@@ -115,51 +78,64 @@ public class SyndicationServiceImpl implements SyndicationService {
         descriptionContents = descriptionContents + app.getDescription() + "<br>";
       }
 
-
       if(app.getScreenshots() != null && app.getScreenshots().size()>0){
         descriptionContents = descriptionContents + "<br><img src=\"" + app.getScreenshots().get(0).getImgDesktopUrl() + "\"><br>";
       }
 
-      if(showReleases){
 
-        appRelease = appReleaseRepository.findFirstByAppAndArchOrderByOstreeCommitDateDesc(app, Arch.X86_64);
+      descriptionContents = descriptionContents + "<br><h3>Additional information:</h3>";
+      descriptionContents = descriptionContents + "<ul>";
 
-        if(appRelease != null){
-          descriptionContents = descriptionContents + "<br><h3>Additional information:</h3>";
-          descriptionContents = descriptionContents + "<ul>";
-
-          if(app.getCurrentReleaseVersion() != null && app.getCurrentReleaseVersion().length() > 0){
-            descriptionContents = descriptionContents + "<li>Version: " + app.getCurrentReleaseVersion() + "</li>";
-          }
-
-          if(app.getDeveloperName() != null && app.getDeveloperName().length() > 0){
-            descriptionContents = descriptionContents + "<li>Developer: " + app.getDeveloperName() + "</li>";
-          }
-
-          if(app.getProjectLicense() != null && app.getProjectLicense().length() > 0){
-
-            if(app.getProjectLicense().contains("LicenseRef-proprietary")){
-              descriptionContents = descriptionContents + "<li>License: Proprietary</li>";
-            }
-            else{
-              descriptionContents = descriptionContents + "<li>License: " + app.getProjectLicense() + "</li>";
-            }
-
-          }
-
-          descriptionContents = descriptionContents + "<li>Ostree Commit: <ul>";
-          descriptionContents = descriptionContents + "<li>Subject: " + appRelease.getOstreeCommitSubject() + "</li>";
-          descriptionContents = descriptionContents + "<li>Date: " + appRelease.getOstreeCommitDate() + "</li>";
-          descriptionContents = descriptionContents + "<li>Commit: " + appRelease.getOstreeCommitHash() + "</li>";
-          descriptionContents = descriptionContents + "</ul></li></ul>";
-        }
-      }
-
-
-      if(showReleases && appRelease != null){
-        entry.setUpdatedDate(Date.from(appRelease.getOstreeCommitDate().toInstant()));
+      if(app.getCurrentReleaseVersion() != null && app.getCurrentReleaseVersion().length() > 0){
+        descriptionContents = descriptionContents + "<li>Version: " + app.getCurrentReleaseVersion() + "</li>";
       }
       else{
+        descriptionContents = descriptionContents + "<li>Version: &mdash;\n </li>";
+      }
+
+      if(app.getDeveloperName() != null && app.getDeveloperName().length() > 0){
+        descriptionContents = descriptionContents + "<li>Developer: " + app.getDeveloperName() + "</li>";
+      }
+      else{
+        descriptionContents = descriptionContents + "<li>Developer: &mdash;\n </li>";
+      }
+
+      if(app.getProjectLicense() != null && app.getProjectLicense().length() > 0){
+        if(app.getProjectLicense().contains("LicenseRef-proprietary")){
+          descriptionContents = descriptionContents + "<li>License: Proprietary</li>";
+        }
+        else{
+          descriptionContents = descriptionContents + "<li>License: " + app.getProjectLicense() + "</li>";
+        }
+      }
+      else{
+        descriptionContents = descriptionContents + "<li>License: &mdash;\n </li>";
+      }
+
+      // Close the "Additional info" section
+      descriptionContents = descriptionContents + "</ul>";
+
+      appRelease = appReleaseRepository.findFirstByAppAndArchOrderByOstreeCommitDateDesc(app, Arch.X86_64);
+      if(appRelease != null){
+        descriptionContents = descriptionContents + "<br><h3>Latest changes:</h3>";
+        descriptionContents = descriptionContents + "<ul>";
+        descriptionContents = descriptionContents + "<li>Subject: " + appRelease.getOstreeCommitSubject() + "</li>";
+        descriptionContents = descriptionContents + "<li>Date: " + appRelease.getOstreeCommitDate() + "</li>";
+        descriptionContents = descriptionContents + "<li>Hash: " + appRelease.getOstreeCommitShortHash() + "</li>";
+        descriptionContents = descriptionContents + "</ul>";
+      }
+
+      if(publishBy == FeedPublishBy.AppLastChange){
+
+        if(appRelease != null && appRelease.getOstreeCommitDate() != null){
+          entry.setUpdatedDate(Date.from(appRelease.getOstreeCommitDate().toInstant()));
+        }
+        else if(app.getCurrentReleaseDate() != null){
+          entry.setUpdatedDate(Date.from(app.getCurrentReleaseDate().toInstant()));
+        }
+
+      }
+      else if(publishBy == FeedPublishBy.AppInStoreSince){
         entry.setUpdatedDate(Date.from(app.getInStoreSinceDate().toInstant()));
       }
 
@@ -178,8 +154,6 @@ public class SyndicationServiceImpl implements SyndicationService {
     return  new SyndFeedOutput().outputString(feed);
 
   }
-
-
 
 
 }
