@@ -12,7 +12,7 @@ RUN printf "deb http://ftp.debian.org/debian stretch-backports main" > /etc/apt/
 VOLUME /tmp
 
 #Add latest build jar file
-ADD target/linux-store-backend-0.6.5.jar app.jar
+ADD target/linux-store-backend-0.6.6.jar app.jar
 RUN sh -c 'touch /app.jar'
 ENV JAVA_OPTS=""
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
