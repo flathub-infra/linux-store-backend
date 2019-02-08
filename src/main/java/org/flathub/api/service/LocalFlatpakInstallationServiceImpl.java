@@ -43,8 +43,12 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
   private static final String REMOTE_INFO_INSTALLED = "Installed:";
   private static final String REMOTE_INFO_RUNTIME = "Runtime:";
   private static final String REMOTE_INFO_SDK = "Sdk:";
-  private static final String REMOTE_INFO_HISTORY = "History";
+  private static final String REMOTE_INFO_HISTORY = "History:";
   private static final String REMOTE_INFO_EOL_MESSAGE_PREFIX= "eol=";
+  private static final String REMOTE_INFO_EOL= "End-of-life:";
+  private static final String REMOTE_INFO_EOL_REBASE= "End-of-life-rebase:";
+
+
 
   @SuppressWarnings("unused")
   @Value("${flatpak.flatpak-command}")
@@ -57,7 +61,7 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
   @Override
   public List<FlatpakRefRemoteInfo> getAllQuickBasicRemoteInfoByRemote(String remote) {
 
-    String command = flatpakCommand + " --system remote-ls -d --arch=* " + remote;
+    String command = flatpakCommand + " --system remote-ls --columns=ref:f,commit:f,installed-size:f,download-size:f,options:f --arch=* " + remote;
 
     Optional<FlatpakRefRemoteInfo> remoteInfo;
     ArrayList<FlatpakRefRemoteInfo> remoteInfoList = new ArrayList<>();
@@ -94,7 +98,7 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
 
   public Optional<FlatpakRefRemoteInfo> getQuickBasicRemoteInfoByRemoteAndArchAndId(String remote, Arch arch, String id)  {
 
-    String command = flatpakCommand + " --system remote-ls -d --arch=* " + remote;
+    String command = flatpakCommand + " --system remote-ls --columns=ref:f,commit:f,installed-size:f,download-size:f,options:f --arch=* " + remote;
 
     Optional<FlatpakRefRemoteInfo> remoteInfo;
 
@@ -184,13 +188,6 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
             completeInfo.get().setMetadata(metadata.get());
           }
 
-          // Set end of life info from quickinfo while it's not available in flatpak remote-info
-          if(quickInfo.get().getRef().equalsIgnoreCase(completeInfo.get().getRef())){
-            completeInfo.get().setEndOfLife(quickInfo.get().isEndOfLife());
-            completeInfo.get().setEndOfLife(quickInfo.get().getEndOfLife());
-            completeInfo.get().setEndOfLifeRebase(quickInfo.get().getEndOfLifeRebase());
-          }
-
           return completeInfo;
         }
       }
@@ -199,7 +196,7 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
 
     }
     catch (Exception e){
-      LOGGER.error("There was an error getting remote info for id " + id + "for arch " + arch + " and remote " + remote, e);
+      LOGGER.error("There was an error getting remote info for id " + id + " for arch " + arch + " and remote " + remote, e);
       return Optional.empty();
     }
 
@@ -230,7 +227,7 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
   private Optional<FlatpakRefRemoteInfo> parseBasicRemoteInfoLine(String tabulatedRemoteInfo) {
 
     FlatpakRefRemoteInfo remoteInfo = new FlatpakRefRemoteInfo();
-    String[] columns = tabulatedRemoteInfo.trim().split("[\\t]");
+    String[] columns = tabulatedRemoteInfo.trim().replace("\t\t","\t").split("[\\t]");
 
     if (columns.length > 3) {
 
@@ -244,10 +241,15 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
       remoteInfo.setInstalledSize(columns[2]);
       remoteInfo.setDownloadSize(columns[3]);
 
-      if (columns.length > 4 && columns[4] != null && !"".equalsIgnoreCase(columns[4]) && columns[4].startsWith(REMOTE_INFO_EOL_MESSAGE_PREFIX)) {
+      if (columns.length > 4 &&
+        columns[4] != null && !"".equalsIgnoreCase(columns[4]) && columns[4].startsWith(REMOTE_INFO_EOL_MESSAGE_PREFIX)) {
         remoteInfo.setEndOfLife(columns[4].replace(REMOTE_INFO_EOL_MESSAGE_PREFIX, ""));
         remoteInfo.setEndOfLife(true);
       }
+      else{
+        remoteInfo.setEndOfLife(false);
+      }
+
 
       return Optional.of(remoteInfo);
     } else {
@@ -321,6 +323,8 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
 
     FlatpakRefRemoteInfo remoteInfo = new FlatpakRefRemoteInfo();
 
+    remoteInfo.setEndOfLife(false);
+
     int lineCount = 0;
 
     while(lineCount<lines.length){
@@ -377,11 +381,17 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
       else if(line.startsWith(REMOTE_INFO_SDK)){
         remoteInfo.setSdk(line.replace(REMOTE_INFO_SDK, "").trim());
       }
+      else if(line.startsWith(REMOTE_INFO_EOL)){
+        remoteInfo.setEndOfLife(line.replace(REMOTE_INFO_EOL, "").trim());
+        remoteInfo.setEndOfLife(true);
+      }
+      else if(line.startsWith(REMOTE_INFO_EOL_REBASE)){
+        remoteInfo.setEndOfLifeRebase(line.replace(REMOTE_INFO_EOL_REBASE, "").trim());
+      }
       else if(line.startsWith(REMOTE_INFO_HISTORY)){
         remoteInfo.setHistory(parseOstreeHistory(remoteInfo, Arrays.copyOfRange(lines, lineCount, lines.length)));
         break;
       }
-
       lineCount++;
     }
 
@@ -393,18 +403,20 @@ public class LocalFlatpakInstallationServiceImpl implements LocalFlatpakInstalla
     ArrayList<FlatpakRefRemoteInfo> list = new ArrayList<>();
     Optional<FlatpakRefRemoteInfo> currentParsedRemoteInfo;
     String currentParsedRemoteInfoString;
-    String line;
 
     int lineCount = 0;
     while(lineCount<history.length) {
 
-      line = history[lineCount].trim();
+      if((lineCount + 2 < history.length) &&
+          (history[lineCount] != null && history[lineCount].trim().startsWith(REMOTE_INFO_COMMIT) &&
+          (history[lineCount + 1] != null && history[lineCount + 1].trim().startsWith(REMOTE_INFO_SUBJECT)) &&
+          (history[lineCount + 2] != null && history[lineCount + 2].trim().startsWith(REMOTE_INFO_DATE)))
+        ){
 
-      if(line.startsWith(REMOTE_INFO_SUBJECT) && (lineCount + 2 < history.length)){
-
-        currentParsedRemoteInfoString = line + "\n" + history[lineCount + 1].trim() + "\n" + history[lineCount + 2].trim();
+        currentParsedRemoteInfoString = history[lineCount].trim() + "\n" + history[lineCount + 1].trim() + "\n" + history[lineCount + 2].trim();
         currentParsedRemoteInfo = parseRemoteInfoString(currentParsedRemoteInfoString);
 
+        // Add the missing data from parent
         if(currentParsedRemoteInfo.isPresent()){
           currentParsedRemoteInfo.get().setRef(currentRemoteInfo.getRef());
           currentParsedRemoteInfo.get().setId(currentRemoteInfo.getId());

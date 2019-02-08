@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,6 +86,7 @@ public class LocalFlatpakInstallationServiceImplTest {
     assertThat(info.get().getInstalledSize()).isEqualToIgnoringCase("6,1 MB");
     assertThat(info.get().getRuntime()).isNullOrEmpty();
     assertThat(info.get().getSdk()).isNullOrEmpty();
+
     assertThat(info.get().isEndOfLife()).isTrue();
     assertThat(info.get().getEndOfLife()).isEqualToIgnoringCase("This application has been renamed to com.gitlab.bitseater.meteo");
     assertThat(info.get().getEndOfLifeRebase()).isNullOrEmpty();
@@ -107,12 +109,15 @@ public class LocalFlatpakInstallationServiceImplTest {
     assertThat(info.get().getArch()).isEqualToIgnoringCase(Arch.X86_64.toString());
     assertThat(info.get().getBranch()).isEqualToIgnoringCase("stable");
     assertThat(info.get().getCollection()).isEqualToIgnoringCase("org.flathub.Stable");
-    assertThat(info.get().getDate()).isInstanceOf(LocalDateTime.class);
-    assertThat(info.get().getDate()).isGreaterThan(LocalDateTime.of(2018, 1, 1, 0, 0,0));
-    assertThat(info.get().getSubject()).isNotEmpty();
-    assertThat(info.get().getCommit()).isNotEmpty();
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z");
+    assertThat(info.get().getDate()).isEqualToComparingFieldByField(LocalDateTime.parse("2018-12-12 14:34:14 +0000", formatter));
+
+
+    assertThat(info.get().getSubject()).isEqualToIgnoringCase("Update eol message (2f82d9d8)");
+    assertThat(info.get().getCommit()).isEqualToIgnoringCase("aaa4a1810027de1b32e9e077288622de7824a6f25622359889a8192e21d86597");
     assertThat(info.get().getShortCommit()).isEqualToIgnoringCase("aaa4a1810027");
-    assertThat(info.get().getParent()).isNotEmpty();
+    assertThat(info.get().getParent()).isEqualToIgnoringCase("17b37809fe86abb44a84588829790059e74c9321ebfdf0f90225b57bcaa8c002");
     assertThat(info.get().getDownloadSize()).isEqualToIgnoringCase("1,2 MB");
     assertThat(info.get().getInstalledSize()).isEqualToIgnoringCase("6,1 MB");
     assertThat(info.get().getRuntime()).isEqualToIgnoringCase("org.gnome.Platform/x86_64/3.26");
@@ -133,11 +138,40 @@ public class LocalFlatpakInstallationServiceImplTest {
 
     //When
 
-    Optional<String> metadata  = service.getRemoteMetatataByRemoteAndArchAndId("flathub", Arch.X86_64, "org.gnome.gedit");
+    Optional<String> metadata  = service.getRemoteMetatataByRemoteAndArchAndId("flathub", Arch.X86_64, "com.github.bitseater.weather");
 
 
     //Then
     assertThat(metadata.isPresent());
+    assertThat(metadata.get().equalsIgnoreCase("[Application]\n" +
+      "name=com.github.bitseater.weather\n" +
+      "runtime=org.gnome.Platform/x86_64/3.26\n" +
+      "sdk=org.gnome.Sdk/x86_64/3.26\n" +
+      "command=com.github.bitseater.weather\n" +
+      "\n" +
+      "[Context]\n" +
+      "shared=network;ipc;\n" +
+      "sockets=x11;wayland;\n" +
+      "devices=dri;\n" +
+      "filesystems=xdg-run/dconf;~/.config/dconf:ro;\n" +
+      "\n" +
+      "[Session Bus Policy]\n" +
+      "org.kde.StatusNotifierWatcher=talk\n" +
+      "ca.desrt.dconf=talk\n" +
+      "\n" +
+      "[System Bus Policy]\n" +
+      "org.freedesktop.GeoClue2=talk\n" +
+      "\n" +
+      "[Environment]\n" +
+      "DCONF_USER_CONFIG_DIR=.config/dconf\n" +
+      "\n" +
+      "[Extension com.github.bitseater.weather.Locale]\n" +
+      "directory=share/runtime/locale\n" +
+      "autodelete=true\n" +
+      "locale-subset=true\n" +
+      "\n" +
+      "[Build]\n" +
+      "built-extensions=com.github.bitseater.weather.Locale;com.github.bitseater.weather.Sources;\n"));
 
 
 
@@ -189,6 +223,9 @@ public class LocalFlatpakInstallationServiceImplTest {
     assertThat(info.get().getInstalledSize()).isNotEmpty();
     assertThat(info.get().getRuntime()).startsWith("org.gnome.Platform/x86_64/");
     assertThat(info.get().getSdk()).startsWith("org.gnome.Sdk/x86_64/");
+    assertThat(info.get().isEndOfLife()).isFalse();
+    assertThat(info.get().getEndOfLife()).isNullOrEmpty();
+    assertThat(info.get().getEndOfLifeRebase()).isNullOrEmpty();
   }
 
   @Test
@@ -215,6 +252,9 @@ public class LocalFlatpakInstallationServiceImplTest {
     assertThat(info.get().getInstalledSize()).isNotEmpty();
     assertThat(info.get().getRuntime()).startsWith("org.gnome.Platform/i386/");
     assertThat(info.get().getSdk()).startsWith("org.gnome.Sdk/i386/");
+    assertThat(info.get().isEndOfLife()).isFalse();
+    assertThat(info.get().getEndOfLife()).isNullOrEmpty();
+    assertThat(info.get().getEndOfLifeRebase()).isNullOrEmpty();
   }
 
   @Test
@@ -241,6 +281,9 @@ public class LocalFlatpakInstallationServiceImplTest {
     assertThat(info.get().getInstalledSize()).isNotEmpty();
     assertThat(info.get().getRuntime()).startsWith("org.gnome.Platform/arm/");
     assertThat(info.get().getSdk()).startsWith("org.gnome.Sdk/arm/");
+    assertThat(info.get().isEndOfLife()).isFalse();
+    assertThat(info.get().getEndOfLife()).isNullOrEmpty();
+    assertThat(info.get().getEndOfLifeRebase()).isNullOrEmpty();
   }
 
   @Test
@@ -267,6 +310,12 @@ public class LocalFlatpakInstallationServiceImplTest {
     assertThat(info.get().getInstalledSize()).isNotEmpty();
     assertThat(info.get().getRuntime()).startsWith("org.gnome.Platform/aarch64/");
     assertThat(info.get().getSdk()).startsWith("org.gnome.Sdk/aarch64/");
+    assertThat(info.get().isEndOfLife()).isFalse();
+    assertThat(info.get().getEndOfLife()).isNullOrEmpty();
+    assertThat(info.get().getEndOfLifeRebase()).isNullOrEmpty();
+    assertThat(info.get().isEndOfLife()).isFalse();
+    assertThat(info.get().getEndOfLife()).isNullOrEmpty();
+    assertThat(info.get().getEndOfLifeRebase()).isNullOrEmpty();
   }
 
 
