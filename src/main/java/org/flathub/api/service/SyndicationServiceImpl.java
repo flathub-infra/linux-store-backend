@@ -128,15 +128,15 @@ public class SyndicationServiceImpl implements SyndicationService {
       if(publishBy == FeedPublishBy.AppLastChange){
 
         if(appRelease != null && appRelease.getOstreeCommitDate() != null){
-          entry.setUpdatedDate(Date.from(appRelease.getOstreeCommitDate().toInstant()));
+          entry.setPublishedDate(Date.from(appRelease.getOstreeCommitDate().toInstant()));
         }
         else if(app.getCurrentReleaseDate() != null){
-          entry.setUpdatedDate(Date.from(app.getCurrentReleaseDate().toInstant()));
+          entry.setPublishedDate(Date.from(app.getCurrentReleaseDate().toInstant()));
         }
 
       }
       else if(publishBy == FeedPublishBy.AppInStoreSince){
-        entry.setUpdatedDate(Date.from(app.getInStoreSinceDate().toInstant()));
+        entry.setPublishedDate(Date.from(app.getInStoreSinceDate().toInstant()));
       }
 
       description.setValue(descriptionContents);
