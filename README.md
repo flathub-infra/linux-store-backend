@@ -1,4 +1,8 @@
+#  Note: this backend has been replaced in flathub.org by [this one](https://github.com/flathub/backend/) (Sept. 2020) 
+
+
 # Linux Store backend
+
 
 This is a simple Spring Boot App implementing a backend for [linux-store-frontend](https://github.com/jgarciao/linux-store-frontend):
 * Implements a system to get the list of apps and runtimes published in flatpak repos like [Flathub](http://flathub.org) and others 
